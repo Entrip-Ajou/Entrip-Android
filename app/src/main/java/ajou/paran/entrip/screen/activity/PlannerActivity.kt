@@ -9,8 +9,13 @@ import ajou.paran.entrip.model.fakeDateItemList
 import ajou.paran.entrip.screen.adapter.DateRecyclerViewAdapter
 import ajou.paran.entrip.screen.viewmodel.PlannerActivityViewModel
 import ajou.paran.entrip.util.getCurrentPosition
+import ajou.paran.entrip.util.hideKeyboard
+import android.content.Context
+import android.text.InputType
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.core.util.Pair
 import androidx.core.util.component1
@@ -39,8 +44,19 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
 
         // insert onClickListener
         binding.plannerActIvClose.setOnClickListener(this)
-//        binding.plannerActTvTitle.setOnClickListener(this)
-        binding.plannerActIbTitleEdit.setOnClickListener(this)
+        binding.plannerActEtTitle.setOnClickListener(this)
+//        binding.plannerActIbTitleEdit.setOnClickListener(this) // 타이틀 에딧 버튼 부분
+        binding.plannerActEtTitle.setOnKeyListener { _, keyCode, event ->
+            if ((event.action == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                // 타이틀 변경 이후 키보드 엔터 키를 입력하여 종료시 실행되는 부분
+                Log.d(TAG, "Click Enter")
+                binding.plannerActEtTitle.inputType = InputType.TYPE_NULL
+                hideKeyboard()
+                true
+            } else {
+                false
+            }
+        }
         binding.plannerActTvDate.setOnClickListener(this)
         binding.plannerActIvDateEdit.setOnClickListener(this)
         binding.plannerActIvPlannerAdd.setOnClickListener(this)
@@ -75,9 +91,10 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     Log.d(TAG, "Case: Close")
                     onBackPressed()
                 }
-                binding.plannerActIbTitleEdit.id -> {
+                binding.plannerActEtTitle.id -> {
                     Log.d(TAG, "Case: Click planner title button")
-
+                    binding.plannerActEtTitle.inputType = InputType.TYPE_CLASS_TEXT
+                    /*
                     when (binding.plannerActEtTitle.isEnabled) {
                         true -> {
                             binding.plannerActEtTitle.isEnabled = false
@@ -92,6 +109,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                              * **/
                         }
                     }
+                    */
                 }
                 binding.plannerActTvDate.id, binding.plannerActIvDateEdit.id -> {
                     Log.d(TAG, "Case: Edit planner Date")
