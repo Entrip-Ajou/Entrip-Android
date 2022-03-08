@@ -55,7 +55,7 @@
                     android:id="@+id/plannerAct_ib_titleEdit"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
-                    android:src="@drawable/ic_baseline_edit_24" />
+                    android:background="@drawable/ic_baseline_edit_24" />
 
             </LinearLayout>
 
