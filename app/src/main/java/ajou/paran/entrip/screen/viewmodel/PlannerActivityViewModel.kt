@@ -12,6 +12,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * @ClassName: PlannerActivityViewModel
+ * @innerFunc: setPlannerDateItem(List<PlannerDate>), getPlannerDateItem()
+ * @private: _plannerDateItemList: MutableLiveData<List<PlannerDate>>
+ * **/
 @HiltViewModel
 class PlannerActivityViewModel
     @Inject

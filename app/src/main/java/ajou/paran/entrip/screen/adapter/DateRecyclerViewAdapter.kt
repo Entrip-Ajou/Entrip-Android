@@ -2,11 +2,18 @@ package ajou.paran.entrip.screen.adapter
 
 import ajou.paran.entrip.R
 import ajou.paran.entrip.model.PlannerDate
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+
+/**
+ * @ClassName: DateRecyclerViewAdapter
+ * @inheritance: RecyclerView.Adapter
+ * @innerClass: DateItemViewHolder
+ * **/
 
 class DateRecyclerViewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -30,7 +37,14 @@ class DateRecyclerViewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun bind(plannerDate: PlannerDate){
             itemView.findViewById<TextView>(R.id.itemLayout_tv_month).text = "${plannerDate.month}월"
-            itemView.findViewById<TextView>(R.id.itemLayout_tv_day).text = "${plannerDate.day}일"
+            itemView.findViewById<TextView>(R.id.itemLayout_tv_day).text = "${plannerDate.day}"
+            itemView.setOnClickListener {
+                Log.d("DateRecyclerViewAdapter", "Click Case: ${plannerDate.month}월 ${plannerDate.day}일")
+                // 해당 부분에서 플래너 날짜별 세부 내용과 연동 필요
+
+
+
+            }
         }
     }
 }
