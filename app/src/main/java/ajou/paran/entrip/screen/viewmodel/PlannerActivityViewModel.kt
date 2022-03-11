@@ -29,6 +29,9 @@ class PlannerActivityViewModel
     constructor(
         private val plannerRepository: PlannerRepository
     ) : ViewModel() {
+    companion object{
+        private const val TAG = "[PlannerActivityViewModel]"
+    }
 
     private val _plannerDateItemList: MutableLiveData<List<PlannerDate>> = MutableLiveData()
 

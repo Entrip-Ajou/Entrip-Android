@@ -1,28 +1,25 @@
 package ajou.paran.entrip.base
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewbinding.ViewBinding
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 
-abstract class BaseActivity<T: ViewBinding>(
+abstract class BaseActivity<T: ViewDataBinding>(
     @LayoutRes private val layoutResId: Int,
-    private val bindingFactory: (LayoutInflater) -> T
 ): AppCompatActivity(layoutResId) {
-    private var mBinding: T? = null
-    protected val binding
-        get() = mBinding!!
+
+    protected lateinit var binding: T
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding = bindingFactory(layoutInflater)
-        setContentView(binding.root)
+        binding = DataBindingUtil.setContentView(this, layoutResId)
+        binding.lifecycleOwner = this
         init()
     }
 
     override fun onDestroy() {
-        mBinding = null
         super.onDestroy()
     }
 
