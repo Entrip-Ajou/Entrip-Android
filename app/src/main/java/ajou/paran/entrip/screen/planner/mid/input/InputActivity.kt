@@ -60,7 +60,7 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
     }
 
     // backButton, time, location 클릭 이벤트 처리
-    fun onClick(v: View) {
+    fun input_click(v: View) {
         when (v.id) {
             binding.backButton.id -> {
 

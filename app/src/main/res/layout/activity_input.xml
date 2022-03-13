@@ -22,7 +22,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="15dp"
             android:src="@drawable/ic_baseline_arrow_back_24"
-            android:onClick="onClick"
+            android:onClick="input_click"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -173,7 +173,7 @@
             android:inputType="time"
             android:text="@={inputViewModel.time}"
             android:textSize="24sp"
-            android:onClick="onClick"
+            android:onClick="input_click"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
@@ -214,7 +214,7 @@
             android:inputType="time"
             android:text="@={inputViewModel.location}"
             android:textSize="24sp"
-            android:onClick="onClick"
+            android:onClick="input_click"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_time" />
