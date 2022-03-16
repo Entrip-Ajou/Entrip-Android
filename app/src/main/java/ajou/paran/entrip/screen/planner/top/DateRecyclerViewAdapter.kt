@@ -1,9 +1,8 @@
-package ajou.paran.entrip.screen.adapter
+package ajou.paran.entrip.screen.planner.top
 
 import ajou.paran.entrip.R
 import ajou.paran.entrip.model.PlannerDate
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View

@@ -1,8 +1,8 @@
-package ajou.paran.entrip.screen.viewmodel
+package ajou.paran.entrip.screen.planner.top
 
 import ajou.paran.entrip.model.PlannerDate
 import ajou.paran.entrip.repository.PlannerRepository
-import android.view.View
+import android.annotation.SuppressLint
 import androidx.core.util.Pair
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
@@ -49,8 +49,10 @@ class PlannerActivityViewModel
         }
     }
 
+    @SuppressLint("RestrictedApi")
     fun startDateRangePicker(supportFragmentManager: FragmentManager) {
-        val dateRangePicker = MaterialDatePicker.Builder.dateRangePicker()
+        val selector = CustomMaterialDatePicker()
+        val dateRangePicker = MaterialDatePicker.Builder.customDatePicker(selector)
             .setTitleText("Select dates")
             .setSelection(
                 Pair(

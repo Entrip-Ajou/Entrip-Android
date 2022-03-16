@@ -1,6 +1,6 @@
 package ajou.paran.entrip
 
-import ajou.paran.entrip.screen.activity.PlannerActivity
+import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

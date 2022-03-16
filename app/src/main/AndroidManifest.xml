@@ -22,8 +22,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".screen.activity.PlannerActivity"
-            android:exported="false" />
+            android:name=".screen.planner.top.PlannerActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>
