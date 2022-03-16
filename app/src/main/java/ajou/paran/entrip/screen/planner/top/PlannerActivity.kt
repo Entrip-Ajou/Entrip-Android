@@ -3,7 +3,9 @@ package ajou.paran.entrip.screen.planner.top
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityPlannerBinding
+import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
 import ajou.paran.entrip.util.hideKeyboard
+import android.content.Intent
 import android.text.InputType
 import android.util.Log
 import android.view.KeyEvent
@@ -11,14 +13,12 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,6 +31,8 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
 
     private lateinit var dateRecyclerViewAdapter: DateRecyclerViewAdapter
     private lateinit var navController: NavController
+
+
     private val viewModel: PlannerActivityViewModel by viewModels()
 
 
@@ -87,9 +89,11 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 }
                 binding.plannerActIvPlannerAdd.id -> {
                     Log.d(TAG, "Case: Add planner")
+                    showPlannerAddDeleteDialog()
                 }
                 binding.plannerActPersonAdd.id -> {
                     Log.d(TAG, "Case: Add user")
+                    startActivity(Intent(this, PlannerUserAddActivity::class.java))
                 }
                 else -> {
                     return
@@ -141,5 +145,20 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.plannerAct_bottom_nav)
         bottomNavigationView.setupWithNavController(navController)
 
+    }
+
+    private fun showPlannerAddDeleteDialog() {
+        val btnsheet = layoutInflater.inflate(R.layout.layout_bottom_sheet_planner_edit, null)
+        val dialog = BottomSheetDialog(this)
+        dialog.setContentView(btnsheet)
+        btnsheet.findViewById<MaterialButton>(R.id.addBtn).setOnClickListener{
+            Log.d(TAG, "Dialog.dismiss: addBtn")
+            dialog.dismiss()
+        }
+        btnsheet.findViewById<MaterialButton>(R.id.deleteBtn).setOnClickListener{
+            Log.d(TAG, "Dialog.dismiss: deleteBtn")
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 }

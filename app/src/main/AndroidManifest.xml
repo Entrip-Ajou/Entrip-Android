@@ -24,6 +24,9 @@
         <activity
             android:name=".screen.planner.top.PlannerActivity"
             android:exported="false"/>
+        <activity
+            android:name=".screen.planner.top.useradd.PlannerUserAddActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>
