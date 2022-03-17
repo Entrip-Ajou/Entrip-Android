@@ -38,10 +38,11 @@ class DateRecyclerViewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     inner class DateItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
         fun bind(plannerDate: PlannerDate){
-            itemView.findViewById<TextView>(R.id.itemLayout_tv_month).text = "${plannerDate.month}월"
-            itemView.findViewById<TextView>(R.id.itemLayout_tv_day).text = "${plannerDate.day}"
+            val (year, month, day) = plannerDate.date.split("/")
+            itemView.findViewById<TextView>(R.id.itemLayout_tv_month).text = "$month 월"
+            itemView.findViewById<TextView>(R.id.itemLayout_tv_day).text = day
             itemView.setOnClickListener {
-                Log.d("DateRecyclerViewAdapter", "Click Case: ${plannerDate.month}월 ${plannerDate.day}일")
+                Log.d("DateRecyclerViewAdapter", "Click Case: $month 월 $day 일")
                 // 해당 부분에서 플래너 날짜별 세부 내용과 연동 필요
 //                itemView.setBackgroundColor(Color.CYAN)
             }

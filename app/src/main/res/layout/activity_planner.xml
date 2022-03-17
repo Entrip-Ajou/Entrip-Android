@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -47,6 +48,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:orientation="horizontal">
 
                     <EditText
@@ -74,9 +76,9 @@
                         android:id="@+id/plannerAct_tv_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/planner_date"
                         android:textColor="#CCCCCC"
                         android:textSize="12sp"
+                        android:gravity="center"
                         android:onClick="onClick"/>
 
                     <ImageView
@@ -136,9 +138,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/testAct_cl_1"
-            android:orientation="horizontal">
-
-        </androidx.recyclerview.widget.RecyclerView>
+            android:orientation="horizontal"
+            android:scrollbars="horizontal"
+            android:scrollbarFadeDuration="1"/>
         <!-- 리사이클러뷰 영역 -->
 
         <!-- 구분선 -->
@@ -157,12 +159,12 @@
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="1"
             app:defaultNavHost="true"
             app:layout_constraintBottom_toTopOf="@+id/plannerAct_bottom_nav"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/plannerAct_rv_1"
-            app:navGraph="@navigation/navigation_planner" />
+            app:layout_constraintTop_toBottomOf="@+id/plannerAct_rv_1" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/plannerAct_bottom_nav"

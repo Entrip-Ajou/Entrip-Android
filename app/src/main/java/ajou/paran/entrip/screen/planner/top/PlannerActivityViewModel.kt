@@ -66,16 +66,16 @@ class PlannerActivityViewModel
 
         dateRangePicker.addOnPositiveButtonClickListener {
             val (s_year, s_month, s_day) = SimpleDateFormat(
-                "yyyy.MM.dd",
+                "yyyy/MM/dd",
                 Locale.getDefault()
             ).format(it.first)
-                .split(".")
+                .split("/")
                 .map { it.toInt() }
             val (e_year, e_month, e_day) = SimpleDateFormat(
-                "yyyy.MM.dd",
+                "yyyy/MM/dd",
                 Locale.getDefault()
             ).format(it.second)
-                .split(".")
+                .split("/")
                 .map { it.toInt() }
 
             val cal = Calendar.getInstance()
@@ -88,15 +88,11 @@ class PlannerActivityViewModel
             ) {
                 // 플래너에 집어 넣을 Date 생성 로직
                 mutableList.add(
-                    PlannerDate(
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)
-                    )
+                    PlannerDate("${cal.get(Calendar.YEAR)}/${cal.get(Calendar.MONTH)}/${cal.get(Calendar.DAY_OF_MONTH)}")
                 )
                 cal.add(Calendar.DAY_OF_MONTH, 1)
             }
-            mutableList.add(PlannerDate(e_year, e_month, e_day))
+            mutableList.add(PlannerDate("${cal.get(Calendar.YEAR)}/${cal.get(Calendar.MONTH)}/${cal.get(Calendar.DAY_OF_MONTH)}"))
             setPlannerDateItem(mutableList.toList())
             mutableList.clear()
         }

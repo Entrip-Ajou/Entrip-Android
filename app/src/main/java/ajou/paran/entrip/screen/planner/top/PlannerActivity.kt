@@ -126,10 +126,10 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 if (binding.plannerActRv1.visibility == View.GONE)
                     binding.plannerActRv1.visibility = View.VISIBLE
                 dateRecyclerViewAdapter.submitList(it)
-                binding.plannerActTvDate.text = "${it.first().month}/${it.first().day} ~ ${it.last().month}/${it.last().day}"
+                binding.plannerActTvDate.text = "${it.first().date} ~ ${it.last().date}"
             }
             else{
-                binding.plannerActTvDate.text = "${it.first().month}/${it.first().day}"
+                binding.plannerActTvDate.text = "${it.first().date} ~ ${it.last().date}"
                 binding.plannerActRv1.visibility = View.GONE
             }
         })
@@ -141,6 +141,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             R.id.plannerAct_nav_host_container
         ) as NavHostFragment
         navController = navHostFragment.navController
+        navController.setGraph(R.navigation.nav_planner)
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.plannerAct_bottom_nav)
         bottomNavigationView.setupWithNavController(navController)
@@ -148,14 +149,14 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     }
 
     private fun showPlannerAddDeleteDialog() {
-        val btnsheet = layoutInflater.inflate(R.layout.layout_bottom_sheet_planner_edit, null)
+        val btnSheet = layoutInflater.inflate(R.layout.layout_bottom_sheet_planner_edit, null)
         val dialog = BottomSheetDialog(this)
-        dialog.setContentView(btnsheet)
-        btnsheet.findViewById<MaterialButton>(R.id.addBtn).setOnClickListener{
+        dialog.setContentView(btnSheet)
+        btnSheet.findViewById<MaterialButton>(R.id.addBtn).setOnClickListener{
             Log.d(TAG, "Dialog.dismiss: addBtn")
             dialog.dismiss()
         }
-        btnsheet.findViewById<MaterialButton>(R.id.deleteBtn).setOnClickListener{
+        btnSheet.findViewById<MaterialButton>(R.id.deleteBtn).setOnClickListener{
             Log.d(TAG, "Dialog.dismiss: deleteBtn")
             dialog.dismiss()
         }
