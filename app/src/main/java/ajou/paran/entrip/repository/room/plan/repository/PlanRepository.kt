@@ -4,4 +4,5 @@ import ajou.paran.entrip.model.PlanEntity
 
 interface PlanRepository {
     suspend fun insertPlan(planEntity: PlanEntity)
+    suspend fun selectPlan() : List<PlanEntity>?
 }

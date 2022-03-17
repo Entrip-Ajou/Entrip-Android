@@ -1,9 +1,11 @@
 package ajou.paran.entrip.screen.planner.mid.input
 
+import ajou.paran.entrip.MainActivity
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityInputBinding
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.graphics.Color
 import android.util.Log
 import android.view.View
@@ -63,7 +65,11 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
     fun input_click(v: View) {
         when (v.id) {
             binding.backButton.id -> {
-
+                /* Activity -> Activity 인 이유는, 현재는 MainActivity가 MidFragment를 가지고 있기 때문에,
+                추후에 희훈님 코드랑 합칠 때, midFragment를 가지고 있는 activity로 변경해야 함.
+                 */
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
             }
 
             binding.tvTime.id -> {

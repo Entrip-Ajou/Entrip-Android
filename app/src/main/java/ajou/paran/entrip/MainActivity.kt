@@ -1,7 +1,6 @@
 package ajou.paran.entrip
 
-import ajou.paran.entrip.screen.planner.mid.input.InputActivity
-import android.content.Intent
+import ajou.paran.entrip.screen.planner.mid.MidFragment
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
@@ -12,7 +11,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val intent = Intent(this, InputActivity::class.java)
-        startActivity(intent)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.view, MidFragment())
+            .commit()
     }
 }

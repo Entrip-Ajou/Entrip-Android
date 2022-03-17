@@ -8,4 +8,9 @@ class PlanRepositoryImpl @Inject constructor(private val db:AppDatabase) : PlanR
     override suspend fun insertPlan(planEntity: PlanEntity) {
         db.planDao().insertPlan(planEntity)
     }
+
+    override suspend fun selectPlan(): List<PlanEntity>? {
+        return db.planDao().selectPlan()
+    }
+
 }
