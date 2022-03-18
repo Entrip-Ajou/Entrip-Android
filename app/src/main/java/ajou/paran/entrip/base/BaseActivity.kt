@@ -16,12 +16,12 @@ abstract class BaseActivity<T: ViewDataBinding>(
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, layoutResId)
         binding.lifecycleOwner = this
-        init()
+        init(savedInstanceState)
     }
 
     override fun onDestroy() {
         super.onDestroy()
     }
 
-    abstract fun init()
+    abstract fun init(savedInstanceState: Bundle?)
 }

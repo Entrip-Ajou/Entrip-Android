@@ -4,6 +4,7 @@ import ajou.paran.entrip.model.PlannerDate
 import ajou.paran.entrip.repository.PlannerRepository
 import android.annotation.SuppressLint
 import androidx.core.util.Pair
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -64,17 +65,17 @@ class PlannerActivityViewModel
             .build()
         dateRangePicker.show(supportFragmentManager,"Hello")
 
-        dateRangePicker.addOnPositiveButtonClickListener {
+        dateRangePicker.addOnPositiveButtonClickListener { pairDate ->
             val (s_year, s_month, s_day) = SimpleDateFormat(
                 "yyyy/MM/dd",
                 Locale.getDefault()
-            ).format(it.first)
+            ).format(pairDate.first)
                 .split("/")
                 .map { it.toInt() }
             val (e_year, e_month, e_day) = SimpleDateFormat(
                 "yyyy/MM/dd",
                 Locale.getDefault()
-            ).format(it.second)
+            ).format(pairDate.second)
                 .split("/")
                 .map { it.toInt() }
 
@@ -97,4 +98,17 @@ class PlannerActivityViewModel
             mutableList.clear()
         }
     }
+
+    fun plannerDataDelete(){
+        TODO("Case: Delete Planner Data")
+    }
+
+    fun plannerAdd(){
+        TODO("Case: Add Planner")
+    }
+
+    fun plannerTitleChange(title: String){
+        TODO("Case: Change Planner Title")
+    }
+
 }
