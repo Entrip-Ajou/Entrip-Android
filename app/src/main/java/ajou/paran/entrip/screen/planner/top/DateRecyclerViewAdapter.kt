@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class DateRecyclerViewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    private var checkedItemView: View? = null
     private var dateItemList: List<PlannerDate>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
@@ -38,8 +39,6 @@ class DateRecyclerViewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     inner class DateItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
-        var checkedItemView: View? = null
-
         fun bind(plannerDate: PlannerDate){
             val (year, month, day) = plannerDate.date.split("/")
             itemView.findViewById<TextView>(R.id.itemLayout_tv_month).text = "$month 월"
@@ -53,9 +52,9 @@ class DateRecyclerViewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
 
-        fun checkSelected(itemView: View) = checkedItemView?.let {
-//            https://curryyou.tistory.com/395 - Radio Button
-//            checkedItemView!!.setBackgroundColor(Color.WHITE)
+        private fun checkSelected(itemView: View) = checkedItemView?.let {
+            if(checkedItemView!!.id == itemView.id)
+                checkedItemView!!.setBackgroundColor(Color.WHITE)
         }
 
     }
