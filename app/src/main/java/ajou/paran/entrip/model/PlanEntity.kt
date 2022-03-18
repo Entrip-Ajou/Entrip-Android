@@ -15,5 +15,5 @@ data class PlanEntity(
     @ColumnInfo(name="time")
     val time : Int,
     @ColumnInfo(name="location")
-    val location : String
+    val location : String?
 )

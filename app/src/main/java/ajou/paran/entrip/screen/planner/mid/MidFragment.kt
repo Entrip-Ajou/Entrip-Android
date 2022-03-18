@@ -1,10 +1,12 @@
 package ajou.paran.entrip.screen.planner.mid
 
 
+
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +30,6 @@ class MidFragment : Fragment(){
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentMidBinding.inflate(inflater, container, false)
-        binding.midFragment = this@MidFragment
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.midViewModel = viewModel
@@ -43,15 +44,6 @@ class MidFragment : Fragment(){
         binding.rvPlan.adapter = categoryAdapter
         viewModel.items.observe(viewLifecycleOwner){
             categoryAdapter.submitList(it)
-        }
-    }
-
-    fun mid_click(v:View){
-        when(v.id){
-            binding.btnPlanAdd.id -> {
-                val intent =  Intent(activity ,InputActivity::class.java)
-                startActivity(intent)
-            }
         }
     }
 }

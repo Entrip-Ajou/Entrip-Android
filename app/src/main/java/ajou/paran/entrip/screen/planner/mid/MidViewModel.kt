@@ -7,27 +7,28 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MidViewModel @Inject constructor(
     private val planRepository: PlanRepository
-    ): ViewModel() {
+) : ViewModel() {
 
-    companion object{
+    companion object {
         private const val TAG = "[MidViewModel]"
     }
 
     private val _items = MutableLiveData<List<PlanEntity>>()
-    val items : LiveData<List<PlanEntity>> = _items
+    val items: LiveData<List<PlanEntity>> = _items
 
     init {
         loadPlan()
     }
 
-    private fun loadPlan(){
-        viewModelScope.launch{
+    private fun loadPlan() {
+        viewModelScope.launch {
             val plans = planRepository.selectPlan()
             _items.value = plans!!
         }

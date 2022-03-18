@@ -5,9 +5,6 @@
 
     <data>
 
-        <variable
-            name="plan"
-            type="ajou.paran.entrip.model.PlanEntity" />
     </data>
 
     <RelativeLayout
@@ -27,17 +24,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_margin="20dp"
-            android:layout_toRightOf="@id/tv_item_time">
+            android:layout_toRightOf="@id/tv_item_time"
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/item_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintLeft_toRightOf="@id/tv_item_time"
-                android:background="@{plan.rgb}">
+                app:layout_constraintLeft_toRightOf="@id/tv_item_time">
 
                 <TextView
                     android:id="@+id/tv_item_todo"
@@ -46,20 +42,19 @@
                     android:layout_marginLeft="10dp"
                     android:scrollbarFadeDuration="0"
                     android:scrollbars="horizontal"
-                    android:text="@{plan.todo}"
                     android:textColor="@color/black"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     tools:text="성심당가서 빵먹기" />
 
                 <TextView
+                    android:id="@+id/tv_item_location"
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
                     android:scrollbarFadeDuration="0"
                     android:scrollbars="horizontal"
-                    android:text="@{plan.location}"
                     android:textSize="12sp"
                     tools:text="대한민국 전라북도 전주시 완산구" />
 

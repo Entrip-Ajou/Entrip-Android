@@ -69,7 +69,7 @@ class InputViewModel @Inject constructor(
                             todo = todo.value.toString(),
                             rgb = rgb.value!!,
                             time = timeToInt,
-                            location = location?.value.toString()
+                            location = location.value
                         )
                     )
                 }
