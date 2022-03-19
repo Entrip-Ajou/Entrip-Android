@@ -70,15 +70,28 @@ class PlanAdapter : ListAdapter<PlanEntity, RecyclerView.ViewHolder>(PlanDiffCal
 
         fun bind(planEntity: PlanEntity) {
             val timeString = planEntity.time.toString()
-            val hour: String
-            if (timeString.length == 3) {
-                hour = timeString.substring(0, 1)
-            } else {
-                hour = timeString.substring(0, 2)
-            }
-            val minute = timeString.substring(timeString.length - 2, timeString.length)
+            var hour = ""
+            var minute = ""
 
-            binding.tvItemTime.text = hour + ":" + minute
+            when (timeString.length) {
+                1 -> {
+                    hour = "00"
+                    minute = "0" + timeString
+                }
+                2 -> {
+                    hour = "00"
+                    minute = timeString
+                }
+                3 -> {
+                    hour = "0"+timeString.substring(0, 1)
+                    minute = timeString.substring(timeString.length - 2, timeString.length)
+                }
+                4 -> {
+                    hour = timeString.substring(0, 2)
+                    minute = timeString.substring(timeString.length - 2, timeString.length)
+                }
+            }
+            binding.tvItemTime.text = "$hour:$minute"
 
             if (planEntity.location.isNullOrEmpty()) binding.tvItemLocation.text = ""
             else binding.tvItemLocation.text = planEntity.location
