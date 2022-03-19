@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlanDao {
@@ -12,5 +13,5 @@ interface PlanDao {
     suspend fun insertPlan(planEntity: PlanEntity)
 
     @Query("SELECT * FROM `plan` ORDER BY time ASC ")
-    suspend fun selectPlan() : List<PlanEntity>?
+    fun selectPlan() : Flow<List<PlanEntity>>
 }

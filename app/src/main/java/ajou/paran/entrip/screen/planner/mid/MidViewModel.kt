@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,11 +28,6 @@ class MidViewModel @Inject constructor(
         loadPlan()
     }
 
-    private fun loadPlan() {
-        viewModelScope.launch {
-            val plans = planRepository.selectPlan()
-            _items.value = plans!!
-        }
-    }
+    fun loadPlan() : Flow<List<PlanEntity>> = planRepository.selectPlan()
 
 }

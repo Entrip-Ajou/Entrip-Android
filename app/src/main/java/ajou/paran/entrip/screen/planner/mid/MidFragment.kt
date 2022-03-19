@@ -1,7 +1,6 @@
 package ajou.paran.entrip.screen.planner.mid
 
 
-
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import android.content.Intent
@@ -12,17 +11,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.coroutineScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MidFragment : Fragment(){
+class MidFragment : Fragment() {
 
-    companion object{
+    companion object {
         private const val TAG = "[MidFragment]"
     }
 
-    private val viewModel : MidViewModel by viewModels()
-    private lateinit var binding : FragmentMidBinding
+    private val viewModel: MidViewModel by viewModels()
+    private lateinit var binding: FragmentMidBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,10 +42,12 @@ class MidFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val categoryAdapter = PlanAdapter()
-        binding.rvPlan.adapter = categoryAdapter
-        viewModel.items.observe(viewLifecycleOwner){
-            categoryAdapter.submitList(it)
+        val planAdapter = PlanAdapter()
+        binding.rvPlan.adapter = planAdapter
+        lifecycle.coroutineScope.launch {
+            viewModel.loadPlan().collect() {
+                planAdapter.submitList(it)
+            }
         }
     }
 }

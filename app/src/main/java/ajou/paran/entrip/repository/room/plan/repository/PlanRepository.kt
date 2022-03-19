@@ -1,8 +1,9 @@
 package ajou.paran.entrip.repository.room.plan.repository
 
 import ajou.paran.entrip.model.PlanEntity
+import kotlinx.coroutines.flow.Flow
 
 interface PlanRepository {
     suspend fun insertPlan(planEntity: PlanEntity)
-    suspend fun selectPlan() : List<PlanEntity>?
+    fun selectPlan() : Flow<List<PlanEntity>>
 }
