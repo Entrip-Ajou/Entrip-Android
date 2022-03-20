@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface PlanRepository {
     suspend fun insertPlan(planEntity: PlanEntity)
     fun selectPlan() : Flow<List<PlanEntity>>
+    fun deletePlan(planEntity: PlanEntity)
+    fun updatePlan(planEntity: PlanEntity)
 }

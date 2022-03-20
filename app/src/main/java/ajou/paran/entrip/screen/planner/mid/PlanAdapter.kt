@@ -1,5 +1,6 @@
 package ajou.paran.entrip.screen.planner.mid
 
+import ajou.paran.entrip.R
 import ajou.paran.entrip.databinding.ItemLayoutPlanBinding
 import ajou.paran.entrip.databinding.ItemLayoutPlanFooterBinding
 import ajou.paran.entrip.model.PlanEntity
@@ -16,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 private const val FOOTER_VIEW_TYPE = 1
 
-class PlanAdapter : ListAdapter<PlanEntity, RecyclerView.ViewHolder>(PlanDiffCallback()) {
+class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, RecyclerView.ViewHolder>(PlanDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == FOOTER_VIEW_TYPE) {
@@ -34,12 +35,17 @@ class PlanAdapter : ListAdapter<PlanEntity, RecyclerView.ViewHolder>(PlanDiffCal
         }
         val binding =
             ItemLayoutPlanBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PlanViewHolder(binding)
+        return PlanViewHolder(binding, listener)
 
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is PlanViewHolder) {
+            holder.itemView.setOnClickListener{
+                // todo : 데이터셋에 변화가 생기면, 변화된 데이터 셋의 position을 가져오지 못해서 에러가 발생한다.
+
+                listener.onItemClickListener(getItem(position))
+            }
             holder.bind(getItem(position))
         } else if (holder is FooterViewHolder) {
             holder.bind()
@@ -65,7 +71,7 @@ class PlanAdapter : ListAdapter<PlanEntity, RecyclerView.ViewHolder>(PlanDiffCal
         }
     }
 
-    class PlanViewHolder(private val binding: ItemLayoutPlanBinding) :
+    class PlanViewHolder(private val binding: ItemLayoutPlanBinding, val listener: RowClickListener) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(planEntity: PlanEntity) {
@@ -101,11 +107,22 @@ class PlanAdapter : ListAdapter<PlanEntity, RecyclerView.ViewHolder>(PlanDiffCal
             binding.itemLayout.setBackgroundColor(
                 ContextCompat.getColor(
                     binding.root.context,
-                    planEntity.rgb
+                    R.color.indigo
+                    //planEntity.rgb  사용자가 흰색을 눌렀을 때 터짐
                 )
             )
+
+            binding.imgItemDelete.setOnClickListener{
+                listener.onDeletePlanClickListener(planEntity)
+            }
+
             binding.executePendingBindings()
         }
+    }
+
+    interface RowClickListener{
+        fun onDeletePlanClickListener(planEntity: PlanEntity)
+        fun onItemClickListener(planEntity: PlanEntity)
     }
 }
 

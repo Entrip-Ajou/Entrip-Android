@@ -14,4 +14,12 @@ class PlanRepositoryImpl @Inject constructor(private val db:AppDatabase) : PlanR
         return db.planDao().selectPlan()
     }
 
+    override fun deletePlan(planEntity: PlanEntity) {
+        db.planDao().deletePlan(planEntity)
+    }
+
+    override fun updatePlan(planEntity: PlanEntity) {
+        db.planDao().updatePlan(planEntity)
+    }
+
 }

@@ -2,8 +2,7 @@ package ajou.paran.entrip.screen.planner.mid
 
 
 import ajou.paran.entrip.databinding.FragmentMidBinding
-import ajou.paran.entrip.screen.planner.mid.input.InputActivity
-import android.content.Intent
+import ajou.paran.entrip.model.PlanEntity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,7 +16,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MidFragment : Fragment() {
+class MidFragment : Fragment(),PlanAdapter.RowClickListener {
 
     companion object {
         private const val TAG = "[MidFragment]"
@@ -42,12 +41,24 @@ class MidFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val planAdapter = PlanAdapter()
+        val planAdapter = PlanAdapter(this@MidFragment)
         binding.rvPlan.adapter = planAdapter
         lifecycle.coroutineScope.launch {
             viewModel.loadPlan().collect() {
-                planAdapter.submitList(it)
+                planAdapter.submitList(it.toList())
             }
         }
+    }
+
+    override fun onDeletePlanClickListener(planEntity: PlanEntity) {
+        viewModel.deletePlan(planEntity)
+    }
+
+    override fun onItemClickListener(planEntity: PlanEntity) {
+        // todo : 위에서 delete를 한뒤 선택하면 update가 안되어있음.
+        Log.e(TAG, "해당 아이템 클릭")
+        Log.e(TAG, "Todo : " + planEntity.todo)
+        Log.e(TAG, "Time : " + planEntity.time)
+        Log.e(TAG, "rgb : " + planEntity.rgb)
     }
 }

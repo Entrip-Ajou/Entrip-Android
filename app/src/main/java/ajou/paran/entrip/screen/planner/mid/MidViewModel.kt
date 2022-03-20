@@ -2,12 +2,10 @@ package ajou.paran.entrip.screen.planner.mid
 
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.repository.room.plan.repository.PlanRepository
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,13 +19,21 @@ class MidViewModel @Inject constructor(
         private const val TAG = "[MidViewModel]"
     }
 
-    private val _items = MutableLiveData<List<PlanEntity>>()
-    val items: LiveData<List<PlanEntity>> = _items
-
     init {
         loadPlan()
     }
 
     fun loadPlan() : Flow<List<PlanEntity>> = planRepository.selectPlan()
 
+    fun deletePlan(planEntity: PlanEntity){
+        viewModelScope.launch(Dispatchers.IO) {
+            planRepository.deletePlan(planEntity)
+        }
+    }
+
+    fun updatePlan(planEntity:PlanEntity){
+        viewModelScope.launch(Dispatchers.IO) {
+            planRepository.updatePlan(planEntity)
+        }
+    }
 }
