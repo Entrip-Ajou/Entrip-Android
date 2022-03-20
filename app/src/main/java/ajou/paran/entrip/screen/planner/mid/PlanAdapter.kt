@@ -1,6 +1,5 @@
 package ajou.paran.entrip.screen.planner.mid
 
-import ajou.paran.entrip.R
 import ajou.paran.entrip.databinding.ItemLayoutPlanBinding
 import ajou.paran.entrip.databinding.ItemLayoutPlanFooterBinding
 import ajou.paran.entrip.model.PlanEntity
@@ -29,6 +28,7 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
             return FooterViewHolder(binding).apply {
                 binding.btnPlanAdd.setOnClickListener {
                     val intent = Intent(binding.btnPlanAdd.context, InputActivity::class.java)
+                    intent.putExtra("isUpdate", false)
                     ContextCompat.startActivity(binding.btnPlanAdd.context, intent, null)
                 }
             }
@@ -41,11 +41,6 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is PlanViewHolder) {
-            holder.itemView.setOnClickListener{
-                // todo : 데이터셋에 변화가 생기면, 변화된 데이터 셋의 position을 가져오지 못해서 에러가 발생한다.
-
-                listener.onItemClickListener(getItem(position))
-            }
             holder.bind(getItem(position))
         } else if (holder is FooterViewHolder) {
             holder.bind()
@@ -64,15 +59,26 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
         return super.getItemViewType(position)
     }
 
-    class FooterViewHolder(private val binding: ItemLayoutPlanFooterBinding) :
+    inner class FooterViewHolder(private val binding: ItemLayoutPlanFooterBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind() {
 
         }
     }
 
-    class PlanViewHolder(private val binding: ItemLayoutPlanBinding, val listener: RowClickListener) :
+    inner class PlanViewHolder(private val binding: ItemLayoutPlanBinding, val listener: RowClickListener) :
         RecyclerView.ViewHolder(binding.root) {
+
+        init{
+            binding.apply {
+                itemClick.setOnClickListener{
+                    val position = adapterPosition
+                    if(position != RecyclerView.NO_POSITION){
+                        listener.onItemClickListener(getItem(position))
+                    }
+                }
+            }
+        }
 
         fun bind(planEntity: PlanEntity) {
             val timeString = planEntity.time.toString()
@@ -107,8 +113,7 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
             binding.itemLayout.setBackgroundColor(
                 ContextCompat.getColor(
                     binding.root.context,
-                    R.color.indigo
-                    //planEntity.rgb  사용자가 흰색을 눌렀을 때 터짐
+                    planEntity.rgb
                 )
             )
 

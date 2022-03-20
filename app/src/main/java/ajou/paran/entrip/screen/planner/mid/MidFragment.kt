@@ -3,6 +3,8 @@ package ajou.paran.entrip.screen.planner.mid
 
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.model.PlanEntity
+import ajou.paran.entrip.screen.planner.mid.input.InputActivity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -55,10 +57,15 @@ class MidFragment : Fragment(),PlanAdapter.RowClickListener {
     }
 
     override fun onItemClickListener(planEntity: PlanEntity) {
-        // todo : 위에서 delete를 한뒤 선택하면 update가 안되어있음.
-        Log.e(TAG, "해당 아이템 클릭")
-        Log.e(TAG, "Todo : " + planEntity.todo)
-        Log.e(TAG, "Time : " + planEntity.time)
-        Log.e(TAG, "rgb : " + planEntity.rgb)
+        val intent = Intent(context, InputActivity::class.java)
+        intent.apply {
+            this.putExtra("isUpdate", true)
+            this.putExtra("Id", planEntity.id)
+            this.putExtra("Todo",planEntity.todo)
+            this.putExtra("Rgb",planEntity.rgb)
+            this.putExtra("Time",planEntity.time)
+            this.putExtra("Location",planEntity.location)
+        }
+        startActivity(intent)
     }
 }

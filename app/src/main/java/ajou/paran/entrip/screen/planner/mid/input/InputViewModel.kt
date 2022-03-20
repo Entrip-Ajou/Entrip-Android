@@ -1,5 +1,6 @@
 package ajou.paran.entrip.screen.planner.mid.input
 
+import ajou.paran.entrip.R
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.repository.room.plan.repository.PlanRepository
 import android.graphics.Color
@@ -8,8 +9,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-
-
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,6 +21,9 @@ class InputViewModel @Inject constructor(
     companion object{
         private const val TAG = "[InputViewModel]"
     }
+
+    var isUpdate = false
+    var update_id : Long = 0L
 
     val todo : MutableLiveData<String> by lazy{
         MutableLiveData<String>()
@@ -59,19 +61,36 @@ class InputViewModel @Inject constructor(
                 _inputState.value = InputState.Success
 
                 // time이 String 형태로 ex) 16 : 20 문자열 그대로 찍히기 때문에, Room에 데이터를 넣을 때는 int 값으로 변환하여 넣는다.
-                val timeArray = time.value.toString().split(" : ")
+                val timeArray = time.value.toString().split(":")
                 val timeToString = timeArray[0].plus(timeArray[1])
                 val timeToInt = Integer.parseInt(timeToString)
 
-                viewModelScope.launch(Dispatchers.IO) {
-                    planRepository.insertPlan(
-                        PlanEntity(
-                            todo = todo.value.toString(),
-                            rgb = rgb.value!!,
-                            time = timeToInt,
-                            location = location.value
+                // 아무것도 선택을 안할 시, -1이 rgb에 할당되므로 이를 렌더링 할 수가 없다.
+                if(rgb.value!! < 0) rgb.value = R.color.white
+
+                if(!isUpdate){
+                    viewModelScope.launch(Dispatchers.IO) {
+                        planRepository.insertPlan(
+                            PlanEntity(
+                                todo = todo.value.toString(),
+                                rgb = rgb.value!!,
+                                time = timeToInt,
+                                location = location.value
+                            )
                         )
-                    )
+                    }
+                }else{
+                    viewModelScope.launch(Dispatchers.IO){
+                        planRepository.updatePlan(
+                            PlanEntity(
+                                id = update_id,
+                                todo = todo.value.toString(),
+                                rgb = rgb.value!!,
+                                time = timeToInt,
+                                location = location.value
+                            )
+                        )
+                    }
                 }
             }
         }

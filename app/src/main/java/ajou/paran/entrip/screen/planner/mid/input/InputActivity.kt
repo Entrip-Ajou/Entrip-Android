@@ -27,7 +27,44 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
 
     override fun init() {
         binding.inputViewModel = viewModel
+        setUpView()
         setUpObserver()
+    }
+
+    private fun setUpView(){
+        val isUpdate = intent.getBooleanExtra("isUpdate",false)
+        if(isUpdate){
+            viewModel.isUpdate = true
+            viewModel.update_id = intent.getLongExtra("Id",0)
+            viewModel.todo.value = intent.getStringExtra("Todo")
+            viewModel.location.value = intent.getStringExtra("Location")
+            viewModel.rgb.value = intent.getIntExtra("Rgb",0)
+
+            val time = intent.getIntExtra("Time",0)
+            val timeString = time.toString()
+            var hour = ""
+            var minute = ""
+
+            when (timeString.length) {
+                1 -> {
+                    hour = "00"
+                    minute = "0" + timeString
+                }
+                2 -> {
+                    hour = "00"
+                    minute = timeString
+                }
+                3 -> {
+                    hour = "0"+timeString.substring(0, 1)
+                    minute = timeString.substring(timeString.length - 2, timeString.length)
+                }
+                4 -> {
+                    hour = timeString.substring(0, 2)
+                    minute = timeString.substring(timeString.length - 2, timeString.length)
+                }
+            }
+            viewModel.time.value = "$hour:$minute"
+        }
     }
 
     private fun setUpObserver() {
@@ -55,7 +92,8 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
                 }
 
                 is InputState.Success -> {
-                    Log.d(TAG, "SUCCESS")
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
                 }
             }
         }
@@ -80,9 +118,9 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
                 TimePickerDialog(
                     this, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                         if (minute < 10) {
-                            binding.tvTime.setText("$hourOfDay : 0$minute")
+                            binding.tvTime.setText("$hourOfDay:0$minute")
                         } else {
-                            binding.tvTime.setText("$hourOfDay : $minute")
+                            binding.tvTime.setText("$hourOfDay:$minute")
                         }
                     },
                     startHour, startMinute, true
@@ -99,8 +137,13 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
     fun selectPalette(v: View) {
         when (v.id) {
             binding.color.id -> {
-                binding.etTodo.setBackgroundColor(Color.WHITE)
-                viewModel.rgb.value = Color.WHITE
+                binding.etTodo.setBackgroundColor(
+                    ContextCompat.getColor(
+                        applicationContext,
+                        R.color.white
+                    )
+                )
+                viewModel.rgb.value = R.color.white
             }
             binding.color1.id -> {
                 binding.etTodo.setBackgroundColor(
