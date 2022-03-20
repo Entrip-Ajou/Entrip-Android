@@ -1,6 +1,6 @@
 package ajou.paran.entrip
 
-import ajou.paran.entrip.screen.planner.top.PlannerActivity
+import ajou.paran.entrip.screen.intro.SplashActivity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViewById<Button>(R.id.testBtn).setOnClickListener{
-            startActivity(Intent(this, PlannerActivity::class.java))
+            startActivity(Intent(this, SplashActivity::class.java))
         }
     }
 }
