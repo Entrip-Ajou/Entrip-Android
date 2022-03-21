@@ -15,5 +15,6 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.testBtn).setOnClickListener{
             startActivity(Intent(this, PlannerActivity::class.java))
         }
+
     }
 }
