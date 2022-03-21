@@ -1,6 +1,5 @@
 package ajou.paran.entrip.screen.planner.mid
 
-
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity

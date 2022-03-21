@@ -1,17 +1,18 @@
 package ajou.paran.entrip.di
 
-import ajou.paran.entrip.repository.room.plan.repository.PlanRepository
-import ajou.paran.entrip.repository.room.plan.repository.PlanRepositoryImpl
-import dagger.Binds
+import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
+import ajou.paran.entrip.repository.PlannerRepository
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
-abstract class RepositoryModule {
-    @Binds
-    abstract fun bindPlanRepository(
-        planRepository:PlanRepositoryImpl
-    ): PlanRepository
+@InstallIn(SingletonComponent::class)
+object RepositoryModule {
+
+    @Singleton
+    @Provides
+    fun providePlannerRepository(): PlannerRepository = PlannerRepositoryImpl()
 }

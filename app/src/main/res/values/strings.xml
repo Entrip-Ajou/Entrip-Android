@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">Entrip</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="planner_title">제목 없음</string>
 </resources>

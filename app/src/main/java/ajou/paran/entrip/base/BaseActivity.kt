@@ -7,8 +7,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 
 abstract class BaseActivity<T: ViewDataBinding>(
-    @LayoutRes private val layoutResId: Int
-    ) : AppCompatActivity() {
+
+    @LayoutRes private val layoutResId: Int,
+): AppCompatActivity(layoutResId) {
 
     protected lateinit var binding: T
 
@@ -16,12 +17,13 @@ abstract class BaseActivity<T: ViewDataBinding>(
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, layoutResId)
         binding.lifecycleOwner = this
-        init()
+
+        init(savedInstanceState)
     }
 
-    abstract fun init()
-
-    override fun onDestroy(){
+    override fun onDestroy() {
         super.onDestroy()
     }
+
+    abstract fun init(savedInstanceState: Bundle?)
 }

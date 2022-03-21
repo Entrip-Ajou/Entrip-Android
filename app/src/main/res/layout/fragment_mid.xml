@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="midViewModel"
             type="ajou.paran.entrip.screen.planner.mid.MidViewModel" />
