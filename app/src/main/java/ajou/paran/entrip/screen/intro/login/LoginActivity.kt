@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import dagger.hilt.android.AndroidEntryPoint
+import org.json.JSONObject
 
 
 @AndroidEntryPoint
@@ -28,6 +29,13 @@ class LoginActivity
             when(it.id){
                 binding.loginActButtonLogin.id -> {
                     startActivity(Intent(this, PlannerActivity::class.java))
+                    val userInsertId = binding.loginActEditTextId.text.toString()
+                    val userInsertPass = binding.loginActEditTextPassword.text.toString()
+                    val data = JSONObject()
+                    data.put("userId", userInsertId)
+                    data.put("userPassword", userInsertPass)
+
+
                 }
                 binding.loginActButtonRegister.id -> {
                     Log.d(TAG, "Case: Click Register")
