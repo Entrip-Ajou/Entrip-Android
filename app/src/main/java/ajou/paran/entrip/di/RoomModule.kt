@@ -2,6 +2,8 @@ package ajou.paran.entrip.di
 
 import ajou.paran.entrip.repository.room.AppDatabase
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
+import ajou.paran.entrip.repository.room.plan.repository.PlanRepository
+import ajou.paran.entrip.repository.room.plan.repository.PlanRepositoryImpl
 import android.content.Context
 import androidx.room.Room
 import dagger.Module
@@ -25,5 +27,11 @@ object RoomModule {
     @Provides
     fun providePlanDao(appDatabase: AppDatabase) : PlanDao {
         return appDatabase.planDao()
+    }
+
+
+    @Provides
+    fun providePlanRepository(planDao: PlanDao) : PlanRepository{
+        return PlanRepositoryImpl(planDao)
     }
 }

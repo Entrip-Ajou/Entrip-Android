@@ -2,24 +2,25 @@ package ajou.paran.entrip.repository.room.plan.repository
 
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.repository.room.AppDatabase
+import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class PlanRepositoryImpl @Inject constructor(private val db:AppDatabase) : PlanRepository {
+class PlanRepositoryImpl @Inject constructor(private val planDao: PlanDao) : PlanRepository {
     override suspend fun insertPlan(planEntity: PlanEntity) {
-        db.planDao().insertPlan(planEntity)
+        planDao.insertPlan(planEntity)
     }
 
-    override fun selectPlan(): Flow<List<PlanEntity>> {
-        return db.planDao().selectPlan()
+    override fun selectPlan(planDate : String, plannerId : String): Flow<List<PlanEntity>> {
+        return planDao.selectPlan(planDate, plannerId)
     }
 
     override fun deletePlan(planEntity: PlanEntity) {
-        db.planDao().deletePlan(planEntity)
+        planDao.deletePlan(planEntity)
     }
 
-    override fun updatePlan(planEntity: PlanEntity) {
-        db.planDao().updatePlan(planEntity)
+    override fun updatePlan(todo:String, rgb:Int, time : Int, location : String, id : Long) {
+        planDao.updatePlan(todo, rgb, time, location, id)
     }
 
 }

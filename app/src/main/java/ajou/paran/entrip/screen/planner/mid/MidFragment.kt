@@ -42,10 +42,18 @@ class MidFragment : Fragment(),PlanAdapter.RowClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        /*
+        Todo : Intent로 Date RecyclerView의 default date를 넘겨주세요
+        1. MidFragment를 담고 있는 Activity에서 date, plannerId를 이쪽으로 넘김
+        2. date, planner_id를 추출하여 변수 만들어주시고
+        3. MidViewModel에도 넣어주세요(lateinit var date, planner_id 만들어놨습니다. 할당해주심 될거같아요)
+        4. 코루틴 안에 loadPlan 매개변수에 넣어주세요
+        */
+
         val planAdapter = PlanAdapter(this@MidFragment)
         binding.rvPlan.adapter = planAdapter
         lifecycle.coroutineScope.launch {
-            viewModel.loadPlan().collect() {
+            viewModel.loadPlan(date, planner_id).collect() {
                 planAdapter.submitList(it.toList())
             }
         }
@@ -64,6 +72,7 @@ class MidFragment : Fragment(),PlanAdapter.RowClickListener {
             this.putExtra("Rgb",planEntity.rgb)
             this.putExtra("Time",planEntity.time)
             this.putExtra("Location",planEntity.location)
+            this.putExtra("date", planEntity.date)
         }
         startActivity(intent)
     }

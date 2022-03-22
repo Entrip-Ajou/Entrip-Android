@@ -15,5 +15,13 @@ data class PlanEntity(
     @ColumnInfo(name="time")
     val time : Int,
     @ColumnInfo(name="location")
-    val location : String?
+    val location : String?,
+
+    // 희훈님 파트 column 추가
+    @ColumnInfo(name="date")
+    val date : String,
+    @ColumnInfo(name="title")
+    val title : String,
+    @ColumnInfo(name="planner_id")
+    val planner_id : String
 )

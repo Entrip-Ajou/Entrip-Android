@@ -15,15 +15,18 @@ class MidViewModel @Inject constructor(
     private val planRepository: PlanRepository
 ) : ViewModel() {
 
+    lateinit var date : String
+    lateinit var plannerId : String
+
     companion object {
         private const val TAG = "[MidViewModel]"
     }
 
     init {
-        loadPlan()
+        loadPlan(date, plannerId)
     }
 
-    fun loadPlan() : Flow<List<PlanEntity>> = planRepository.selectPlan()
+    fun loadPlan(date: String, plannerId : String) : Flow<List<PlanEntity>> = planRepository.selectPlan(date,plannerId)
 
     fun deletePlan(planEntity: PlanEntity){
         viewModelScope.launch(Dispatchers.IO) {
@@ -31,9 +34,14 @@ class MidViewModel @Inject constructor(
         }
     }
 
-    fun updatePlan(planEntity:PlanEntity){
+    fun updateQueryPlan(planEntity:PlanEntity){
         viewModelScope.launch(Dispatchers.IO) {
-            planRepository.updatePlan(planEntity)
+            planRepository.updatePlan(
+                planEntity.todo,
+                planEntity.rgb,
+                planEntity.time,
+                planEntity.location.toString(),
+                planEntity.id)
         }
     }
 }

@@ -22,8 +22,13 @@ class InputViewModel @Inject constructor(
         private const val TAG = "[InputViewModel]"
     }
 
-    var isUpdate = false
+    var isUpdate : Boolean = false
     var update_id : Long = 0L
+
+    lateinit var date : String
+    lateinit var title : String
+    lateinit var planner_id : String
+
 
     val todo : MutableLiveData<String> by lazy{
         MutableLiveData<String>()
@@ -75,20 +80,21 @@ class InputViewModel @Inject constructor(
                                 todo = todo.value.toString(),
                                 rgb = rgb.value!!,
                                 time = timeToInt,
-                                location = location.value
+                                location = location.value,
+                                date = date,
+                                title = title,
+                                planner_id = planner_id
                             )
                         )
                     }
                 }else{
                     viewModelScope.launch(Dispatchers.IO){
                         planRepository.updatePlan(
-                            PlanEntity(
-                                id = update_id,
-                                todo = todo.value.toString(),
-                                rgb = rgb.value!!,
-                                time = timeToInt,
-                                location = location.value
-                            )
+                                todo.value.toString(),
+                                rgb.value!!,
+                                timeToInt,
+                                location.value.toString(),
+                                update_id
                         )
                     }
                 }

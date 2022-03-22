@@ -28,7 +28,14 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
             return FooterViewHolder(binding).apply {
                 binding.btnPlanAdd.setOnClickListener {
                     val intent = Intent(binding.btnPlanAdd.context, InputActivity::class.java)
-                    intent.putExtra("isUpdate", false)
+                    intent.apply{
+                        this.putExtra("isUpdate", false)
+                        // getItem(adapterPosition) -> 현재 버튼이 가장 마지막 position이므로 현재 포지션에서 1을뺀 planEntity를 가져옴
+                        // 오류가 발생하면 position 크기를 더 줄이면 된다!
+                        this.putExtra("date", getItem(adapterPosition-1).date)
+                        this.putExtra("title",getItem(adapterPosition-1).title)
+                        this.putExtra("plannerId", getItem(adapterPosition-1).planner_id)
+                    }
                     ContextCompat.startActivity(binding.btnPlanAdd.context, intent, null)
                 }
             }
