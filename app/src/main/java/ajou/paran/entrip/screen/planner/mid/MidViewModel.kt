@@ -22,9 +22,9 @@ class MidViewModel @Inject constructor(
         private const val TAG = "[MidViewModel]"
     }
 
-    init {
-        loadPlan(date, plannerId)
-    }
+//    init {
+//        loadPlan(date, plannerId)
+//    }
 
     fun loadPlan(date: String, plannerId : String) : Flow<List<PlanEntity>> = planRepository.selectPlan(date,plannerId)
 

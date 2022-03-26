@@ -3,6 +3,7 @@ package ajou.paran.entrip.screen.planner.top
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityPlannerBinding
+import ajou.paran.entrip.model.fakeDateItemList
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
 import ajou.paran.entrip.util.hideKeyboard
@@ -33,10 +34,17 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
 
     private lateinit var dateRecyclerViewAdapter: DateRecyclerViewAdapter
     private lateinit var navController: NavController
+    private lateinit var midFragment: MidFragment
 
     private val viewModel: PlannerActivityViewModel by viewModels()
 
     override fun init(savedInstanceState: Bundle?) {
+        binding.plannerActEtTitle.setText(intent.getStringExtra("title") ?: "제목 없음")
+        midFragment = MidFragment(
+            date = intent.getStringExtra("date") ?: fakeDateItemList[0].date,
+            title = intent.getStringExtra("title") ?: binding.plannerActEtTitle.text.toString(),
+            plannerId = "1"
+        )
         if (savedInstanceState == null)
             setUpBottomNavigationBar()
         binding.plannerActEtTitle.setOnKeyListener { _, keyCode, event ->
@@ -46,7 +54,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 binding.plannerActEtTitle.inputType = InputType.TYPE_NULL
                 binding.plannerActEtTitle.isCursorVisible = false
                 hideKeyboard()
-                viewModel.plannerTitleChange(binding.plannerActEtTitle.text.toString())
+                midFragment.setTitle(binding.plannerActEtTitle.text.toString())
                 true
             } else {
                 false
@@ -111,7 +119,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
      * @Made: Jeon
      * **/
     private fun initDateRecyclerView() = binding.plannerActRv1.apply {
-        dateRecyclerViewAdapter = DateRecyclerViewAdapter()
+        dateRecyclerViewAdapter = DateRecyclerViewAdapter(midFragment)
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         adapter = dateRecyclerViewAdapter
     }
@@ -139,19 +147,19 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
 
     private fun setUpBottomNavigationBar(){
         supportFragmentManager.beginTransaction()
-            .replace(R.id.plannerAct_nav_host_container, MidFragment()).commit()
+            .replace(R.id.plannerAct_nav_host_container, midFragment).commit()
         val navHostFragment = supportFragmentManager.findFragmentById(
             R.id.plannerAct_nav_host_container
         ) as NavHostFragment
         navController = navHostFragment.navController
-        navController.setGraph(R.navigation.nav_planner)
+//        navController.setGraph(R.navigation.nav_planner)
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.plannerAct_bottom_nav)
         bottomNavigationView.setOnItemReselectedListener {
             when(it.itemId){
                 R.id.nav_planner -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.plannerAct_nav_host_container, MidFragment()).commit()
+                        .replace(R.id.plannerAct_nav_host_container, midFragment).commit()
                 }
             }
         }

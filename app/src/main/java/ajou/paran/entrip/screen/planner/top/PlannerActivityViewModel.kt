@@ -107,8 +107,4 @@ class PlannerActivityViewModel
         TODO("Case: Add Planner")
     }
 
-    fun plannerTitleChange(title: String){
-        TODO("Case: Change Planner Title")
-    }
-
 }

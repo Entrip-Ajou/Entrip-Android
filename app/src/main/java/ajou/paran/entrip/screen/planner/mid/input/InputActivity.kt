@@ -98,6 +98,10 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
                 is InputState.Success -> {
                     // PlannerActivity가 MidFragment를 가지고 있으므로 변경
                     val intent = Intent(this, PlannerActivity::class.java)
+                    intent.apply {
+                        this.putExtra("date",viewModel.date)
+                        this.putExtra("title",viewModel.title)
+                    }
                     startActivity(intent)
                 }
             }
@@ -110,6 +114,10 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             binding.backButton.id -> {
                 // PlannerActivity가 MidFragment를 가지고 있으므로 변경
                 val intent = Intent(this, PlannerActivity::class.java)
+                intent.apply {
+                    this.putExtra("date",viewModel.date)
+                    this.putExtra("title",viewModel.title)
+                }
                 startActivity(intent)
             }
 

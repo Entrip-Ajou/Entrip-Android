@@ -2,6 +2,8 @@ package ajou.paran.entrip.screen.planner.mid
 
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.model.PlanEntity
+import ajou.paran.entrip.model.PlannerDate
+import ajou.paran.entrip.model.fakeDateItemList
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import android.content.Intent
 import android.os.Bundle
@@ -17,8 +19,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MidFragment : Fragment(),PlanAdapter.RowClickListener {
-
+class MidFragment
+    constructor(
+        private var date: String,
+        private var title: String,
+        private var plannerId: String
+): Fragment(),PlanAdapter.RowClickListener {
     companion object {
         private const val TAG = "[MidFragment]"
     }
@@ -50,13 +56,7 @@ class MidFragment : Fragment(),PlanAdapter.RowClickListener {
         4. 코루틴 안에 loadPlan 매개변수에 넣어주세요
         */
 
-        val planAdapter = PlanAdapter(this@MidFragment)
-        binding.rvPlan.adapter = planAdapter
-        lifecycle.coroutineScope.launch {
-            viewModel.loadPlan(date, planner_id).collect() {
-                planAdapter.submitList(it.toList())
-            }
-        }
+        setAdapter(date)
     }
 
     override fun onDeletePlanClickListener(planEntity: PlanEntity) {
@@ -75,5 +75,28 @@ class MidFragment : Fragment(),PlanAdapter.RowClickListener {
             this.putExtra("date", planEntity.date)
         }
         startActivity(intent)
+    }
+
+    fun setAdapter(date: String) {
+        val planAdapter = PlanAdapter(this@MidFragment)
+        planAdapter.date = date
+        planAdapter.title = title
+        planAdapter.plannerId = plannerId
+        binding.rvPlan.adapter = planAdapter
+
+        lifecycle.coroutineScope.launch {
+            viewModel.date = date
+            viewModel.plannerId = plannerId
+            viewModel.loadPlan(date, plannerId).collect() {
+                planAdapter.submitList(it.toList())
+            }
+        }
+    }
+
+    fun getDate() = date
+
+    fun setTitle(title: String){
+        this.title = title
+        // todo: title change event 필요
     }
 }

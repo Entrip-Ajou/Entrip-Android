@@ -1,5 +1,6 @@
 package ajou.paran.entrip.screen.planner.mid
 
+import ajou.paran.entrip.R
 import ajou.paran.entrip.databinding.ItemLayoutPlanBinding
 import ajou.paran.entrip.databinding.ItemLayoutPlanFooterBinding
 import ajou.paran.entrip.model.PlanEntity
@@ -8,15 +9,21 @@ import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.w3c.dom.Text
 
 
 private const val FOOTER_VIEW_TYPE = 1
 
 class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, RecyclerView.ViewHolder>(PlanDiffCallback()) {
+
+    lateinit var date: String
+    lateinit var title: String
+    lateinit var plannerId: String
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == FOOTER_VIEW_TYPE) {
@@ -29,12 +36,19 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
                 binding.btnPlanAdd.setOnClickListener {
                     val intent = Intent(binding.btnPlanAdd.context, InputActivity::class.java)
                     intent.apply{
-                        this.putExtra("isUpdate", false)
-                        // getItem(adapterPosition) -> 현재 버튼이 가장 마지막 position이므로 현재 포지션에서 1을뺀 planEntity를 가져옴
-                        // 오류가 발생하면 position 크기를 더 줄이면 된다!
-                        this.putExtra("date", getItem(adapterPosition-1).date)
-                        this.putExtra("title",getItem(adapterPosition-1).title)
-                        this.putExtra("plannerId", getItem(adapterPosition-1).planner_id)
+                        if (currentList.size != 0){
+                            this.putExtra("isUpdate", false)
+                            // getItem(adapterPosition) -> 현재 버튼이 가장 마지막 position이므로 현재 포지션에서 1을뺀 planEntity를 가져옴
+                            // 오류가 발생하면 position 크기를 더 줄이면 된다!
+                            this.putExtra("date", getItem(adapterPosition-1).date)
+                            this.putExtra("title",getItem(adapterPosition-1).title)
+                            this.putExtra("plannerId", getItem(adapterPosition-1).planner_id)
+                        } else {
+                            this.putExtra("isUpdate", false)
+                            this.putExtra("date", date)
+                            this.putExtra("title",title)
+                            this.putExtra("plannerId", plannerId)
+                        }
                     }
                     ContextCompat.startActivity(binding.btnPlanAdd.context, intent, null)
                 }
@@ -120,6 +134,7 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
             binding.itemLayout.setBackgroundColor(
                 ContextCompat.getColor(
                     binding.root.context,
+//                    R.color.indigo
                     planEntity.rgb
                 )
             )
