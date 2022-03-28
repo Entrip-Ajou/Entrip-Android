@@ -1,20 +1,16 @@
 package ajou.paran.entrip.screen.planner.mid
 
-import ajou.paran.entrip.R
 import ajou.paran.entrip.databinding.ItemLayoutPlanBinding
 import ajou.paran.entrip.databinding.ItemLayoutPlanFooterBinding
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.w3c.dom.Text
 
 
 private const val FOOTER_VIEW_TYPE = 1

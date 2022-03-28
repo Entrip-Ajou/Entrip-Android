@@ -19,15 +19,15 @@ import androidx.recyclerview.widget.RecyclerView
  * **/
 
 class DateRecyclerViewAdapter
-    constructor(
-        private val midFragment: MidFragment
-    ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+constructor(
+    private val midFragment: MidFragment
+): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var checkedItemView: View? = null
     private var dateItemList: List<PlannerDate>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
-        = DateItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_layout_date, parent, false))
+            = DateItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_layout_date, parent, false))
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         dateItemList?.let { (holder as DateItemViewHolder).bind(it[position]) }

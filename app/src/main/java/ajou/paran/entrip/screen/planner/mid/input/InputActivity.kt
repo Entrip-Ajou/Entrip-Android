@@ -31,6 +31,16 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
         setUpObserver()
     }
 
+    override fun onBackPressed() {
+        // PlannerActivity가 MidFragment를 가지고 있으므로 변경
+        val intent = Intent(this, PlannerActivity::class.java)
+        intent.apply {
+            this.putExtra("date",viewModel.date)
+            this.putExtra("title",viewModel.title)
+        }
+        startActivity(intent)
+    }
+
     private fun setUpView(){
         val isUpdate = intent.getBooleanExtra("isUpdate",false)
         if(isUpdate){
@@ -39,6 +49,9 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             viewModel.todo.value = intent.getStringExtra("Todo")
             viewModel.location.value = intent.getStringExtra("Location")
             viewModel.rgb.value = intent.getIntExtra("Rgb",0)
+            viewModel.date = intent.getStringExtra("date").toString()
+            viewModel.title = intent.getStringExtra("title") ?: "제목 없음"
+            viewModel.planner_id = intent.getStringExtra("plannerId").toString()
 
             val time = intent.getIntExtra("Time",0)
             val timeString = time.toString()
@@ -67,7 +80,7 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
         }else{
             viewModel.date = intent.getStringExtra("date").toString()
             viewModel.title = intent.getStringExtra("title").toString()
-            viewModel.planner_id = intent.getStringExtra("plannerId").toString();
+            viewModel.planner_id = intent.getStringExtra("plannerId").toString()
         }
     }
 
@@ -97,12 +110,7 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
 
                 is InputState.Success -> {
                     // PlannerActivity가 MidFragment를 가지고 있으므로 변경
-                    val intent = Intent(this, PlannerActivity::class.java)
-                    intent.apply {
-                        this.putExtra("date",viewModel.date)
-                        this.putExtra("title",viewModel.title)
-                    }
-                    startActivity(intent)
+                    onBackPressed()
                 }
             }
         }
@@ -113,12 +121,7 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
         when (v.id) {
             binding.backButton.id -> {
                 // PlannerActivity가 MidFragment를 가지고 있으므로 변경
-                val intent = Intent(this, PlannerActivity::class.java)
-                intent.apply {
-                    this.putExtra("date",viewModel.date)
-                    this.putExtra("title",viewModel.title)
-                }
-                startActivity(intent)
+                onBackPressed()
             }
 
             binding.tvTime.id -> {

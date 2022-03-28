@@ -3,10 +3,12 @@ package ajou.paran.entrip.screen.planner.top
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityPlannerBinding
+import ajou.paran.entrip.model.PlannerDate
 import ajou.paran.entrip.model.fakeDateItemList
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
 import ajou.paran.entrip.util.hideKeyboard
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -14,6 +16,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.util.Pair
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -22,7 +25,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.*
 
 @AndroidEntryPoint
 class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
@@ -41,6 +47,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     override fun init(savedInstanceState: Bundle?) {
         binding.plannerActEtTitle.setText(intent.getStringExtra("title") ?: "제목 없음")
         midFragment = MidFragment(
+            // TODO date의 경우 db에 startDate 와 endDate 가 생기는 경우 변
             date = intent.getStringExtra("date") ?: fakeDateItemList[0].date,
             title = intent.getStringExtra("title") ?: binding.plannerActEtTitle.text.toString(),
             plannerId = "1"
@@ -95,7 +102,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 }
                 binding.plannerActTvDate.id, binding.plannerActIvDateEdit.id -> {
                     Log.d(TAG, "Case: Edit planner Date")
-                    viewModel.startDateRangePicker(supportFragmentManager)
+                    startDateRangePicker()
                 }
                 binding.plannerActIvPlannerAdd.id -> {
                     Log.d(TAG, "Case: Add planner")
@@ -182,5 +189,52 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             dialog.dismiss()
         }
         dialog.show()
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun startDateRangePicker() {
+        val selector = CustomMaterialDatePicker()
+        val dateRangePicker = MaterialDatePicker.Builder.customDatePicker(selector)
+            .setTitleText("Select dates")
+            .setSelection(
+                Pair(
+                    MaterialDatePicker.thisMonthInUtcMilliseconds(),
+                    MaterialDatePicker.todayInUtcMilliseconds()
+                )
+            )
+            .build()
+        dateRangePicker.show(supportFragmentManager,"Hello")
+
+        dateRangePicker.addOnPositiveButtonClickListener { pairDate ->
+            val format = SimpleDateFormat("yyyy/MM/dd",
+                Locale.getDefault())
+            val (s_year, s_month, s_day) = format.format(pairDate.first)
+                .split("/")
+                .map { it.toInt() }
+            val (e_year, e_month, e_day) = format.format(pairDate.second)
+                .split("/")
+                .map { it.toInt() }
+
+            val cal = Calendar.getInstance()
+            cal.set(s_year, s_month, s_day)
+            val mutableList = mutableListOf<PlannerDate>()
+            while (cal.get(Calendar.YEAR) != e_year
+                || cal.get(Calendar.MONTH) != e_month
+                || cal.get(Calendar.DAY_OF_MONTH) != e_day
+            ) {
+                // 플래너에 집어 넣을 Date 생성 로직
+                cal.add(Calendar.MONTH, -1)
+                mutableList.add(
+                    PlannerDate(format.format(cal.time))
+                )
+                cal.add(Calendar.MONTH, 1)
+                cal.add(Calendar.DAY_OF_MONTH, 1)
+            }
+            cal.add(Calendar.MONTH, -1)
+            mutableList.add(PlannerDate(format.format(cal.time)))
+            viewModel.setPlannerDateItem(mutableList.toList())
+            mutableList.clear()
+            midFragment.setAdapter(format.format(pairDate.first))
+        }
     }
 }

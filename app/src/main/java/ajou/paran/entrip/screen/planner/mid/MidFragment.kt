@@ -2,12 +2,9 @@ package ajou.paran.entrip.screen.planner.mid
 
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.model.PlanEntity
-import ajou.paran.entrip.model.PlannerDate
-import ajou.paran.entrip.model.fakeDateItemList
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,10 +17,10 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MidFragment
-    constructor(
-        private var date: String,
-        private var title: String,
-        private var plannerId: String
+constructor(
+    private var date: String,
+    private var title: String,
+    private var plannerId: String
 ): Fragment(),PlanAdapter.RowClickListener {
     companion object {
         private const val TAG = "[MidFragment]"
