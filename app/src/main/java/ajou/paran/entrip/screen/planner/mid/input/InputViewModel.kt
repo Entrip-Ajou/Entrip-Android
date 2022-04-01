@@ -82,7 +82,7 @@ class InputViewModel @Inject constructor(
                                 time = timeToInt,
                                 location = location.value,
                                 date = date,
-                                title = title,
+//                                title = title,
                                 planner_id = planner_id
                             )
                         )

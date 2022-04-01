@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 class MidFragment
 constructor(
     private var date: String,
-    private var title: String,
+//    private var title: String,
     private var plannerId: String
 ): Fragment(),PlanAdapter.RowClickListener {
     companion object {
@@ -77,7 +77,7 @@ constructor(
     fun setAdapter(date: String) {
         val planAdapter = PlanAdapter(this@MidFragment)
         planAdapter.date = date
-        planAdapter.title = title
+//        planAdapter.title = title
         planAdapter.plannerId = plannerId
         binding.rvPlan.adapter = planAdapter
 
@@ -92,8 +92,8 @@ constructor(
 
     fun getDate() = date
 
-    fun setTitle(title: String){
-        this.title = title
-        // todo: title change event 필요
-    }
+//    fun setTitle(title: String){
+//        this.title = title
+//         todo: title change event 필요
+//    }
 }

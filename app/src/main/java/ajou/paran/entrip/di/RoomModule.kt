@@ -4,6 +4,9 @@ import ajou.paran.entrip.repository.room.AppDatabase
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.repository.room.plan.repository.PlanRepository
 import ajou.paran.entrip.repository.room.plan.repository.PlanRepositoryImpl
+import ajou.paran.entrip.repository.room.planner.dao.PlannerDao
+import ajou.paran.entrip.repository.room.planner.repository.PlannerRepository
+import ajou.paran.entrip.repository.room.planner.repository.PlannerRepositoryImpl
 import android.content.Context
 import androidx.room.Room
 import dagger.Module
@@ -34,4 +37,12 @@ object RoomModule {
     fun providePlanRepository(planDao: PlanDao) : PlanRepository{
         return PlanRepositoryImpl(planDao)
     }
+
+    @Provides
+    fun providePlannerDao(appDatabase: AppDatabase) : PlannerDao
+        = appDatabase.plannerDao()
+
+    @Provides
+    fun providePlannerRepository(plannerDao: PlannerDao) : PlannerRepository
+        = PlannerRepositoryImpl(plannerDao)
 }

@@ -1,7 +1,9 @@
 package ajou.paran.entrip.di
 
-import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
-import ajou.paran.entrip.repository.PlannerRepository
+import ajou.paran.entrip.repository.Impl.PlannerDumRepositoryImpl
+import ajou.paran.entrip.repository.PlannerDumRepository
+import ajou.paran.entrip.repository.room.planner.repository.PlannerRepository
+import ajou.paran.entrip.repository.room.planner.repository.PlannerRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,5 +16,5 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun providePlannerRepository(): PlannerRepository = PlannerRepositoryImpl()
+    fun providePlannerDumRepository(): PlannerDumRepository = PlannerDumRepositoryImpl()
 }

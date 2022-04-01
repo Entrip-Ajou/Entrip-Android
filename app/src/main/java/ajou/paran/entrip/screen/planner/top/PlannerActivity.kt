@@ -49,7 +49,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         midFragment = MidFragment(
             // TODO date의 경우 db에 startDate 와 endDate 가 생기는 경우 변
             date = intent.getStringExtra("date") ?: fakeDateItemList[0].date,
-            title = intent.getStringExtra("title") ?: binding.plannerActEtTitle.text.toString(),
+//            title = intent.getStringExtra("title") ?: binding.plannerActEtTitle.text.toString(),
             plannerId = "1"
         )
         if (savedInstanceState == null)
@@ -61,7 +61,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 binding.plannerActEtTitle.inputType = InputType.TYPE_NULL
                 binding.plannerActEtTitle.isCursorVisible = false
                 hideKeyboard()
-                midFragment.setTitle(binding.plannerActEtTitle.text.toString())
+//                midFragment.setTitle(binding.plannerActEtTitle.text.toString())
                 true
             } else {
                 false

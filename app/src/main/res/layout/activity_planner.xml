@@ -135,12 +135,14 @@
             android:id="@+id/plannerAct_rv_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:orientation="horizontal"
+            android:scrollbarFadeDuration="1"
+            android:scrollbars="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/testAct_cl_1"
-            android:orientation="horizontal"
-            android:scrollbars="horizontal"
-            android:scrollbarFadeDuration="1"/>
+            app:layout_constraintTop_toBottomOf="@+id/testAct_cl_1" />
         <!-- 리사이클러뷰 영역 -->
 
         <!-- 구분선 -->

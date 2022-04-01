@@ -2,6 +2,6 @@ package ajou.paran.entrip.repository
 
 import ajou.paran.entrip.model.PlannerDate
 
-interface PlannerRepository {
+interface PlannerDumRepository {
     suspend fun getPlannerDates(): List<PlannerDate>
 }
