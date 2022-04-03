@@ -1,4 +1,4 @@
-package ajou.paran.entrip.util
+package ajou.paran.entrip.util.ui
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView

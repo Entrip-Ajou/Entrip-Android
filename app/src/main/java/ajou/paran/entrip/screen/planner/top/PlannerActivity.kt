@@ -7,7 +7,7 @@ import ajou.paran.entrip.model.PlannerDate
 import ajou.paran.entrip.model.fakeDateItemList
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
-import ajou.paran.entrip.util.hideKeyboard
+import ajou.paran.entrip.util.ui.hideKeyboard
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
@@ -100,7 +100,9 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     Log.d(TAG, "Case: Click planner title button")
                     binding.plannerActEtTitle.inputType = InputType.TYPE_CLASS_TEXT
                 }
-                binding.plannerActTvDate.id, binding.plannerActIvDateEdit.id -> {
+                binding.plannerActIvDateEdit.id,
+                binding.plannerActTvStartDate.id,
+                binding.plannerActTvEndDate.id -> {
                     Log.d(TAG, "Case: Edit planner Date")
                     startDateRangePicker()
                 }
@@ -143,10 +145,12 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 if (binding.plannerActRv1.visibility == View.GONE)
                     binding.plannerActRv1.visibility = View.VISIBLE
                 dateRecyclerViewAdapter.submitList(it)
-                binding.plannerActTvDate.text = it.first().date+" ~ "+it.last().date
+                binding.plannerActTvStartDate.text = it.first().date
+                binding.plannerActTvEndDate.text = it.last().date
             }
             else{
-                binding.plannerActTvDate.text = it.first().date+" ~ "+it.last().date
+                binding.plannerActTvStartDate.text = it.first().date
+                binding.plannerActTvEndDate.text = it.last().date
                 binding.plannerActRv1.visibility = View.GONE
             }
         })

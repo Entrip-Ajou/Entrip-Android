@@ -3,6 +3,7 @@ package ajou.paran.entrip.screen.planner.mid
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
+import ajou.paran.entrip.util.ui.VerticalSpaceItemDecoration
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -52,7 +53,7 @@ constructor(
         3. MidViewModel에도 넣어주세요(lateinit var date, planner_id 만들어놨습니다. 할당해주심 될거같아요)
         4. 코루틴 안에 loadPlan 매개변수에 넣어주세요
         */
-
+        binding.rvPlan.addItemDecoration(VerticalSpaceItemDecoration(-8))
         setAdapter(date)
     }
 

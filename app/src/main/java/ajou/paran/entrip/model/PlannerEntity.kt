@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "planner")
 data class PlannerEntity(
     @PrimaryKey(autoGenerate = true)
+    // auto -> 서버로부터 받아와서 변경
     val id : Long = 0L,
     @ColumnInfo(name="title")
     val title : String,

@@ -78,13 +78,13 @@ constructor(
         }
 
         fun defaultSelected() {
-            itemView.findViewById<TextView>(R.id.itemLayout_tv_month).setTextColor(Color.BLACK)
-            itemView.findViewById<TextView>(R.id.itemLayout_tv_day).setTextColor(Color.BLACK)
+            itemView.findViewById<TextView>(R.id.itemLayout_tv_month).setTextColor(Color.parseColor("#7a7a7a"))
+            itemView.findViewById<TextView>(R.id.itemLayout_tv_day).setTextColor(Color.parseColor("#7a7a7a"))
         }
 
         fun selected(){
-            itemView.findViewById<TextView>(R.id.itemLayout_tv_month).setTextColor(Color.CYAN)
-            itemView.findViewById<TextView>(R.id.itemLayout_tv_day).setTextColor(Color.CYAN)
+            itemView.findViewById<TextView>(R.id.itemLayout_tv_month).setTextColor(Color.parseColor("#2d95eb"))
+            itemView.findViewById<TextView>(R.id.itemLayout_tv_day).setTextColor(Color.parseColor("#2d95eb"))
         }
 
 //        private fun checkSelected(itemView: View) = checkedItemView?.let {

@@ -127,7 +127,7 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
 
             binding.tvItemTodo.text = planEntity.todo
 
-            binding.itemLayout.setBackgroundColor(
+            binding.ivRgb.setBackgroundColor(
                 ContextCompat.getColor(
                     binding.root.context,
 //                    R.color.indigo
