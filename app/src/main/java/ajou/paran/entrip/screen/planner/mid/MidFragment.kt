@@ -3,7 +3,9 @@ package ajou.paran.entrip.screen.planner.mid
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
+import ajou.paran.entrip.util.ui.SwipeHelperCallback
 import ajou.paran.entrip.util.ui.VerticalSpaceItemDecoration
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +14,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -75,8 +78,18 @@ constructor(
         startActivity(intent)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     fun setAdapter(date: String) {
         val planAdapter = PlanAdapter(this@MidFragment)
+        val swipeHelperCallback = SwipeHelperCallback(planAdapter).apply {
+            setClamp(resources.displayMetrics.widthPixels.toFloat()/4)
+        }
+        ItemTouchHelper(swipeHelperCallback).attachToRecyclerView(binding.rvPlan)
+        binding.rvPlan.setOnTouchListener{
+            _,_ ->
+            swipeHelperCallback.removePreviousClamp(binding.rvPlan)
+            false
+        }
         planAdapter.date = date
 //        planAdapter.title = title
         planAdapter.plannerId = plannerId
