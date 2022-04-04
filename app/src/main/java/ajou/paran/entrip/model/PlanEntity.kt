@@ -1,27 +1,28 @@
 package ajou.paran.entrip.model
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "plan")
-data class PlanEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id : Long = 0L,
-    @ColumnInfo(name="todo")
-    val todo : String,
-    @ColumnInfo(name="rgb")
-    val rgb : Int,
-    @ColumnInfo(name="time")
-    val time : Int,
-    @ColumnInfo(name="location")
-    val location : String?,
-
-    // 희훈님 파트 column 추가
-    @ColumnInfo(name="date")
-    val date : String,
-    @ColumnInfo(name="title")
-    val title : String,
-    @ColumnInfo(name="planner_id")
-    val planner_id : String
+@Entity(
+    tableName = "plan",
+    foreignKeys = arrayOf(
+        ForeignKey(
+            entity = PlannerEntity::class,
+            parentColumns = ["planner_id"],
+            childColumns = ["planner_idFK"],
+            onDelete = ForeignKey.CASCADE
+        )
+    )
 )
+data class PlanEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val planner_idFK : Long,
+    val todo : String,
+    val rgb : Int,
+    val time : Int,
+    val location : String?,
+    val date : String
+)
+
+
