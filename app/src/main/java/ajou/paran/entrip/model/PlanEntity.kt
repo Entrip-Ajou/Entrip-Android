@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
     )
 )
 data class PlanEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey(autoGenerate = false) val id: Long,
     val planner_idFK : Long,
     val todo : String,
     val rgb : Int,

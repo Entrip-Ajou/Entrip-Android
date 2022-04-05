@@ -3,34 +3,70 @@ package ajou.paran.entrip.repository.Impl
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.PlanRemoteSource
+import ajou.paran.entrip.repository.network.dto.PlanRequest
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import android.util.Log
-
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 class PlanRepositoryImpl @Inject constructor(
     private val planRemoteSource: PlanRemoteSource,
     private val planDao: PlanDao
 ) : PlanRepository {
-    override suspend fun insertPlan(planEntity: PlanEntity) {
-        planDao.insertPlan(planEntity)
+
+    override suspend fun insertPlan(planRequest: PlanRequest) : BaseResult<Int, Failure>{
+        val plan = planRemoteSource.insertPlan(planRequest)
+        if(plan is BaseResult.Success){
+            planDao.insertPlan(plan.data)
+            val planner = planRemoteSource.fetchPlanner(plan.data.planner_idFK)
+            if(planner is BaseResult.Success){
+                planDao.updatePlanner(planner.data)
+                return BaseResult.Success(200)
+            }else{
+                return BaseResult.Error(Failure(408, "Request TimeOut"))
+            }
+        }else{
+            return BaseResult.Error(Failure(408, "Request TimeOut"))
+        }
     }
 
-    override fun selectPlan(planDate: String, plannerId: Long): List<PlanEntity> {
+    override suspend fun deletePlan(plan_id: Long, planner_id : Long) : BaseResult<Int, Failure> {
+        val plan = planRemoteSource.deletePlan(plan_id)
+        if(plan is BaseResult.Success){
+            planDao.deletePlan(plan_id)
+            val planner = planRemoteSource.fetchPlanner(planner_id)
+            if(planner is BaseResult.Success){
+                planDao.updatePlanner(planner.data)
+                return BaseResult.Success(200)
+            }else{
+                return BaseResult.Error(Failure(408, "Request TimeOut"))
+            }
+        }else{
+            return BaseResult.Error(Failure(408, "Request TimeOut"))
+        }
+    }
+
+    override suspend fun updatePlan(planEntity: PlanEntity) : BaseResult<Int, Failure> {
+        val plan = planRemoteSource.updatePlan(planEntity)
+        if(plan is BaseResult.Success){
+            planDao.updatePlan(planEntity)
+            val planner = planRemoteSource.fetchPlanner(plan.data.planner_idFK)
+            if(planner is BaseResult.Success){
+                planDao.updatePlanner(planner.data)
+                return BaseResult.Success(200)
+            }else{
+                return BaseResult.Error(Failure(408, "Request TimeOut"))
+            }
+        }else{
+            return BaseResult.Error(Failure(408, "Request TimeOut"))
+        }
+    }
+
+    override fun selectPlan(planDate: String, plannerId: Long): Flow<List<PlanEntity>> {
         return planDao.selectPlan(planDate, plannerId)
-    }
-
-    override fun deletePlan(planEntity: PlanEntity) {
-        planDao.deletePlan(planEntity)
-    }
-
-    override fun updatePlan(todo: String, rgb: Int, time: Int, location: String, id: Long) {
-        planDao.updatePlan(todo, rgb, time, location, id)
     }
 
     /**
@@ -66,28 +102,24 @@ class PlanRepositoryImpl @Inject constructor(
             val localPlanner = planDao.findPlanner(planner_idFK)
 
             if (remotePlanner is BaseResult.Success) {
-                val remoteTimestamp: LocalDateTime = remotePlanner.data.timeStamp
-                val localTimestamp: LocalDateTime = localPlanner.timeStamp
+                val remoteTimestamp: String = remotePlanner.data.timeStamp
+                val localTimestamp: String = localPlanner.timeStamp
 
-                if (!remoteTimestamp.equals(localTimestamp)) {
+                if (remoteTimestamp.equals(localTimestamp)) {
+                    val localDB_plan = planDao.selectAllPlan(planner_idFK)
+                    emit(BaseResult.Success(localDB_plan))
+                }else{
                     // 최신 상태 x -> remoteDB fetch
                     planDao.updatePlanner(remotePlanner.data)
                     val remoteDB_plan = planRemoteSource.fetchPlans(planner_idFK)
                     if (remoteDB_plan is BaseResult.Success) {
                         savePlanToLocal(remoteDB_plan.data, planner_idFK)
-                        emit(remoteDB_plan)
-                    } else {
-                        Log.e("[PlanRepositoryImpl]", "Network를 확인하세요")
-                        /**
-                         *   Todo : 추가적인 Error Handling 필요(ex. 화면에 Dialong or Toast message)
-                         **/
                     }
+                    emit(remoteDB_plan)
                 }
-            } else {
-                Log.e("[PlanRepositoryImpl]", "Network를 확인하세요")
-                /**
-                 *   Todo : 추가적인 Error Handling 필요(ex. 화면에 Dialong or Toast message)
-                 **/
+            }else{
+                // 연결 시도 실패
+                emit(BaseResult.Error(Failure(408,"Request Timeout")))
             }
         }
     }

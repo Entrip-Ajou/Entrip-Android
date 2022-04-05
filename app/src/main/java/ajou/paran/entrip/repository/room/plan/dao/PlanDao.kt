@@ -13,14 +13,11 @@ interface PlanDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlanner(plannerEntity: PlannerEntity)
 
-    @Delete
-    fun deletePlan(planEntity: PlanEntity)
-
-    @Query("Update 'plan' SET todo = :todo, rgb = :rgb, time = :time, location = :location WHERE id = :id")
-    fun updatePlan(todo:String, rgb:Int, time : Int, location : String, id : Long)
+    @Query("DELETE FROM 'plan' WHERE id = :plan_id")
+    suspend fun deletePlan(plan_id : Long)
 
     @Query("SELECT * FROM `plan` WHERE date = :planDate AND planner_idFK = :plannerId ORDER BY time ASC")
-    fun selectPlan(planDate : String, plannerId : Long) : List<PlanEntity>
+    fun selectPlan(planDate : String, plannerId : Long) : Flow<List<PlanEntity>>
 
     @Query("SELECT * FROM 'plan' WHERE planner_idFK = :plannerId")
     suspend fun selectAllPlan(plannerId: Long) : List<PlanEntity>
@@ -36,4 +33,7 @@ interface PlanDao {
 
     @Update
     fun updatePlanner(plannerEntity: PlannerEntity)
+
+    @Update
+    suspend fun updatePlan(planEntity: PlanEntity)
 }
