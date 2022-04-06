@@ -11,7 +11,7 @@ interface PlanRepository {
     suspend fun insertPlan(planRequest: PlanRequest) : BaseResult<Int, Failure>
     fun selectPlan(planDate : String, plannerId : Long) : Flow<List<PlanEntity>>
     suspend fun deletePlan(plan_id : Long, planner_id : Long) : BaseResult<Int, Failure>
-    suspend fun updatePlan(planEntity: PlanEntity) : BaseResult<Int, Failure>
+    suspend fun updatePlan(plan_id:Long, planEntity: PlanEntity) : BaseResult<Int, Failure>
 
     suspend fun createPlanner() : Long
     suspend fun syncRemoteDB(plannerEntity: PlannerEntity) : Flow<BaseResult<Any, Failure>>

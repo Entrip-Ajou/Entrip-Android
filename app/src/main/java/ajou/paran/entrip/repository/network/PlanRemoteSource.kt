@@ -126,9 +126,9 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
         }
     }
 
-    suspend fun updatePlan(plan: PlanEntity): BaseResult<PlanEntity, Failure>{
+    suspend fun updatePlan(plan_id:Long,plan: PlanEntity): BaseResult<PlanEntity, Failure>{
         try {
-            val response = planApi.updatePlan(plan)
+            val response = planApi.updatePlan(plan_id,plan)
             return if (response.isSuccessful) {
                 val plan = response.body()?.let { t ->
                     PlanEntity(t.id, t.planner_idFK, t.todo, t.rgb, t.time, t.location, t.date)

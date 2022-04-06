@@ -49,8 +49,8 @@ class PlanRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updatePlan(planEntity: PlanEntity) : BaseResult<Int, Failure> {
-        val plan = planRemoteSource.updatePlan(planEntity)
+    override suspend fun updatePlan(plan_id: Long, planEntity: PlanEntity) : BaseResult<Int, Failure> {
+        val plan = planRemoteSource.updatePlan(plan_id, planEntity)
         if(plan is BaseResult.Success){
             planDao.updatePlan(planEntity)
             val planner = planRemoteSource.fetchPlanner(plan.data.planner_idFK)

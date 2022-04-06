@@ -33,5 +33,5 @@ interface PlanApi {
     suspend fun deletePlan(plan_id : Long) : Response<Long>
 
     @GET("")
-    suspend fun updatePlan(plan:PlanEntity) : Response<PlanEntity>
+    suspend fun updatePlan(plan_id: Long, plan:PlanEntity) : Response<PlanEntity>
 }
