@@ -1,4 +1,4 @@
-package ajou.paran.entrip.util
+package ajou.paran.entrip.util.ui
 
 import android.app.Activity
 import android.content.Context

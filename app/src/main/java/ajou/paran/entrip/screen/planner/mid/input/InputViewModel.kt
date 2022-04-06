@@ -2,9 +2,8 @@ package ajou.paran.entrip.screen.planner.mid.input
 
 import ajou.paran.entrip.R
 import ajou.paran.entrip.model.PlanEntity
-import ajou.paran.entrip.repository.room.plan.repository.PlanRepository
+import ajou.paran.entrip.repository.Impl.PlanRepository
 import android.graphics.Color
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -71,7 +70,7 @@ class InputViewModel @Inject constructor(
                 val timeToInt = Integer.parseInt(timeToString)
 
                 // 아무것도 선택을 안할 시, -1이 rgb에 할당되므로 이를 렌더링 할 수가 없다.
-                if(rgb.value!! < 0) rgb.value = R.color.white
+                if(rgb.value!! == -1) rgb.value = R.color.white
 
                 if(!isUpdate){
                     viewModelScope.launch(Dispatchers.IO) {
@@ -82,7 +81,7 @@ class InputViewModel @Inject constructor(
                                 time = timeToInt,
                                 location = location.value,
                                 date = date,
-                                title = title,
+//                                title = title,
                                 planner_id = planner_id
                             )
                         )

@@ -1,8 +1,10 @@
 package ajou.paran.entrip.screen.planner.mid
 
 import ajou.paran.entrip.model.PlanEntity
-import ajou.paran.entrip.repository.room.plan.repository.PlanRepository
+import ajou.paran.entrip.repository.Impl.PlanRepository
+import ajou.paran.entrip.repository.Impl.PlanRepositoryImpl
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -12,11 +14,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MidViewModel @Inject constructor(
-    private val planRepository: PlanRepository
+    private val planRepository: PlanRepositoryImpl
 ) : ViewModel() {
 
     lateinit var date : String
     lateinit var plannerId : String
+    val plans = planRepository.getPlans(date, plannerId).asLiveData()
+
 
     companion object {
         private const val TAG = "[MidViewModel]"
