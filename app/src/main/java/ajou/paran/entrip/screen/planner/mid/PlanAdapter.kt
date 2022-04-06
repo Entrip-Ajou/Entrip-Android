@@ -1,10 +1,12 @@
 package ajou.paran.entrip.screen.planner.mid
 
+import ajou.paran.entrip.R
 import ajou.paran.entrip.databinding.ItemLayoutPlanBinding
 import ajou.paran.entrip.databinding.ItemLayoutPlanFooterBinding
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import android.content.Intent
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -18,7 +20,7 @@ private const val FOOTER_VIEW_TYPE = 1
 class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, RecyclerView.ViewHolder>(PlanDiffCallback()) {
 
     lateinit var date: String
-    lateinit var title: String
+//    lateinit var title: String
     lateinit var plannerId: String
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -37,12 +39,12 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
                             // getItem(adapterPosition) -> 현재 버튼이 가장 마지막 position이므로 현재 포지션에서 1을뺀 planEntity를 가져옴
                             // 오류가 발생하면 position 크기를 더 줄이면 된다!
                             this.putExtra("date", getItem(adapterPosition-1).date)
-                            this.putExtra("title",getItem(adapterPosition-1).title)
+//                            this.putExtra("title",getItem(adapterPosition-1).title)
                             this.putExtra("plannerId", getItem(adapterPosition-1).planner_id)
                         } else {
                             this.putExtra("isUpdate", false)
                             this.putExtra("date", date)
-                            this.putExtra("title",title)
+//                            this.putExtra("title",title)
                             this.putExtra("plannerId", plannerId)
                         }
                     }
@@ -127,13 +129,9 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
 
             binding.tvItemTodo.text = planEntity.todo
 
-            binding.itemLayout.setBackgroundColor(
-                ContextCompat.getColor(
-                    binding.root.context,
-//                    R.color.indigo
-                    planEntity.rgb
-                )
-            )
+            val drawable: GradientDrawable = ContextCompat.getDrawable(this.itemView.context, R.drawable.circle_rgb) as GradientDrawable
+            drawable.setColor(planEntity.rgb)
+            binding.ivRgb.setImageDrawable(drawable)
 
             binding.imgItemDelete.setOnClickListener{
                 listener.onDeletePlanClickListener(planEntity)

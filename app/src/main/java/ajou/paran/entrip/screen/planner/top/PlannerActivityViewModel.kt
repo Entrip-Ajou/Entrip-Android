@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -51,4 +52,10 @@ constructor(
         TODO("Case: Add Planner")
     }
 
+//    fun loadPlannerDate(start_date: String, end_date: String, id: Long): Flow<List<PlannerDate>>
+//        = plannerRepository.datePlanner(
+//            start_date = start_date,
+//            end_date = end_date,
+//            id = id
+//    )
 }
