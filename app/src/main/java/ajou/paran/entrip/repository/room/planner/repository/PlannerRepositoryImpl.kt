@@ -1,7 +1,6 @@
 package ajou.paran.entrip.repository.room.planner.repository
 
-import ajou.paran.entrip.model.PlannerDate
-import ajou.paran.entrip.model.PlannerEntity
+import ajou.paran.entrip.model.test.PlannerTestEntity
 import ajou.paran.entrip.repository.room.planner.dao.PlannerDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -11,9 +10,9 @@ class PlannerRepositoryImpl
     constructor(
         private val plannerDao: PlannerDao
     ): PlannerRepository{
-    override suspend fun insertPlanner(plannerEntity: PlannerEntity) {
+    override suspend fun insertPlanner(plannerTestEntity: PlannerTestEntity) {
         plannerDao.insertPlanner(
-            plannerEntity = plannerEntity
+            plannerTestEntity = plannerTestEntity
         )
     }
 
@@ -37,7 +36,7 @@ class PlannerRepositoryImpl
         start_date: String,
         end_date: String,
         id: Long
-    ): Flow<List<PlannerEntity>>
+    ): Flow<List<PlannerTestEntity>>
         = plannerDao.selectPlanner(
             start_date = start_date,
             end_date = end_date,

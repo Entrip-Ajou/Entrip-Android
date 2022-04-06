@@ -173,14 +173,17 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
                 val startMinute = currentTime.get(Calendar.MINUTE)
 
                 TimePickerDialog(
-                    this, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+                    this@InputActivity,
+                    TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                         if (minute < 10) {
-                            binding.tvTime.setText("$hourOfDay:0$minute")
+                            binding.tvTime.text = "$hourOfDay:0$minute"
                         } else {
-                            binding.tvTime.setText("$hourOfDay:$minute")
+                            binding.tvTime.text = "$hourOfDay:$minute"
                         }
                     },
-                    startHour, startMinute, true
+                    startHour,
+                    startMinute,
+                    true
                 ).show()
             }
 

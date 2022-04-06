@@ -1,6 +1,6 @@
 package ajou.paran.entrip.screen.planner.main
 
-import ajou.paran.entrip.model.PlannerEntity
+import ajou.paran.entrip.model.test.PlannerTestEntity
 import ajou.paran.entrip.repository.room.planner.repository.PlannerRepository
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,7 +18,7 @@ class MainActivityViewModel
 
     fun insert() = viewModelScope.launch {
         plannerRepository.insertPlanner(
-            plannerEntity = PlannerEntity(
+            plannerTestEntity = PlannerTestEntity(
                 title = "제목 없음",
                 start_date = "2022/04/01",
                 end_date = "2022/04/14",

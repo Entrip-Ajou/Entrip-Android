@@ -1,11 +1,11 @@
-package ajou.paran.entrip.model
+package ajou.paran.entrip.model.test
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "planner")
-data class PlannerEntity(
+data class PlannerTestEntity(
     @PrimaryKey(autoGenerate = true)
     // auto -> 서버로부터 받아와서 변경
     val id : Long = 0L,
