@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ajou.paran.entrip">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".base.App"
@@ -13,7 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Entrip">
         <activity
-            android:name=".MainActivity"
+            android:name=".screen.planner.mid.map.MapActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screen.planner.mid.input.InputActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screen.planner.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +27,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".screen.planner.top.PlannerActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".screen.planner.top.useradd.PlannerUserAddActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>

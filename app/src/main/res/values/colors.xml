@@ -6,5 +6,14 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="white">#FFFFFF</color>
+
+    <!-- InputActivity color palette -->
+    <color name="red">#FF6666</color>
+    <color name="orange">#FF9966</color>
+    <color name="yellow">#FFFF99</color>
+    <color name="green">#99FF99</color>
+    <color name="blue">#6699FF</color>
+    <color name="indigo">#9999FF</color>
+    <color name="purple">#CC33FF</color>
 </resources>
