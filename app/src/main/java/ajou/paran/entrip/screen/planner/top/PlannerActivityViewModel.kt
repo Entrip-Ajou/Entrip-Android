@@ -1,7 +1,7 @@
 package ajou.paran.entrip.screen.planner.top
 
 import ajou.paran.entrip.model.PlannerDate
-import ajou.paran.entrip.repository.PlannerRepository
+import ajou.paran.entrip.repository.Impl.PlannerRepository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

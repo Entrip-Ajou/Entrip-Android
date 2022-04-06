@@ -1,6 +1,6 @@
 package ajou.paran.entrip.screen.planner.top.useradd
 
-import ajou.paran.entrip.repository.PlannerRepository
+import ajou.paran.entrip.repository.Impl.PlannerRepository
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

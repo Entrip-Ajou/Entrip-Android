@@ -2,9 +2,8 @@ package ajou.paran.entrip.screen.planner.mid.input
 
 import ajou.paran.entrip.R
 import ajou.paran.entrip.model.PlanEntity
-import ajou.paran.entrip.repository.room.plan.repository.PlanRepository
+import ajou.paran.entrip.repository.Impl.PlanRepository
 import android.graphics.Color
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
