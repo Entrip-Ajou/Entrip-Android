@@ -19,9 +19,9 @@ private const val FOOTER_VIEW_TYPE = 1
 
 class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, RecyclerView.ViewHolder>(PlanDiffCallback()) {
 
+    // todo : InputActivity로 보내기 위해 필요한데 plannerId가 -1 값이 보내질 수도 있다.
     lateinit var date: String
-//    lateinit var title: String
-    lateinit var plannerId: String
+    var plannerId: Long = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == FOOTER_VIEW_TYPE) {
@@ -40,7 +40,7 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
                             // 오류가 발생하면 position 크기를 더 줄이면 된다!
                             this.putExtra("date", getItem(adapterPosition-1).date)
 //                            this.putExtra("title",getItem(adapterPosition-1).title)
-                            this.putExtra("plannerId", getItem(adapterPosition-1).planner_id)
+                            this.putExtra("plannerId", getItem(adapterPosition-1).planner_idFK)
                         } else {
                             this.putExtra("isUpdate", false)
                             this.putExtra("date", date)

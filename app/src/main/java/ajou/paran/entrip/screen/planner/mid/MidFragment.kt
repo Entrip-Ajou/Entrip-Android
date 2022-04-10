@@ -23,8 +23,7 @@ import kotlinx.coroutines.launch
 class MidFragment
 constructor(
     private var date: String,
-//    private var title: String,
-    private var plannerId: String
+    private var plannerId: Long
 ): Fragment(),PlanAdapter.RowClickListener {
     companion object {
         private const val TAG = "[MidFragment]"
@@ -53,7 +52,7 @@ constructor(
     }
 
     override fun onDeletePlanClickListener(planEntity: PlanEntity) {
-        viewModel.deletePlan(planEntity)
+        viewModel.deletePlan(planEntity.id, planEntity.planner_idFK)
     }
 
     override fun onItemClickListener(planEntity: PlanEntity) {
@@ -83,13 +82,14 @@ constructor(
             false
         }
         planAdapter.date = date
-//        planAdapter.title = title
         planAdapter.plannerId = plannerId
         binding.rvPlan.adapter = planAdapter
 
         lifecycle.coroutineScope.launch {
+            /*
             viewModel.date = date
             viewModel.plannerId = plannerId
+             */
             viewModel.loadPlan(date, plannerId).collect() {
                 planAdapter.submitList(it.toList())
             }

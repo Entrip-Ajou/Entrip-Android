@@ -3,6 +3,7 @@ package ajou.paran.entrip.screen.planner.mid
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.repository.Impl.PlanRepository
 import ajou.paran.entrip.repository.Impl.PlanRepositoryImpl
+import ajou.paran.entrip.util.network.BaseResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -17,24 +18,26 @@ class MidViewModel @Inject constructor(
     private val planRepository: PlanRepositoryImpl
 ) : ViewModel() {
 
+    /*
     lateinit var date : String
     lateinit var plannerId : String
     val plans = planRepository.getPlans(date, plannerId).asLiveData()
-
+     */
 
     companion object {
         private const val TAG = "[MidViewModel]"
     }
 
-//    init {
-//        loadPlan(date, plannerId)
-//    }
+    fun loadPlan(date: String, plannerId : Long) : Flow<List<PlanEntity>> = planRepository.selectPlan(date,plannerId)
 
-    fun loadPlan(date: String, plannerId : String) : Flow<List<PlanEntity>> = planRepository.selectPlan(date,plannerId)
-
-    fun deletePlan(planEntity: PlanEntity){
+    fun deletePlan(plan_id: Long, planner_id : Long){
         viewModelScope.launch(Dispatchers.IO) {
-            planRepository.deletePlan(planEntity)
+            val result = planRepository.deletePlan(plan_id, planner_id)
+            if(result is BaseResult.Success){
+
+            }else{
+
+            }
         }
     }
 
