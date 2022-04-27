@@ -17,7 +17,7 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.activity.viewModels
 import androidx.core.util.Pair
-import androidx.lifecycle.Observer
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -27,6 +27,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,7 +47,8 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     private val viewModel: PlannerActivityViewModel by viewModels()
 
     override fun init(savedInstanceState: Bundle?) {
-        binding.plannerActEtTitle.setText(intent.getStringExtra("title") ?: "제목 없음")
+        viewModel.setting(intent.getLongExtra("plannerId", -1L))
+
         midFragment = MidFragment(
             // TODO date의 경우 db에 startDate 와 endDate 가 생기는 경우 변
             date = intent.getStringExtra("date") ?: fakeDateItemList[0].date,
@@ -61,7 +64,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 binding.plannerActEtTitle.inputType = InputType.TYPE_NULL
                 binding.plannerActEtTitle.isCursorVisible = false
                 hideKeyboard()
-//                midFragment.setTitle(binding.plannerActEtTitle.text.toString())
+                viewModel.plannerChange(binding.plannerActEtTitle.text.toString())
                 true
             } else {
                 false
@@ -69,11 +72,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         }
         initDateRecyclerView()
         subscribeObservers()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.getPlannerDateItem()
     }
 
     /**
@@ -133,27 +131,25 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         adapter = dateRecyclerViewAdapter
     }
 
-    /**
-     * @funcName: subscribeObservers
-     * @func: observe
-     * @Date: 2022.03.08
-     * @Made: Jeon
-     * **/
     private fun subscribeObservers() {
-        viewModel.plannerDateItemList.observe(this, Observer {
-            if(it.first() != it.last()){
-                if (binding.plannerActRv1.visibility == View.GONE)
-                    binding.plannerActRv1.visibility = View.VISIBLE
-                dateRecyclerViewAdapter.submitList(it)
-                binding.plannerActTvStartDate.text = it.first().date
-                binding.plannerActTvEndDate.text = it.last().date
+        lifecycle.coroutineScope.launch {
+            viewModel.getFlowPlanner().collect {
+                val list = getDates(it.start_date, it.end_date)
+                binding.plannerActEtTitle.setText(it.title)
+                if(it.start_date != it.end_date){
+                    if (binding.plannerActRv1.visibility == View.GONE)
+                        binding.plannerActRv1.visibility = View.VISIBLE
+                    binding.plannerActTvStartDate.text = it.start_date
+                    binding.plannerActTvEndDate.text = it.end_date
+                }
+                else{
+                    binding.plannerActTvStartDate.text = it.start_date
+                    binding.plannerActTvEndDate.text = it.end_date
+                    binding.plannerActRv1.visibility = View.GONE
+                }
+                dateRecyclerViewAdapter.submitList(list)
             }
-            else{
-                binding.plannerActTvStartDate.text = it.first().date
-                binding.plannerActTvEndDate.text = it.last().date
-                binding.plannerActRv1.visibility = View.GONE
-            }
-        })
+        }
     }
 
     private fun setUpBottomNavigationBar(){
@@ -184,7 +180,13 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         dialog.setContentView(btnSheet)
         btnSheet.findViewById<MaterialButton>(R.id.addBtn).setOnClickListener{
             Log.d(TAG, "Dialog.dismiss: addBtn")
-            viewModel.plannerAdd()
+            lifecycle.coroutineScope.launch {
+                viewModel.plannerAdd("test1").collect {
+                    val intent = Intent(baseContext, PlannerActivity::class.java)
+                    intent.putExtra("plannerId", it)
+                    startActivity(intent)
+                }
+            }
             dialog.dismiss()
         }
         btnSheet.findViewById<MaterialButton>(R.id.deleteBtn).setOnClickListener{
@@ -219,26 +221,44 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 .split("/")
                 .map { it.toInt() }
 
-            val cal = Calendar.getInstance()
-            cal.set(s_year, s_month, s_day)
-            val mutableList = mutableListOf<PlannerDate>()
-            while (cal.get(Calendar.YEAR) != e_year
-                || cal.get(Calendar.MONTH) != e_month
-                || cal.get(Calendar.DAY_OF_MONTH) != e_day
-            ) {
-                // 플래너에 집어 넣을 Date 생성 로직
-                cal.add(Calendar.MONTH, -1)
-                mutableList.add(
-                    PlannerDate(format.format(cal.time))
-                )
-                cal.add(Calendar.MONTH, 1)
-                cal.add(Calendar.DAY_OF_MONTH, 1)
-            }
-            cal.add(Calendar.MONTH, -1)
-            mutableList.add(PlannerDate(format.format(cal.time)))
-            viewModel.setPlannerDateItem(mutableList.toList())
-            mutableList.clear()
+            val mutableList = getDates(
+                start_date = "$s_year/$s_month/$s_day",
+                end_date = "$e_year/$e_month/$e_day"
+            )
+            viewModel.plannerChange(mutableList.toList())
             midFragment.setAdapter(format.format(pairDate.first))
         }
+    }
+
+    private fun getDates(start_date: String, end_date: String): List<PlannerDate>{
+        val format = SimpleDateFormat("yyyy/MM/dd",
+            Locale.getDefault())
+
+        val (s_year, s_month, s_day) = start_date
+            .split("/")
+            .map { it.toInt() }
+        val (e_year, e_month, e_day) = end_date
+            .split("/")
+            .map { it.toInt() }
+
+        val cal = Calendar.getInstance()
+        cal.set(s_year, s_month, s_day)
+        val mutableList = mutableListOf<PlannerDate>()
+        while (cal.get(Calendar.YEAR) != e_year
+            || cal.get(Calendar.MONTH) != e_month
+            || cal.get(Calendar.DAY_OF_MONTH) != e_day
+        ) {
+            // 플래너에 집어 넣을 Date 생성 로직
+            cal.add(Calendar.MONTH, -1)
+            mutableList.add(
+                PlannerDate(format.format(cal.time))
+            )
+            cal.add(Calendar.MONTH, 1)
+            cal.add(Calendar.DAY_OF_MONTH, 1)
+        }
+        cal.add(Calendar.MONTH, -1)
+        mutableList.add(PlannerDate(format.format(cal.time)))
+
+        return mutableList
     }
 }

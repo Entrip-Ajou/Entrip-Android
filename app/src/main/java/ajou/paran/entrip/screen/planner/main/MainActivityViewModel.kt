@@ -1,29 +1,20 @@
 package ajou.paran.entrip.screen.planner.main
 
-import ajou.paran.entrip.model.test.PlannerTestEntity
-import ajou.paran.entrip.repository.room.planner.repository.PlannerRepository
+import ajou.paran.entrip.repository.Impl.PlannerRepository
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel
-    @Inject
-    constructor(
-        private val plannerRepository: PlannerRepository
-    ): ViewModel(){
+@Inject
+constructor(private val plannerRepository: PlannerRepository)
+    : ViewModel() {
 
-    fun insert() = viewModelScope.launch {
-        plannerRepository.insertPlanner(
-            plannerTestEntity = PlannerTestEntity(
-                title = "제목 없음",
-                start_date = "2022/04/01",
-                end_date = "2022/04/14",
-                time_stamp = Calendar.getInstance().time.toString()
-            )
-        )
+    fun createPlanner() = CoroutineScope(Dispatchers.IO).launch {
+        plannerRepository.createPlanner("test1")
     }
 }

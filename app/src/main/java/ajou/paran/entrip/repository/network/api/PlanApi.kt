@@ -1,11 +1,14 @@
 package ajou.paran.entrip.repository.network.api
 
 import ajou.paran.entrip.model.PlanEntity
+import ajou.paran.entrip.repository.network.dto.BaseResponse
 import ajou.paran.entrip.repository.network.dto.PlanRequest
 import ajou.paran.entrip.repository.network.dto.PlanResponse
-import ajou.paran.entrip.repository.network.dto.PlannerResponse
+import ajou.paran.entrip.repository.network.dto.planner.CreatePlannerDto
+import ajou.paran.entrip.repository.network.dto.planner.PlannerData
+import ajou.paran.entrip.repository.network.dto.planner.UpdatePlannerRequestDto
 import retrofit2.Response
-import retrofit2.http.GET
+import retrofit2.http.*
 
 interface PlanApi {
     companion object{
@@ -13,25 +16,60 @@ interface PlanApi {
     }
 
     // Planner 추가를 눌렀을 때
-    @GET("")
-    suspend fun createPlanner() : Response<PlannerResponse>
+    @POST("api/v1/planners")
+    suspend fun createPlanner(
+        @Body user_id: CreatePlannerDto
+    ) : BaseResponse<PlannerData>
 
     // Home화면 Planner 선택란에서 기존에 저장된 Planner를 눌렀을 때
-    @GET("")
-    suspend fun fetchPlanner(planner_id : Long) : Response<PlannerResponse>
+    @GET("api/v1/plans/{planner_id}")
+    suspend fun fetchPlanner(
+        @Path("planner_id") planner_id : Long
+    ) : BaseResponse<PlannerData>
 
-    @GET("")
-    suspend fun fetchPlans(planner_idFK : Long) : Response<List<PlanResponse>>
+    @GET("api/v1/planners/{planner_id}/all")
+    suspend fun fetchPlans(
+        @Path("planner_id") planner_idFK : Long
+    ) : Response<List<PlanResponse>>
 
-    @GET("")
-    suspend fun isExist(planner_id: Long) : Response<Boolean>
+    @GET("api/v1/planners/{planner_id}/exist")
+    suspend fun isExist(
+        @Path("planner_id") planner_id: Long
+    ) : BaseResponse<Boolean>
 
-    @GET("")
-    suspend fun insertPlan(plan : PlanRequest) : Response<PlanResponse>
+    @POST("api/v1/plans")
+    suspend fun insertPlan(
+        @Body plan : PlanRequest
+    ) : Response<PlanResponse>
 
-    @GET("")
-    suspend fun deletePlan(plan_id : Long) : Response<Long>
+    @DELETE("api/v1/plans/{plan_id}")
+    suspend fun deletePlan(
+        @Path("plan_id") plan_id : Long
+    ) : Response<Long>
 
-    @GET("")
-    suspend fun updatePlan(plan_id: Long, plan:PlanEntity) : Response<PlanEntity>
+    @DELETE("api/v1/planners/{planner_id}")
+    suspend fun deletePlanner(
+        @Path("planner_id") planner_id: Long
+    ) : BaseResponse<Long>
+
+    /**
+     * update 사용할 때, 문제 발생 시 Entity class -> Serialized(dto) class 변경하기
+     */
+
+    @PUT("api/v1/plans/{plan_id}")
+    suspend fun updatePlan(
+        @Path("plan_id") plan_id: Long,
+        @Body plan:PlanEntity
+    ) : Response<PlanEntity>
+
+    @PUT("api/v1/planners/{planner_id}")
+    suspend fun updatePlanner(
+        @Path("planner_id") planner_id : Long,
+        @Body updatePlannerRequestDto: UpdatePlannerRequestDto
+    ) : BaseResponse<PlannerData>
+
+    @GET("api/v1/planners/{planner_id}")
+    suspend fun findPlanner(
+        @Path("planner_id") planner_id: Long
+    ) : BaseResponse<PlannerData>
 }

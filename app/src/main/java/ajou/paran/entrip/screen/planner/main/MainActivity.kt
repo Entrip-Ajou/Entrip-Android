@@ -17,9 +17,22 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        viewModel.insert()
-        findViewById<Button>(R.id.testBtn).setOnClickListener{
-            startActivity(Intent(this, PlannerActivity::class.java))
+
+        val intent = Intent(this, PlannerActivity::class.java)
+
+        findViewById<Button>(R.id.testBtn1).setOnClickListener{
+            // 플래너 추가
+            viewModel.createPlanner()
+        }
+        findViewById<Button>(R.id.testBtn2).setOnClickListener{
+            // 플래너 4
+            intent.putExtra("plannerId", 4L)
+            startActivity(intent)
+        }
+        findViewById<Button>(R.id.testBtn3).setOnClickListener{
+            // 플래너 5
+            intent.putExtra("plannerId", 6L)
+            startActivity(intent)
         }
     }
 }
