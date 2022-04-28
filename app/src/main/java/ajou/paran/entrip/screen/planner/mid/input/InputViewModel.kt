@@ -1,8 +1,10 @@
 package ajou.paran.entrip.screen.planner.mid.input
 
 import ajou.paran.entrip.R
-import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.repository.Impl.PlanRepository
+import ajou.paran.entrip.repository.network.dto.PlanRequest
+import ajou.paran.entrip.repository.network.dto.PlanUpdateRequest
+import ajou.paran.entrip.util.network.BaseResult
 import android.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,9 +27,7 @@ class InputViewModel @Inject constructor(
     var update_id : Long = 0L
 
     lateinit var date : String
-    lateinit var title : String
-    lateinit var planner_id : String
-
+    var planner_id : Long = -1L
 
     val todo : MutableLiveData<String> by lazy{
         MutableLiveData<String>()
@@ -62,10 +62,9 @@ class InputViewModel @Inject constructor(
                 _inputState.value = InputState.NoTime
             }
             !todo.value.isNullOrEmpty() && !time.value.isNullOrEmpty() -> {
-                _inputState.value = InputState.Success
-
+                _inputState.value = InputState.IsLoading(true)
                 // time이 String 형태로 ex) 16 : 20 문자열 그대로 찍히기 때문에, Room에 데이터를 넣을 때는 int 값으로 변환하여 넣는다.
-                val timeArray = time.value.toString().split(":")
+                val timeArray = time.value!!.split(":")
                 val timeToString = timeArray[0].plus(timeArray[1])
                 val timeToInt = Integer.parseInt(timeToString)
 
@@ -74,27 +73,40 @@ class InputViewModel @Inject constructor(
 
                 if(!isUpdate){
                     viewModelScope.launch(Dispatchers.IO) {
-                        planRepository.insertPlan(
-                            PlanEntity(
-                                todo = todo.value.toString(),
-                                rgb = rgb.value!!,
-                                time = timeToInt,
-                                location = location.value,
-                                date = date,
-//                                title = title,
-                                planner_id = planner_id
-                            )
+                        val planRequest = PlanRequest(
+                            date = date,
+                            todo = todo.value!!,
+                            time = timeToInt,
+                            location = location.value,
+                            RGB = rgb.value!!,
+                            planner_idFK = planner_id
                         )
+                        val res = planRepository.insertPlan(planRequest)
+                        if(res is BaseResult.Success){
+                            _inputState.value = InputState.IsLoading(false)
+                            _inputState.value = InputState.Success
+                        }else{
+                            _inputState.value = InputState.IsLoading(false)
+                            _inputState.value = InputState.Failure
+                        }
                     }
                 }else{
                     viewModelScope.launch(Dispatchers.IO){
-                        planRepository.updatePlan(
-                                todo.value.toString(),
-                                rgb.value!!,
-                                timeToInt,
-                                location.value.toString(),
-                                update_id
+                        val planUpdateRequest = PlanUpdateRequest(
+                            date = date,
+                            todo = todo.value!!,
+                            time = timeToInt,
+                            location = location.value,
+                            RGB = rgb.value!!
                         )
+                        val res = planRepository.updatePlan(update_id, planUpdateRequest)
+                        if(res is BaseResult.Success){
+                            _inputState.value = InputState.IsLoading(false)
+                            _inputState.value = InputState.Success
+                        }else{
+                            _inputState.value = InputState.IsLoading(false)
+                            _inputState.value = InputState.Failure
+                        }
                     }
                 }
             }

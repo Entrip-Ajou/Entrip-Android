@@ -14,7 +14,7 @@ data class PlanRequest(
 data class PlanUpdateRequest(
     @SerializedName("date") var date:String,
     @SerializedName("todo") var todo: String,
-    @SerializedName("time") var time: String,
+    @SerializedName("time") var time: Int,
     @SerializedName("location") var location: String?,
     @SerializedName("RGB") var RGB: Int
 )

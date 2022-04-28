@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,7 +43,6 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
         val intent = Intent(this, PlannerActivity::class.java)
         intent.apply {
             this.putExtra("date",viewModel.date)
-            this.putExtra("title",viewModel.title)
         }
         startActivity(intent)
     }
@@ -56,8 +56,7 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             viewModel.location.value = intent.getStringExtra("Location")
             viewModel.rgb.value = intent.getIntExtra("Rgb",0)
             viewModel.date = intent.getStringExtra("date").toString()
-            viewModel.title = intent.getStringExtra("title") ?: "제목 없음"
-            viewModel.planner_id = intent.getStringExtra("plannerId").toString()
+            viewModel.planner_id = intent.getLongExtra("plannerId", -1)
 
             val time = intent.getIntExtra("Time",0)
             val timeString = time.toString()
@@ -85,8 +84,7 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             viewModel.time.value = "$hour:$minute"
         }else{
             viewModel.date = intent.getStringExtra("date").toString()
-            viewModel.title = intent.getStringExtra("title").toString()
-            viewModel.planner_id = intent.getStringExtra("plannerId").toString()
+            viewModel.planner_id = intent.getLongExtra("plannerId", -1)
         }
 
         setUpColor()
@@ -116,9 +114,18 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
                     binding.timeNotNull.visibility = View.VISIBLE
                 }
 
+                is InputState.IsLoading -> {
+                    if(it.isLoading) binding.loadingBar.visibility = View.VISIBLE
+                    else binding.loadingBar.visibility = View.INVISIBLE
+                }
+
                 is InputState.Success -> {
                     // PlannerActivity가 MidFragment를 가지고 있으므로 변경
                     onBackPressed()
+                }
+
+                is InputState.Failure -> {
+                    Toast.makeText(this, "네트워크를 확인 해주세요", Toast.LENGTH_LONG).show()
                 }
             }
         }

@@ -127,7 +127,7 @@ constructor(
         if(isLoading){
             binding.loadingBar.visibility = View.VISIBLE
         }else{
-            binding.loadingBar.visibility = View.GONE
+            binding.loadingBar.visibility = View.INVISIBLE
         }
     }
 }
