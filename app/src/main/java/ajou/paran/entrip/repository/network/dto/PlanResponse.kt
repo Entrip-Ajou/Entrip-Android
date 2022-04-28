@@ -4,12 +4,12 @@ import com.google.gson.annotations.SerializedName
 
 
 data class PlanResponse(
-    @SerializedName("id") var id: Long,
-    @SerializedName("planner_idFK") var planner_idFK: Long,
+    @SerializedName("plan_id") var id: Long,
+    @SerializedName("date") var date: String,
     @SerializedName("todo") var todo: String,
-    @SerializedName("rgb") var rgb: Int,
     @SerializedName("time") var time: Int,
     @SerializedName("location") var location: String?,
-    @SerializedName("date") var date: String
+    @SerializedName("planner_id") var planner_idFK: Long,
+    @SerializedName("rgb") var rgb: Int
 )
 

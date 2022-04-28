@@ -4,9 +4,11 @@ import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.api.PlanApi
 import ajou.paran.entrip.repository.network.dto.PlanRequest
+import ajou.paran.entrip.repository.network.dto.PlanUpdateRequest
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+
 
 class PlanRemoteSource constructor(private val planApi: PlanApi) {
     /**
@@ -19,10 +21,10 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
     suspend fun isExist(planner_id: Long): BaseResult<Boolean, Failure> {
         try {
             val response = planApi.isExist(planner_id)
-            return if (response.isSuccessful) {
-                BaseResult.Success(response.body()!!)
+            return if (response.status == "OK") {
+                BaseResult.Success(response.data!!)
             } else {
-                BaseResult.Error(Failure(response.code(), response.message()))
+                BaseResult.Error(Failure(500, response.message))
             }
         } catch (e: NoInternetException) {
             return BaseResult.Error(Failure(0, e.message))
@@ -33,14 +35,15 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
 
     suspend fun createPlanner(): BaseResult<PlannerEntity, Failure> {
         try {
-            val response = planApi.createPlanner()
-            return if (response.isSuccessful) {
-                val planner = response.body()?.let { t ->
+            val user_id_test = "test"
+            val response = planApi.createPlanner(user_id_test)
+            return if (response.status == "OK") {
+                val planner = response.data?.let { t ->
                     PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp)
                 }
                 BaseResult.Success(planner!!)
             } else {
-                BaseResult.Error(Failure(response.code(), response.message()))
+                BaseResult.Error(Failure(500, response.message))
             }
         } catch (e: NoInternetException) {
             return BaseResult.Error(Failure(0, e.message))
@@ -52,16 +55,16 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
     suspend fun fetchPlans(planner_idFK: Long): BaseResult<List<PlanEntity>, Failure> {
         try {
             val response = planApi.fetchPlans(planner_idFK)
-            return if (response.isSuccessful) {
+            return if (response.status == "OK") {
                 val plans = mutableListOf<PlanEntity>()
-                response.body()?.forEach { t ->
+                response.data?.forEach { t ->
                     plans.add(
                         PlanEntity(t.id, t.planner_idFK, t.todo, t.rgb, t.time, t.location, t.date)
                     )
                 }
                 BaseResult.Success(plans)
             } else {
-                BaseResult.Error(Failure(response.code(), response.message()))
+                BaseResult.Error(Failure(500, response.message))
             }
         } catch (e: NoInternetException) {
             return BaseResult.Error(Failure(0, e.message))
@@ -73,13 +76,13 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
     suspend fun fetchPlanner(planner_id: Long): BaseResult<PlannerEntity, Failure> {
         try {
             val response = planApi.fetchPlanner(planner_id)
-            return if (response.isSuccessful) {
-                val planner = response.body()?.let { t ->
+            return if (response.status == "OK") {
+                val planner = response.data?.let { t ->
                     PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp)
                 }
                 BaseResult.Success(planner!!)
             } else {
-                BaseResult.Error(Failure(response.code(), response.message()))
+                BaseResult.Error(Failure(500, response.message))
             }
         } catch (e: NoInternetException) {
             return BaseResult.Error(Failure(0, e.message))
@@ -96,13 +99,13 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
     suspend fun insertPlan(plan: PlanRequest): BaseResult<PlanEntity, Failure> {
         try {
             val response = planApi.insertPlan(plan)
-            return if (response.isSuccessful) {
-                val plan = response.body()?.let { t ->
+            return if (response.status == "OK") {
+                val plan = response.data?.let { t ->
                     PlanEntity(t.id, t.planner_idFK, t.todo, t.rgb, t.time, t.location, t.date)
                 }
                 BaseResult.Success(plan!!)
             }else{
-                BaseResult.Error(Failure(response.code(), response.message()))
+                BaseResult.Error(Failure(500, response.message))
             }
         }catch(e: NoInternetException){
             return BaseResult.Error(Failure(0, e.message))
@@ -114,10 +117,10 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
     suspend fun deletePlan(plan_id: Long): BaseResult<Long, Failure>{
         try{
             val response = planApi.deletePlan(plan_id)
-            return if(response.isSuccessful){
-                BaseResult.Success(response.body()!!)
+            return if(response.status == "OK"){
+                BaseResult.Success(response.data!!)
             }else{
-                BaseResult.Error(Failure(response.code(), response.message()))
+                BaseResult.Error(Failure(500, response.message))
             }
         }catch(e: NoInternetException){
             return BaseResult.Error(Failure(0, e.message))
@@ -126,16 +129,16 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
         }
     }
 
-    suspend fun updatePlan(plan_id:Long,plan: PlanEntity): BaseResult<PlanEntity, Failure>{
+    suspend fun updatePlan(plan_id:Long,plan: PlanUpdateRequest): BaseResult<PlanEntity, Failure>{
         try {
             val response = planApi.updatePlan(plan_id,plan)
-            return if (response.isSuccessful) {
-                val plan = response.body()?.let { t ->
+            return if (response.status == "OK") {
+                val plan = response.data?.let { t ->
                     PlanEntity(t.id, t.planner_idFK, t.todo, t.rgb, t.time, t.location, t.date)
                 }
                 BaseResult.Success(plan!!)
             }else{
-                BaseResult.Error(Failure(response.code(), response.message()))
+                BaseResult.Error(Failure(500, response.message))
             }
         }catch(e: NoInternetException){
             return BaseResult.Error(Failure(0, e.message))

@@ -13,11 +13,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class MidFragment
@@ -48,6 +52,9 @@ constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvPlan.addItemDecoration(VerticalSpaceItemDecoration(-8))
+        observeState()
+        viewModel.syncRemoteDB(plannerId)
+        viewModel.observeTimeStamp(plannerId)
         setAdapter(date)
     }
 
@@ -86,20 +93,41 @@ constructor(
         binding.rvPlan.adapter = planAdapter
 
         lifecycle.coroutineScope.launch {
-            /*
-            viewModel.date = date
-            viewModel.plannerId = plannerId
-             */
-            viewModel.loadPlan(date, plannerId).collect() {
-                planAdapter.submitList(it.toList())
-            }
+            viewModel.loadPlan(date, plannerId)
+                .onStart { viewModel.setLoading() }
+                .catch { e ->
+                    viewModel.hideLoading()
+                }
+                .collect {
+                    viewModel.hideLoading()
+                    planAdapter.submitList(it.toList())
+                }
         }
     }
 
-    fun getDate() = date
+    private fun observeState(){
+        viewModel.state.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .onEach{ handleState(it) }
+            .launchIn(lifecycleScope)
+    }
 
-//    fun setTitle(title: String){
-//        this.title = title
-//         todo: title change event 필요
-//    }
+    private fun handleState(state : PlanState){
+        when(state){
+            is PlanState.Init -> Unit
+            is PlanState.IsLoading -> handleLoading(state.isLoading)
+            is PlanState.IsUpdate -> handleUpdate(state.isUpdate)
+        }
+    }
+
+    private fun handleUpdate(isUpdate : Boolean){
+        if(isUpdate) viewModel.syncRemoteDB(plannerId)
+    }
+
+    private fun handleLoading(isLoading : Boolean){
+        if(isLoading){
+            binding.loadingBar.visibility = View.VISIBLE
+        }else{
+            binding.loadingBar.visibility = View.GONE
+        }
+    }
 }

@@ -9,5 +9,5 @@ data class PlannerEntity(
     val title : String,
     val start_date : String,
     val end_date : String,
-    val timeStamp: String
+    val time_stamp: String
 )

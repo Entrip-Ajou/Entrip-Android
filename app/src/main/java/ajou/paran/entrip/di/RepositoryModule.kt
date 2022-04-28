@@ -1,13 +1,11 @@
 package ajou.paran.entrip.di
 
-import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
-import ajou.paran.entrip.repository.Impl.PlannerRepository
+import ajou.paran.entrip.repository.Impl.*
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
-import ajou.paran.entrip.repository.Impl.PlanRepository
-import ajou.paran.entrip.repository.Impl.PlanRepositoryImpl
 import ajou.paran.entrip.repository.network.PlanRemoteSource
 import ajou.paran.entrip.repository.network.api.PlanApi
 import ajou.paran.entrip.repository.room.AppDatabase
+import ajou.paran.entrip.repository.room.planner.repository.PlannerRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,10 +16,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
-
-    @Singleton
-    @Provides
-    fun providePlannerRepository(): PlannerRepository = PlannerRepositoryImpl()
 
     @Provides
     @Singleton

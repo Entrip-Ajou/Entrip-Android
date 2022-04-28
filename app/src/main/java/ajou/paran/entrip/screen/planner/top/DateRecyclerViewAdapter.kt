@@ -1,7 +1,6 @@
 package ajou.paran.entrip.screen.planner.top
 
 import ajou.paran.entrip.R
-import ajou.paran.entrip.model.PlannerDate
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import android.annotation.SuppressLint
 import android.graphics.Color

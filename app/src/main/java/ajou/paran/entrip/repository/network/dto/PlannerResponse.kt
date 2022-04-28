@@ -7,5 +7,5 @@ data class PlannerResponse(
     @SerializedName("title") var title : String,
     @SerializedName("start_date") var start_date: String,
     @SerializedName("end_date") var end_date: String,
-    @SerializedName("timeStamp") var timeStamp : String
+    @SerializedName("time_stamp") var timeStamp : String
 )
