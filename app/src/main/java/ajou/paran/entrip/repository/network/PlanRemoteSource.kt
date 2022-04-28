@@ -21,7 +21,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
     suspend fun isExist(planner_id: Long): BaseResult<Boolean, Failure> {
         try {
             val response = planApi.isExist(planner_id)
-            return if (response.status == "OK") {
+            return if (response.status == 200) {
                 BaseResult.Success(response.data!!)
             } else {
                 BaseResult.Error(Failure(500, response.message))
@@ -33,11 +33,10 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
         }
     }
 
-    suspend fun createPlanner(): BaseResult<PlannerEntity, Failure> {
+    suspend fun createPlanner(user_id : String): BaseResult<PlannerEntity, Failure> {
         try {
-            val user_id_test = "test"
-            val response = planApi.createPlanner(user_id_test)
-            return if (response.status == "OK") {
+            val response = planApi.createPlanner(user_id)
+            return if (response.status == 200) {
                 val planner = response.data?.let { t ->
                     PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp)
                 }
@@ -55,7 +54,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
     suspend fun fetchPlans(planner_idFK: Long): BaseResult<List<PlanEntity>, Failure> {
         try {
             val response = planApi.fetchPlans(planner_idFK)
-            return if (response.status == "OK") {
+            return if (response.status == 200) {
                 val plans = mutableListOf<PlanEntity>()
                 response.data?.forEach { t ->
                     plans.add(
@@ -76,7 +75,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
     suspend fun fetchPlanner(planner_id: Long): BaseResult<PlannerEntity, Failure> {
         try {
             val response = planApi.fetchPlanner(planner_id)
-            return if (response.status == "OK") {
+            return if (response.status == 200) {
                 val planner = response.data?.let { t ->
                     PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp)
                 }
@@ -99,7 +98,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
     suspend fun insertPlan(plan: PlanRequest): BaseResult<PlanEntity, Failure> {
         try {
             val response = planApi.insertPlan(plan)
-            return if (response.status == "OK") {
+            return if (response.status == 200) {
                 val plan = response.data?.let { t ->
                     PlanEntity(t.id, t.planner_idFK, t.todo, t.rgb, t.time, t.location, t.date)
                 }
@@ -117,7 +116,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
     suspend fun deletePlan(plan_id: Long): BaseResult<Long, Failure>{
         try{
             val response = planApi.deletePlan(plan_id)
-            return if(response.status == "OK"){
+            return if(response.status == 200){
                 BaseResult.Success(response.data!!)
             }else{
                 BaseResult.Error(Failure(500, response.message))
@@ -132,7 +131,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
     suspend fun updatePlan(plan_id:Long,plan: PlanUpdateRequest): BaseResult<PlanEntity, Failure>{
         try {
             val response = planApi.updatePlan(plan_id,plan)
-            return if (response.status == "OK") {
+            return if (response.status == 200) {
                 val plan = response.data?.let { t ->
                     PlanEntity(t.id, t.planner_idFK, t.todo, t.rgb, t.time, t.location, t.date)
                 }
