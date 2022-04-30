@@ -6,6 +6,7 @@ import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.repository.Impl.PlanRepository
 import ajou.paran.entrip.repository.Impl.PlanRepositoryImpl
 import ajou.paran.entrip.repository.network.PlanRemoteSource
+import ajou.paran.entrip.repository.network.PlannerRemoteSource
 import ajou.paran.entrip.repository.network.api.PlanApi
 import ajou.paran.entrip.repository.room.AppDatabase
 import dagger.Module
@@ -18,10 +19,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
-
-    @Singleton
-    @Provides
-    fun providePlannerRepository(): PlannerRepository = PlannerRepositoryImpl()
 
     @Provides
     @Singleton
@@ -37,6 +34,12 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun providePlannerRemoteSource(planApi: PlanApi) : PlannerRemoteSource{
+        return PlannerRemoteSource(planApi)
+    }
+
+    @Provides
+    @Singleton
     fun providePlanDao(appDatabase: AppDatabase) : PlanDao {
         return appDatabase.planDao()
     }
@@ -45,5 +48,11 @@ object RepositoryModule {
     @Singleton
     fun providePlanRepository(planRemoteSource: PlanRemoteSource, planDao: PlanDao) : PlanRepository{
         return PlanRepositoryImpl(planRemoteSource, planDao)
+    }
+
+    @Provides
+    @Singleton
+    fun providePlannerRepository(plannerRemoteSource: PlannerRemoteSource, planDao: PlanDao) : PlannerRepository{
+        return PlannerRepositoryImpl(plannerRemoteSource, planDao)
     }
 }
