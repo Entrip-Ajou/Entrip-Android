@@ -16,6 +16,9 @@ interface PlanDao {
     @Query("DELETE FROM 'plan' WHERE id = :plan_id")
     suspend fun deletePlan(plan_id : Long)
 
+    @Query("DELETE FROM 'planner' WHERE planner_id = :planner_id")
+    suspend fun deletePlanner(planner_id : Long)
+
     @Query("SELECT * FROM `plan` WHERE date = :planDate AND planner_idFK = :plannerId ORDER BY time ASC")
     fun selectPlan(planDate : String, plannerId : Long) : Flow<List<PlanEntity>>
 
@@ -26,7 +29,10 @@ interface PlanDao {
     fun insertAllPlan(plans : List<PlanEntity>)
 
     @Query("SELECT * FROM 'planner' WHERE planner_id = :planner_Id")
-    suspend fun findPlanner(planner_Id : Long) : PlannerEntity
+    fun findPlanner(planner_Id : Long) : PlannerEntity?
+
+    @Query("SELECT * FROM 'planner' WHERE planner_id = :planner_Id")
+    fun findFlowPlanner(planner_Id : Long) : Flow<PlannerEntity>
 
     @Query("DELETE FROM 'plan' WHERE planner_idFK = :planner_Id")
     fun deleteAllPlan(planner_Id: Long)

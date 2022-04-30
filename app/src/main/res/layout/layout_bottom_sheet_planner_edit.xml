@@ -21,21 +21,21 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/addBtn"
+        android:id="@+id/deleteBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Delete Planner"
-        app:layout_constraintEnd_toStartOf="@+id/deleteBtn"
+        app:layout_constraintEnd_toStartOf="@+id/addBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/deleteBtn"
+        android:id="@+id/addBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Planner"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/addBtn"
+        app:layout_constraintStart_toEndOf="@+id/deleteBtn"
         app:layout_constraintTop_toBottomOf="@id/text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,7 +19,6 @@ private const val FOOTER_VIEW_TYPE = 1
 
 class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, RecyclerView.ViewHolder>(PlanDiffCallback()) {
 
-    // todo : InputActivity로 보내기 위해 필요한데 plannerId가 -1 값이 보내질 수도 있다.
     lateinit var date: String
     var plannerId: Long = -1
 

@@ -3,6 +3,7 @@ package ajou.paran.entrip.di
 import ajou.paran.entrip.repository.Impl.*
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.repository.network.PlanRemoteSource
+import ajou.paran.entrip.repository.network.PlannerRemoteSource
 import ajou.paran.entrip.repository.network.api.PlanApi
 import ajou.paran.entrip.repository.room.AppDatabase
 import ajou.paran.entrip.repository.room.planner.repository.PlannerRepositoryImpl
@@ -31,6 +32,12 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun providePlannerRemoteSource(planApi: PlanApi) : PlannerRemoteSource{
+        return PlannerRemoteSource(planApi)
+    }
+
+    @Provides
+    @Singleton
     fun providePlanDao(appDatabase: AppDatabase) : PlanDao {
         return appDatabase.planDao()
     }
@@ -39,5 +46,11 @@ object RepositoryModule {
     @Singleton
     fun providePlanRepository(planRemoteSource: PlanRemoteSource, planDao: PlanDao) : PlanRepository{
         return PlanRepositoryImpl(planRemoteSource, planDao)
+    }
+
+    @Provides
+    @Singleton
+    fun providePlannerRepository(plannerRemoteSource: PlannerRemoteSource, planDao: PlanDao) : PlannerRepository{
+        return PlannerRepositoryImpl(plannerRemoteSource, planDao)
     }
 }
