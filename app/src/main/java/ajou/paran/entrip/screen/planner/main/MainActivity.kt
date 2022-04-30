@@ -21,6 +21,9 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, PlannerActivity::class.java)
 
         findViewById<Button>(R.id.testBtn1).setOnClickListener{
+            // 임시로 만든 것으로 테스트하기 위해서 플래너 4번 데이터 받아와서 db에 저장
+            // viewModel.insertUserPlannerDB()
+
             // 플래너 추가
             viewModel.createPlanner()
         }

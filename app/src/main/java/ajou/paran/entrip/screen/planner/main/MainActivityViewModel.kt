@@ -17,4 +17,8 @@ constructor(private val plannerRepository: PlannerRepository)
     fun createPlanner() = CoroutineScope(Dispatchers.IO).launch {
         plannerRepository.createPlanner("test1")
     }
+
+    fun insertUserPlannerDB() = CoroutineScope(Dispatchers.IO).launch {
+        plannerRepository.insertPlanner(plannerRepository.findPlanner(4))
+    }
 }

@@ -19,7 +19,7 @@ constructor(private val planApi: PlanApi)
             = try {
         val obj = CreatePlannerDto(user_id)
         val response = planApi.createPlanner(obj)
-        if (response.httpStatus == "OK") {
+        if (response.httpStatus == 200) {
             val planner = response.data.let { t ->
                 PlannerEntity(
                     t.planner_id,
@@ -54,7 +54,7 @@ constructor(private val planApi: PlanApi)
                 end_date = planner.end_date
             )
         )
-        if (response.httpStatus == "OK") {
+        if (response.httpStatus == 200) {
             val updatePlanner = response.data.let { t ->
                 PlannerEntity(
                     planner_id = t.planner_id,
@@ -80,7 +80,7 @@ constructor(private val planApi: PlanApi)
     suspend fun findPlanner(plannerId: Long): BaseResult<PlannerEntity, Failure>
             = try {
         val response = planApi.findPlanner(plannerId)
-        if (response.httpStatus == "OK") {
+        if (response.httpStatus == 200) {
             val planner = response.data.let { t ->
                 PlannerEntity(
                     planner_id = t.planner_id,
@@ -107,7 +107,7 @@ constructor(private val planApi: PlanApi)
     suspend fun isExist(planner_id: Long): BaseResult<Boolean, Failure>
             = try {
         val response = planApi.isExist(planner_id)
-        if (response.httpStatus == "OK") {
+        if (response.httpStatus == 200) {
             BaseResult.Success(response.data)
         } else {
             BaseResult.Error(Failure(500, response.message))
@@ -126,7 +126,7 @@ constructor(private val planApi: PlanApi)
     suspend fun deletePlanner(planner_id: Long) : BaseResult<Long, Failure>
             = try{
         val response = planApi.deletePlanner(planner_id)
-        if (response.httpStatus == "OK"){
+        if (response.httpStatus == 200){
             BaseResult.Success(response.data)
         } else {
             BaseResult.Error(Failure(500, response.message))
