@@ -4,7 +4,6 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityPlannerBinding
 import ajou.paran.entrip.model.PlannerDate
-import ajou.paran.entrip.model.fakeDateItemList
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
 import ajou.paran.entrip.util.ui.hideKeyboard
@@ -51,9 +50,8 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
 
         midFragment = MidFragment(
             // TODO date의 경우 db에 startDate 와 endDate 가 생기는 경우 변
-            date = intent.getStringExtra("date") ?: fakeDateItemList[0].date,
-//            title = intent.getStringExtra("title") ?: binding.plannerActEtTitle.text.toString(),
-            plannerId = "1"
+            date = intent.getStringExtra("date") ?: ( viewModel.getPlannerStartDate() ?: "22/04/30"),
+            plannerId = intent.getLongExtra("plannerId", -1L)
         )
         if (savedInstanceState == null)
             setUpBottomNavigationBar()

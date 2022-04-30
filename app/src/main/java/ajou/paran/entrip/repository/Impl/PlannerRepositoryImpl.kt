@@ -142,4 +142,6 @@ constructor(
     override fun getFlowPlanner(plannerId: Long): Flow<PlannerEntity>
             = planDao.findFlowPlanner(planner_Id = plannerId)
 
+    override fun findDBPlanner(plannerId: Long): PlannerEntity?
+        = planDao.findPlanner(plannerId)
 }

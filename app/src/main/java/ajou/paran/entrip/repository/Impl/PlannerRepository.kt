@@ -21,4 +21,5 @@ interface PlannerRepository {
     suspend fun selectAllPlan(plannerId: Long) : List<PlanEntity>
     fun deleteAllPlan(plannerId: Long)
     fun getFlowPlanner(plannerId: Long): Flow<PlannerEntity>
+    fun findDBPlanner(plannerId: Long): PlannerEntity?
 }

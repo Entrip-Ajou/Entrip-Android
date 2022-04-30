@@ -18,7 +18,7 @@ class MidViewModel @Inject constructor(
 ) : ViewModel() {
 
     lateinit var date : String
-    lateinit var plannerId : String
+    var plannerId : Long = 0L
     val plans = planRepository.getPlans(date, plannerId).asLiveData()
 
 

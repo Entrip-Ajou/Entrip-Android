@@ -40,6 +40,8 @@ constructor(
         TODO("Case: Delete Planner Data")
     }
 
+    fun getPlannerStartDate() = plannerRepository.findDBPlanner(plannerId)?.start_date
+
     fun plannerAdd(userId: String): Flow<Long> = flow {
         val planenrId = plannerRepository.createPlanner(userId)
         if(planenrId != -1L){
