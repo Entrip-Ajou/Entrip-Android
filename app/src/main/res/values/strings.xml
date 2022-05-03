@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Entrip</string>
     <string name="planner_title">제목 없음</string>
+    <string name="default_web_client_id"></string>
 </resources>

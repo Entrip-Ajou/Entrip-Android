@@ -102,7 +102,7 @@
             app:layout_constraintTop_toBottomOf="@+id/loginAct_constLay" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/loginAct_button_register"
+            android:id="@+id/loginAct_button_google"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
