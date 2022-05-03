@@ -1,17 +1,13 @@
 package ajou.paran.entrip.repository.Impl
 
 import ajou.paran.entrip.model.PlanEntity
-import ajou.paran.entrip.model.PlannerDate
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.PlannerRemoteSource
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import android.util.Log
-import androidx.lifecycle.asLiveData
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -21,22 +17,6 @@ constructor(
     private val plannerRemoteSource: PlannerRemoteSource,
     private val planDao: PlanDao
 ): PlannerRepository {
-
-    /**
-     * @name : createPlanner
-     * @param : user_id - String
-     * @return : Success - planner_id - Long, Fail - -1L
-     * **/
-    override suspend fun createPlanner(user_id: String) : Long {
-        val remotePlanner = plannerRemoteSource.createPlanner(user_id)
-        return if (remotePlanner is BaseResult.Success) {
-            planDao.insertPlanner(remotePlanner.data)
-            remotePlanner.data.planner_id
-        } else {
-            Log.e("[PlannerRepositoryImpl]", "Network를 확인하세요 $remotePlanner")
-            -1
-        }
-    }
 
     /**
      * @name : updatePlanner
@@ -64,62 +44,6 @@ constructor(
         }
     }
 
-    /**
-     * @name : findPlanner
-     * @param : plannerId - Long
-     * @return : Success - PlannerEntity, Fail - PlannerEntity(id = -1L)
-     * **/
-    override suspend fun findPlanner(plannerId: Long): PlannerEntity {
-        val plannerExist = plannerRemoteSource.isExist(plannerId)
-        return if(plannerExist is BaseResult.Success){
-            val planner = plannerRemoteSource.findPlanner(plannerId)
-            if (planner is BaseResult.Success){
-                planner.data.let { t ->
-                    PlannerEntity(
-                        planner_id = t.planner_id,
-                        title = t.title,
-                        start_date = t.start_date,
-                        end_date = t.end_date,
-                        timeStamp = t.timeStamp
-                    )
-                }
-            } else {
-                PlannerEntity(
-                    planner_id = -1L,
-                    title = "제목 없음",
-                    start_date = "1000/01/01",
-                    end_date = "1000/12/30",
-                    timeStamp = "null"
-                )
-            }
-        }else{
-            PlannerEntity(
-                planner_id = -1L,
-                title = "제목 없음",
-                start_date = "1000/01/01",
-                end_date = "1000/12/30",
-                timeStamp = "null"
-            )
-        }
-    }
-
-    /**
-     * @name : deletePlanner
-     * @param : plannerId - Long
-     * @return : Success - 1L, Fail - -1L
-     * **/
-    override suspend fun deletePlanner(plannerId: Long): Long {
-        val deletePlanner = plannerRemoteSource.deletePlanner(plannerId)
-        return if (deletePlanner is BaseResult.Success) {
-            if (planDao.findPlanner(plannerId) != null)
-                planDao.deletePlanner(plannerId)
-            deletePlanner.data
-        } else {
-            Log.e("[PlannerRepositoryImpl]", "Network를 확인하세요 $deletePlanner")
-            -1
-        }
-    }
-
     override suspend fun insertPlanner(plannerEntity: PlannerEntity): BaseResult<Int, Failure> {
         val planner = plannerRemoteSource.findPlanner(plannerEntity.planner_id)
         return if (planner is BaseResult.Success){
@@ -144,4 +68,50 @@ constructor(
 
     override fun findDBPlanner(plannerId: Long): PlannerEntity?
         = planDao.findPlanner(plannerId)
+
+
+    // --------------------------------------------------------------------
+
+    override suspend fun selectAllPlanner() : Flow<List<PlannerEntity>>
+            = planDao.selectAllPlanner()
+
+    override suspend fun createPlanner(user_id: String) : BaseResult<PlannerEntity, Failure> {
+        val remotePlanner = plannerRemoteSource.createPlanner(user_id)
+        return if (remotePlanner is BaseResult.Success) {
+            planDao.insertPlanner(remotePlanner.data)
+            return BaseResult.Success(remotePlanner.data)
+        } else {
+            return BaseResult.Error(Failure(408, "Request Timeout"))
+        }
+    }
+
+    override suspend fun deletePlanner(plannerId: Long): BaseResult<Unit, Failure> {
+        val deletePlanner = plannerRemoteSource.deletePlanner(plannerId)
+        return if (deletePlanner is BaseResult.Success) {
+            planDao.deletePlanner(plannerId)
+            return BaseResult.Success(Unit)
+        } else {
+            return BaseResult.Error(Failure(408, "Request Timeout"))
+        }
+    }
+
+    override suspend fun findPlanner(plannerId: Long): BaseResult<PlannerEntity, Failure> {
+        val plannerExist = plannerRemoteSource.isExist(plannerId)
+        return if(plannerExist is BaseResult.Success) {
+            if(plannerExist.data){
+                val planner = plannerRemoteSource.findPlanner(plannerId)
+                if(planner is BaseResult.Success){
+                    return BaseResult.Success(planner.data)
+                }else{
+                    return BaseResult.Error(Failure(408, "Request Timeout"))
+                }
+            }else{
+                // 존재하지 않는다 -> err code가 1일 경우 Message를 띄워 사용자에게 알려줘야 한다.
+                planDao.deletePlanner(plannerId)
+                return BaseResult.Error(Failure(1, "Already deleted"))
+            }
+        }else{
+            return BaseResult.Error(Failure(408, "Request Timeout"))
+        }
+    }
 }

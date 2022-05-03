@@ -74,20 +74,6 @@ class PlanRepositoryImpl @Inject constructor(
     }
 
     /**
-     * Home 화면에서 planner 추가 버튼을 눌렀을 때 호출되는 함수
-     */
-    override suspend fun createPlanner(user_id : String): Long {
-        val remotePlanner = planRemoteSource.createPlanner(user_id)
-        if (remotePlanner is BaseResult.Success) {
-            planDao.insertPlanner(remotePlanner.data)
-            return remotePlanner.data.planner_id
-        } else {
-            Log.e("[PlanRepositoryImpl]", "Network를 확인하세요")
-            return -1
-        }
-    }
-
-    /**
      * Home 화면에서 기존의 planner를 선택했을 때 호출되는 함수 -> Server DB와 Local DB를 동기화
      * Logic 1) RemoteDB에서 planner fetch
      *       2) LocalDB에서 planner fetch

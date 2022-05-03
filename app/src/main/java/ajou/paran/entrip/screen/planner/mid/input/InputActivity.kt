@@ -27,9 +27,6 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
         private const val TAG = "[InputActivity]"
     }
 
-    private lateinit var preImageView: ImageView
-    private var preImageColor: Int = 0
-
     private val viewModel: InputViewModel by viewModels()
 
     override fun init(savedInstanceState: Bundle?) {

@@ -11,45 +11,6 @@ import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
 
 
 class PlanRemoteSource constructor(private val planApi: PlanApi) {
-    /**
-     *  Home 화면 -> Planner 로 넘어가는 과정에서 사용자가
-     *  planner list 중 planner를 선택했을 때 호출되는 함수
-     *  isExist -> True : 해당 planner가 서버에 있으므로 planView로 넘어가서 sync작업
-     *          -> False : 해당 planner가 서버에 없으므로 planView로 넘어가지 않고,
-     *                     Home 화면에 Planner가 없다고 알려줘야 한다.
-     */
-    suspend fun isExist(planner_id: Long): BaseResult<Boolean, Failure> {
-        try {
-            val response = planApi.isExist(planner_id)
-            return if (response.status == 200) {
-                BaseResult.Success(response.data!!)
-            } else {
-                BaseResult.Error(Failure(500, response.message))
-            }
-        } catch (e: NoInternetException) {
-            return BaseResult.Error(Failure(0, e.message))
-        } catch (e: Exception) {
-            return BaseResult.Error(Failure(-1, e.message.toString()))
-        }
-    }
-
-    suspend fun createPlanner(user_id : String): BaseResult<PlannerEntity, Failure> {
-        try {
-            val response = planApi.createPlanner(user_id)
-            return if (response.status == 200) {
-                val planner = response.data?.let { t ->
-                    PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp)
-                }
-                BaseResult.Success(planner!!)
-            } else {
-                BaseResult.Error(Failure(500, response.message))
-            }
-        } catch (e: NoInternetException) {
-            return BaseResult.Error(Failure(0, e.message))
-        } catch (e: Exception) {
-            return BaseResult.Error(Failure(-1, e.message.toString()))
-        }
-    }
 
     suspend fun fetchPlans(planner_idFK: Long): BaseResult<List<PlanEntity>, Failure> {
         try {
@@ -72,6 +33,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
         }
     }
 
+    // PlannerRepositoryImpl의 findPlanner와 동일 -> 필요없으면 삭제
     suspend fun fetchPlanner(planner_id: Long): BaseResult<PlannerEntity, Failure> {
         try {
             val response = planApi.fetchPlanner(planner_id)
@@ -81,7 +43,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
                 }
                 BaseResult.Success(planner!!)
             } else {
-                BaseResult.Error(Failure(500, response.message))
+                BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
             return BaseResult.Error(Failure(0, e.message))
@@ -90,11 +52,6 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
         }
     }
 
-    /**         Return Response             Send Request(parameter)
-     * insert - PlanEntity                  PlanRequest
-     * delete - 지웠던 plan id               plan id
-     * update - PlanEntity                  planEntity
-     */
     suspend fun insertPlan(plan: PlanRequest): BaseResult<PlanEntity, Failure> {
         try {
             val response = planApi.insertPlan(plan)

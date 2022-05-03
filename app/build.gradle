@@ -8,6 +8,9 @@ plugins {
 
     //navigation
     id 'androidx.navigation.safeargs.kotlin'
+
+    // parcelable 추가를 위한 extensions
+    id 'kotlin-android-extensions'
 }
 
 android {
@@ -40,6 +43,10 @@ android {
     buildFeatures{
         dataBinding true
         viewBinding true
+    }
+
+    androidExtensions{
+        experimental = true
     }
 }
 

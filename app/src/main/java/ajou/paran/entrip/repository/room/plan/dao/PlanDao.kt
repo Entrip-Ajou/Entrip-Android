@@ -42,4 +42,7 @@ interface PlanDao {
 
     @Update
     suspend fun updatePlan(planEntity: PlanEntity)
+
+    @Query("SELECT * FROM 'planner'")
+    suspend fun selectAllPlanner() : Flow<List<PlannerEntity>>
 }

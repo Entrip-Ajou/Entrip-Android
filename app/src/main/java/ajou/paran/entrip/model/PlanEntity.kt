@@ -1,9 +1,12 @@
 package ajou.paran.entrip.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(
     tableName = "plan",
     foreignKeys = arrayOf(
@@ -23,6 +26,6 @@ data class PlanEntity(
     val time : Int,
     val location : String?,
     val date : String
-)
+) : Parcelable
 
 

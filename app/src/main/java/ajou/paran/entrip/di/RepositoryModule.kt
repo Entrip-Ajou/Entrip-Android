@@ -6,7 +6,6 @@ import ajou.paran.entrip.repository.network.PlanRemoteSource
 import ajou.paran.entrip.repository.network.PlannerRemoteSource
 import ajou.paran.entrip.repository.network.api.PlanApi
 import ajou.paran.entrip.repository.room.AppDatabase
-import ajou.paran.entrip.repository.room.planner.repository.PlannerRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

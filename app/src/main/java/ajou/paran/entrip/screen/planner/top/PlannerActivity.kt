@@ -3,7 +3,6 @@ package ajou.paran.entrip.screen.planner.top
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityPlannerBinding
-import ajou.paran.entrip.model.PlannerDate
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
 import ajou.paran.entrip.util.ui.hideKeyboard
@@ -26,7 +25,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -46,6 +44,8 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     private val viewModel: PlannerActivityViewModel by viewModels()
 
     override fun init(savedInstanceState: Bundle?) {
+        
+
         viewModel.setting(intent.getLongExtra("plannerId", -1L))
 
         midFragment = MidFragment(
