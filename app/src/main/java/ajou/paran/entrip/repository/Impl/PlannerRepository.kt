@@ -8,17 +8,9 @@ import ajou.paran.entrip.util.network.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface PlannerRepository {
-    /**
-     * @fun PlannerRemoteSource에 존재하는 함수
-     * @순서 PlannerRemoteSource에 존재하는 순서
-     * **/
 
     suspend fun updatePlanner(plannerId: Long, plannerUpdateRequest: PlannerUpdateRequest) : BaseResult<Unit, Failure>
-    suspend fun insertPlanner(plannerEntity: PlannerEntity) : BaseResult<Int, Failure>
-    suspend fun selectAllPlan(plannerId: Long) : List<PlanEntity>
-    fun deleteAllPlan(plannerId: Long)
     fun getFlowPlanner(plannerId: Long): Flow<PlannerEntity>
-    fun findDBPlanner(plannerId: Long): PlannerEntity?
 
     // -------------------------      <Home화면에서의 Logic>    -----------------------------------------
 

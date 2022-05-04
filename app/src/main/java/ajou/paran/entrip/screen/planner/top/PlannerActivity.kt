@@ -4,9 +4,9 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityPlannerBinding
 import ajou.paran.entrip.model.PlannerEntity
-import ajou.paran.entrip.screen.planner.main.HomeState
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
+import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.ui.hideKeyboard
 import android.annotation.SuppressLint
 import android.content.DialogInterface
@@ -16,6 +16,7 @@ import android.text.InputType
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.util.Pair
@@ -28,8 +29,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -141,7 +140,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
 
     private fun subscribeObservers() {
         lifecycle.coroutineScope.launch {
-            viewModel.getFlowPlanner().collect {
+            viewModel.getFlowPlanner(selectedPlanner.planner_id).collect {
                 val list = getDates(it.start_date, it.end_date)
                 binding.plannerActEtTitle.setText(it.title)
                 if(it.start_date != it.end_date){
@@ -253,12 +252,12 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             .launchIn(lifecycleScope)
     }
 
-    private fun handleState(state : PlannerState){
+    private fun handleState(state : ApiState){
         when(state){
-            is PlannerState.Init -> Unit
-            is PlannerState.IsLoading -> handleLoading(state.isLoading)
-            is PlannerState.CreatePlanner -> handleCreate(state.data)
-            is PlannerState.Failure -> handleError()
+            is ApiState.Init -> Unit
+            is ApiState.IsLoading -> handleLoading(state.isLoading)
+            is ApiState.Success -> handleSuccess(state.data)
+            is ApiState.Failure -> handleError(state.code)
         }
     }
 
@@ -270,18 +269,35 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         }
     }
 
-    private fun handleCreate(data : PlannerEntity){
-        val intent = Intent(baseContext, PlannerActivity::class.java)
-        intent.putExtra("PlannerEntity", data)
-        startActivity(intent)
+    private fun handleSuccess(data : Any){
+        if(data is PlannerEntity){
+            val intent = Intent(baseContext, PlannerActivity::class.java)
+            intent.putExtra("PlannerEntity", data)
+            startActivity(intent)
+        }
     }
 
-    private fun handleError(){
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage("네트워크를 확인해주세요")
-            .setPositiveButton("확인",
-                DialogInterface.OnClickListener{ dialog, which -> })
-        builder.show()
-    }
+    private fun handleError(code : Int){
+        when(code){
+            0 -> {
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("네트워크를 확인해주세요")
+                    .setPositiveButton("확인",
+                        DialogInterface.OnClickListener{ dialog, which -> })
+                builder.show()
+            }
 
+            500 -> {
+                Toast.makeText(this,"다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
+            }
+
+            -1 -> {
+                Log.e(TAG, "최상위 Exception class에서 예외 발생 -> 코드 로직 오류")
+            }
+
+            else -> {
+                Log.e(TAG, "${code} Error handleError()에 추가 및 trouble shooting하기")
+            }
+        }
+    }
 }

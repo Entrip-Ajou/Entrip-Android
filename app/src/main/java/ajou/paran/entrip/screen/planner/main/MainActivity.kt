@@ -4,6 +4,7 @@ package ajou.paran.entrip.screen.planner.main
 import ajou.paran.entrip.databinding.ActivityMainBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
+import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -63,12 +64,12 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener{
             .launchIn(lifecycleScope)
     }
 
-    private fun handleState(state : HomeState){
+    private fun handleState(state : ApiState){
         when(state){
-            is HomeState.Init -> Unit
-            is HomeState.IsLoading -> handleLoading(state.isLoading)
-            is HomeState.Success -> handleSuccess(state.data)
-            is HomeState.Failure -> handleError(state.code)
+            is ApiState.Init -> Unit
+            is ApiState.IsLoading -> handleLoading(state.isLoading)
+            is ApiState.Success -> handleSuccess(state.data)
+            is ApiState.Failure -> handleError(state.code)
         }
     }
 

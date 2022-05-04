@@ -4,6 +4,7 @@ import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.Impl.PlannerRepository
 import ajou.paran.entrip.screen.planner.mid.PlanState
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
+import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
 import android.app.AlertDialog
 import android.content.Intent
@@ -25,15 +26,15 @@ class MainActivityViewModel
 constructor(private val plannerRepository: PlannerRepository)
     : ViewModel() {
 
-    private val _state = MutableStateFlow<HomeState>(HomeState.Init)
-    val state : StateFlow<HomeState> get() = _state
+    private val _state = MutableStateFlow<ApiState>(ApiState.Init)
+    val state : StateFlow<ApiState> get() = _state
 
     fun setLoading() {
-        _state.value = HomeState.IsLoading(true)
+        _state.value = ApiState.IsLoading(true)
     }
 
     fun hideLoading() {
-        _state.value = HomeState.IsLoading(false)
+        _state.value = ApiState.IsLoading(false)
     }
 
     suspend fun selectAllPlanner() = plannerRepository.selectAllPlanner()
@@ -44,8 +45,8 @@ constructor(private val plannerRepository: PlannerRepository)
             val res = plannerRepository.createPlanner(userId)
             hideLoading()
             when(res){
-                is BaseResult.Success -> _state.value = HomeState.Success(res.data)
-                is BaseResult.Error -> _state.value = HomeState.Failure(res.err.code)
+                is BaseResult.Success -> _state.value = ApiState.Success(res.data)
+                is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
             }
         }
     }
@@ -56,8 +57,8 @@ constructor(private val plannerRepository: PlannerRepository)
             val res = plannerRepository.deletePlanner(plannerId)
             hideLoading()
             when(res){
-                is BaseResult.Success -> _state.value = HomeState.Success(Unit)
-                is BaseResult.Error -> _state.value = HomeState.Failure(res.err.code)
+                is BaseResult.Success -> _state.value = ApiState.Success(Unit)
+                is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
             }
         }
     }
@@ -68,16 +69,10 @@ constructor(private val plannerRepository: PlannerRepository)
             val res = plannerRepository.findPlanner(plannerId)
             hideLoading()
             when(res){
-                is BaseResult.Success -> _state.value = HomeState.Success(res.data)
-                is BaseResult.Error -> _state.value = HomeState.Failure(res.err.code)
+                is BaseResult.Success -> _state.value = ApiState.Success(res.data)
+                is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
             }
         }
     }
 }
 
-sealed class HomeState {
-    object Init : HomeState()
-    data class IsLoading(val isLoading : Boolean) : HomeState()
-    data class Success(val data : Any) : HomeState()
-    data class Failure(val code : Int) : HomeState()
-}

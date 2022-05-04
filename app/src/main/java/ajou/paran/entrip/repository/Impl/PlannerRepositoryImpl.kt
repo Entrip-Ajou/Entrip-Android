@@ -19,11 +19,6 @@ constructor(
     private val planDao: PlanDao
 ) : PlannerRepository {
 
-    /**
-     * @name : updatePlanner
-     * @param : plannerId - Long, plannerEntity - PlannerEntity
-     * @return : Success - BaseResult.Success, Fail - BaseResult.Error
-     * **/
     override suspend fun updatePlanner(
         plannerId: Long,
         plannerUpdateRequest: PlannerUpdateRequest
@@ -38,32 +33,9 @@ constructor(
         }
     }
 
-    override suspend fun insertPlanner(plannerEntity: PlannerEntity): BaseResult<Int, Failure> {
-        val planner = plannerRemoteSource.findPlanner(plannerEntity.planner_id)
-        return if (planner is BaseResult.Success) {
-            planDao.insertPlanner(plannerEntity)
-            Log.d("TAG", "Success")
-            BaseResult.Success(200)
-        } else {
-            Log.d("TAG", "Fail")
-            return BaseResult.Error(Failure((planner as BaseResult.Error).err.code, planner.err.message))
-        }
-    }
-
-    override suspend fun selectAllPlan(plannerId: Long): List<PlanEntity> =
-        planDao.selectAllPlan(plannerId)
-
-    override fun deleteAllPlan(plannerId: Long) {
-        planDao.deleteAllPlan(plannerId)
-    }
-
     override fun getFlowPlanner(plannerId: Long): Flow<PlannerEntity> =
         planDao.findFlowPlanner(planner_Id = plannerId)
 
-    override fun findDBPlanner(plannerId: Long): PlannerEntity? = planDao.findPlanner(plannerId)
-
-
-// --------------------------------------------------------------------
 
     override suspend fun selectAllPlanner(): Flow<List<PlannerEntity>> = planDao.selectAllPlanner()
 
