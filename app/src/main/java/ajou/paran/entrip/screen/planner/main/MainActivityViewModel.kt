@@ -45,7 +45,7 @@ constructor(private val plannerRepository: PlannerRepository)
             hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = HomeState.Success(res.data)
-                is BaseResult.Error -> _state.value = HomeState.Failure
+                is BaseResult.Error -> _state.value = HomeState.Failure(res.err.code)
             }
         }
     }
@@ -57,7 +57,7 @@ constructor(private val plannerRepository: PlannerRepository)
             hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = HomeState.Success(Unit)
-                is BaseResult.Error -> _state.value = HomeState.Failure
+                is BaseResult.Error -> _state.value = HomeState.Failure(res.err.code)
             }
         }
     }
@@ -69,12 +69,7 @@ constructor(private val plannerRepository: PlannerRepository)
             hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = HomeState.Success(res.data)
-
-                is BaseResult.Error -> if(res.err.code == 1){
-                    _state.value = HomeState.NoExist
-                }else{
-                    _state.value = HomeState.Failure
-                }
+                is BaseResult.Error -> _state.value = HomeState.Failure(res.err.code)
             }
         }
     }
@@ -84,6 +79,5 @@ sealed class HomeState {
     object Init : HomeState()
     data class IsLoading(val isLoading : Boolean) : HomeState()
     data class Success(val data : Any) : HomeState()
-    object Failure : HomeState()
-    object NoExist : HomeState()
+    data class Failure(val code : Int) : HomeState()
 }

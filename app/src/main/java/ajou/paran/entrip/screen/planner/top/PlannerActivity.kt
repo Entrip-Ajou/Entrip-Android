@@ -3,10 +3,13 @@ package ajou.paran.entrip.screen.planner.top
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityPlannerBinding
+import ajou.paran.entrip.model.PlannerEntity
+import ajou.paran.entrip.screen.planner.main.HomeState
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
 import ajou.paran.entrip.util.ui.hideKeyboard
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -14,8 +17,12 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.core.util.Pair
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -25,6 +32,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -41,18 +50,18 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     private lateinit var navController: NavController
     private lateinit var midFragment: MidFragment
 
+    private lateinit var selectedPlanner : PlannerEntity
+
     private val viewModel: PlannerActivityViewModel by viewModels()
 
     override fun init(savedInstanceState: Bundle?) {
-        
-
-        viewModel.setting(intent.getLongExtra("plannerId", -1L))
+        selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
 
         midFragment = MidFragment(
-            // TODO date의 경우 db에 startDate 와 endDate 가 생기는 경우 변
-            date = intent.getStringExtra("date") ?: ( viewModel.getPlannerStartDate() ?: "22/04/30"),
-            plannerId = intent.getLongExtra("plannerId", -1L)
+            date = selectedPlanner.start_date,
+            plannerId = selectedPlanner.planner_id
         )
+
         if (savedInstanceState == null)
             setUpBottomNavigationBar()
         binding.plannerActEtTitle.setOnKeyListener { _, keyCode, event ->
@@ -62,12 +71,13 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 binding.plannerActEtTitle.inputType = InputType.TYPE_NULL
                 binding.plannerActEtTitle.isCursorVisible = false
                 hideKeyboard()
-                viewModel.plannerChange(binding.plannerActEtTitle.text.toString())
+                viewModel.plannerChange(binding.plannerActEtTitle.text.toString(), selectedPlanner)
                 true
             } else {
                 false
             }
         }
+        observeState()
         initDateRecyclerView()
         subscribeObservers()
     }
@@ -104,7 +114,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 }
                 binding.plannerActIvPlannerAdd.id -> {
                     Log.d(TAG, "Case: Add planner")
-                    showPlannerAddDeleteDialog()
+                    viewModel.createPlanner("test1")
                 }
                 binding.plannerActPersonAdd.id -> {
                     Log.d(TAG, "Case: Add user")
@@ -172,29 +182,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
 
     }
 
-    private fun showPlannerAddDeleteDialog() {
-        val btnSheet = layoutInflater.inflate(R.layout.layout_bottom_sheet_planner_edit, null)
-        val dialog = BottomSheetDialog(this)
-        dialog.setContentView(btnSheet)
-        btnSheet.findViewById<MaterialButton>(R.id.addBtn).setOnClickListener{
-            Log.d(TAG, "Dialog.dismiss: addBtn")
-            lifecycle.coroutineScope.launch {
-                viewModel.plannerAdd("test1").collect {
-                    val intent = Intent(baseContext, PlannerActivity::class.java)
-                    intent.putExtra("plannerId", it)
-                    startActivity(intent)
-                }
-            }
-            dialog.dismiss()
-        }
-        btnSheet.findViewById<MaterialButton>(R.id.deleteBtn).setOnClickListener{
-            Log.d(TAG, "Dialog.dismiss: deleteBtn")
-            viewModel.plannerDataDelete()
-            dialog.dismiss()
-        }
-        dialog.show()
-    }
-
     @SuppressLint("RestrictedApi")
     private fun startDateRangePicker() {
         val selector = CustomMaterialDatePicker()
@@ -223,7 +210,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 start_date = "$s_year/$s_month/$s_day",
                 end_date = "$e_year/$e_month/$e_day"
             )
-            viewModel.plannerChange(mutableList.toList())
+            viewModel.plannerChange(mutableList.toList(), selectedPlanner)
             midFragment.setAdapter(format.format(pairDate.first))
         }
     }
@@ -259,4 +246,42 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
 
         return mutableList
     }
+
+    private fun observeState(){
+        viewModel.state.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .onEach{ handleState(it) }
+            .launchIn(lifecycleScope)
+    }
+
+    private fun handleState(state : PlannerState){
+        when(state){
+            is PlannerState.Init -> Unit
+            is PlannerState.IsLoading -> handleLoading(state.isLoading)
+            is PlannerState.CreatePlanner -> handleCreate(state.data)
+            is PlannerState.Failure -> handleError()
+        }
+    }
+
+    private fun handleLoading(isLoading : Boolean){
+        if(isLoading){
+            binding.plannerLoadingBar.visibility = View.VISIBLE
+        }else{
+            binding.plannerLoadingBar.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun handleCreate(data : PlannerEntity){
+        val intent = Intent(baseContext, PlannerActivity::class.java)
+        intent.putExtra("PlannerEntity", data)
+        startActivity(intent)
+    }
+
+    private fun handleError(){
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("네트워크를 확인해주세요")
+            .setPositiveButton("확인",
+                DialogInterface.OnClickListener{ dialog, which -> })
+        builder.show()
+    }
+
 }

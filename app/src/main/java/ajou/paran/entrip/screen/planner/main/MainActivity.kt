@@ -68,8 +68,7 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener{
             is HomeState.Init -> Unit
             is HomeState.IsLoading -> handleLoading(state.isLoading)
             is HomeState.Success -> handleSuccess(state.data)
-            is HomeState.Failure -> handleError()
-            is HomeState.NoExist -> handleNoExist()
+            is HomeState.Failure -> handleError(state.code)
         }
     }
 
@@ -86,19 +85,39 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener{
             val intent = Intent(this, PlannerActivity::class.java)
             intent.putExtra("PlannerEntity", data)
             startActivity(intent)
+            finish()
         }
     }
 
-    private fun handleError(){
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage("네트워크를 확인해주세요")
-            .setPositiveButton("확인",
-                DialogInterface.OnClickListener{ dialog, which -> })
-        builder.show()
-    }
+    /**
+     *    <<< 개발 과정에서 추가적인 Error 발생 시 이쪽에 추가하기 >>>
+     *    0 -> NoInternetException
+     *    -1 -> Exception
+     *    500 -> Internal Server Error
+     *
+     */
+    private fun handleError(code : Int){
+        when(code){
+            0 -> {
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("네트워크를 확인해주세요")
+                    .setPositiveButton("확인",
+                        DialogInterface.OnClickListener{ dialog, which -> })
+                builder.show()
+            }
 
-    private fun handleNoExist(){
-        Toast.makeText(this,"이미 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
+            500 -> {
+                Toast.makeText(this,"다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
+            }
+
+            -1 -> {
+                Log.e(TAG, "최상위 Exception class에서 예외 발생 -> 코드 로직 오류")
+            }
+
+            else -> {
+                Log.e(TAG, "${code} Error handleError()에 추가 및 trouble shooting하기")
+            }
+        }
     }
 
     override fun onDeletePlannerClickListener(plannerEntity: PlannerEntity) {

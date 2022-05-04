@@ -24,7 +24,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
                 }
                 BaseResult.Success(plans)
             } else {
-                BaseResult.Error(Failure(500, response.message))
+                BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
             return BaseResult.Error(Failure(0, e.message))
@@ -61,7 +61,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
                 }
                 BaseResult.Success(plan!!)
             }else{
-                BaseResult.Error(Failure(500, response.message))
+                BaseResult.Error(Failure(response.status, response.message))
             }
         }catch(e: NoInternetException){
             return BaseResult.Error(Failure(0, e.message))
@@ -76,7 +76,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
             return if(response.status == 200){
                 BaseResult.Success(response.data!!)
             }else{
-                BaseResult.Error(Failure(500, response.message))
+                BaseResult.Error(Failure(response.status, response.message))
             }
         }catch(e: NoInternetException){
             return BaseResult.Error(Failure(0, e.message))
@@ -94,7 +94,7 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
                 }
                 BaseResult.Success(plan!!)
             }else{
-                BaseResult.Error(Failure(500, response.message))
+                BaseResult.Error(Failure(response.status, response.message))
             }
         }catch(e: NoInternetException){
             return BaseResult.Error(Failure(0, e.message))

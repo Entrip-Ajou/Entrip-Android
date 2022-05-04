@@ -2,6 +2,7 @@ package ajou.paran.entrip.repository.network
 
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.api.PlanApi
+import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
@@ -20,7 +21,7 @@ class PlannerRemoteSource constructor(private val planApi: PlanApi) {
                 }
                 BaseResult.Success(planner!!)
             } else {
-                BaseResult.Error(Failure(500, response.message))
+                BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
             return BaseResult.Error(Failure(0, e.message))
@@ -34,28 +35,23 @@ class PlannerRemoteSource constructor(private val planApi: PlanApi) {
      * @PathVariable : Long planner_id
      * @RequestBody : String title, String start_date, String end_date
      * **/
-    suspend fun updatePlanner(plannerId: Long, planner: PlannerEntity): BaseResult<PlannerEntity, Failure>
+    suspend fun updatePlanner(plannerId: Long, planner: PlannerUpdateRequest): BaseResult<PlannerEntity, Failure>
             = try {
-        val response = planApi.updatePlanner(
-            plannerId,
-            UpdatePlannerRequestDto(
-                title = planner.title,
-                start_date = planner.start_date,
-                end_date = planner.end_date
-            )
-        )
-        if (response.httpStatus == 200) {
+        val response = planApi.updatePlanner(plannerId,planner)
+        if (response.status == 200) {
             val updatePlanner = response.data.let { t ->
                 PlannerEntity(
                     planner_id = t.planner_id,
                     title = t.title,
                     start_date = t.start_date,
                     end_date = t.end_date,
-                    timeStamp = t.timeStamp)
+                    time_stamp = t.time_stamp,
+                    comment_timestamp = t.comment_timestamp
+                )
             }
             BaseResult.Success(updatePlanner)
         }else{
-            BaseResult.Error(Failure(500, response.message))
+            BaseResult.Error(Failure(response.status, response.message))
         }
     }catch(e: NoInternetException){
         BaseResult.Error(Failure(0, e.message))
