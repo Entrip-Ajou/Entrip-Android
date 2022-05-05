@@ -33,13 +33,12 @@ class PlanRemoteSource constructor(private val planApi: PlanApi) {
         }
     }
 
-    // PlannerRepositoryImpl의 findPlanner와 동일 -> 필요없으면 삭제
     suspend fun fetchPlanner(planner_id: Long): BaseResult<PlannerEntity, Failure> {
         try {
             val response = planApi.fetchPlanner(planner_id)
             return if (response.status == 200) {
                 val planner = response.data?.let { t ->
-                    PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp)
+                    PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp, t.comment_timeStamp)
                 }
                 BaseResult.Success(planner!!)
             } else {

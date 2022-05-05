@@ -9,9 +9,9 @@ import ajou.paran.entrip.util.network.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface PlanRepository {
-    suspend fun insertPlan(planRequest: PlanRequest) : BaseResult<Int, Failure>
+    suspend fun insertPlan(planRequest: PlanRequest) : BaseResult<Unit, Failure>
     fun selectPlan(planDate : String, plannerId : Long) : Flow<List<PlanEntity>>
-    suspend fun deletePlan(plan_id : Long, planner_id : Long) : BaseResult<Int, Failure>
-    suspend fun updatePlan(plan_id:Long, plan: PlanUpdateRequest) : BaseResult<Int, Failure>
+    suspend fun deletePlan(plan_id : Long, planner_id : Long) : BaseResult<Unit, Failure>
+    suspend fun updatePlan(plan_id:Long, plan: PlanUpdateRequest) : BaseResult<Unit, Failure>
     suspend fun syncRemoteDB(planner_id: Long) : Flow<BaseResult<Any, Failure>>
 }

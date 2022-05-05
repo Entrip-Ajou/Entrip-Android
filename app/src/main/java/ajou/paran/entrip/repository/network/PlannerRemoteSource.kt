@@ -17,7 +17,7 @@ class PlannerRemoteSource constructor(private val planApi: PlanApi) {
             val response = planApi.createPlanner(user_id)
             return if (response.status == 200) {
                 val planner = response.data?.let { t ->
-                    PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp, t.user_timeStamp, t.comment_timeStamp)
+                    PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp, t.comment_timeStamp)
                 }
                 BaseResult.Success(planner!!)
             } else {
@@ -68,7 +68,7 @@ class PlannerRemoteSource constructor(private val planApi: PlanApi) {
             val response = planApi.fetchPlanner(plannerId)
             return if (response.status == 200) {
                 val planner = response.data?.let { t ->
-                    PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp, t.user_timeStamp, t.comment_timeStamp)
+                    PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp, t.comment_timeStamp)
                 }
                 BaseResult.Success(planner!!)
             } else {

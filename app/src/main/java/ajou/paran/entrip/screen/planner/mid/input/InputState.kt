@@ -14,7 +14,7 @@ sealed class InputState{
     // 필수 기입 항목들을 모두 기입한 상태
     object Success : InputState()
 
-    object Failure : InputState()
+    data class Failure(val code : Int) : InputState()
 
     data class IsLoading(val isLoading : Boolean) : InputState()
 }

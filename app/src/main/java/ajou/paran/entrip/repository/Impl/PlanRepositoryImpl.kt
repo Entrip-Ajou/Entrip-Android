@@ -21,51 +21,51 @@ class PlanRepositoryImpl @Inject constructor(
     private val planDao: PlanDao
 ) : PlanRepository {
 
-    override suspend fun insertPlan(planRequest: PlanRequest) : BaseResult<Int, Failure>{
+    override suspend fun insertPlan(planRequest: PlanRequest) : BaseResult<Unit, Failure>{
         val plan = planRemoteSource.insertPlan(planRequest)
         if(plan is BaseResult.Success){
             planDao.insertPlan(plan.data)
             val planner = planRemoteSource.fetchPlanner(plan.data.planner_idFK)
             if(planner is BaseResult.Success){
                 planDao.updatePlanner(planner.data)
-                return BaseResult.Success(200)
+                return BaseResult.Success(Unit)
             }else{
-                return BaseResult.Error(Failure(408, "Request TimeOut"))
+                return BaseResult.Error(Failure((planner as BaseResult.Error).err.code,planner.err.message))
             }
         }else{
-            return BaseResult.Error(Failure(408, "Request TimeOut"))
+            return BaseResult.Error(Failure((plan as BaseResult.Error).err.code,plan.err.message))
         }
     }
 
-    override suspend fun deletePlan(plan_id: Long, planner_id : Long) : BaseResult<Int, Failure> {
+    override suspend fun deletePlan(plan_id: Long, planner_id : Long) : BaseResult<Unit, Failure> {
         val plan = planRemoteSource.deletePlan(plan_id)
         if(plan is BaseResult.Success){
             planDao.deletePlan(plan.data)
             val planner = planRemoteSource.fetchPlanner(planner_id)
             if(planner is BaseResult.Success){
                 planDao.updatePlanner(planner.data)
-                return BaseResult.Success(200)
+                return BaseResult.Success(Unit)
             }else{
-                return BaseResult.Error(Failure(408, "Request TimeOut"))
+                return BaseResult.Error(Failure((planner as BaseResult.Error).err.code,planner.err.message))
             }
         }else{
-            return BaseResult.Error(Failure(408, "Request TimeOut"))
+            return BaseResult.Error(Failure((plan as BaseResult.Error).err.code, plan.err.message))
         }
     }
 
-    override suspend fun updatePlan(plan_id: Long, plan : PlanUpdateRequest) : BaseResult<Int, Failure> {
+    override suspend fun updatePlan(plan_id: Long, plan : PlanUpdateRequest) : BaseResult<Unit, Failure> {
         val plan = planRemoteSource.updatePlan(plan_id, plan)
         if(plan is BaseResult.Success){
             planDao.updatePlan(plan.data)
             val planner = planRemoteSource.fetchPlanner(plan.data.planner_idFK)
             if(planner is BaseResult.Success){
                 planDao.updatePlanner(planner.data)
-                return BaseResult.Success(200)
+                return BaseResult.Success(Unit)
             }else{
-                return BaseResult.Error(Failure(408, "Request TimeOut"))
+                return BaseResult.Error(Failure((planner as BaseResult.Error).err.code,planner.err.message))
             }
         }else{
-            return BaseResult.Error(Failure(408, "Request TimeOut"))
+            return BaseResult.Error(Failure((plan as BaseResult.Error).err.code,plan.err.message))
         }
     }
 
@@ -91,7 +91,7 @@ class PlanRepositoryImpl @Inject constructor(
 
             if (remotePlanner is BaseResult.Success) {
                 val remoteTimestamp: String = remotePlanner.data.time_stamp
-                val localTimestamp: String = localPlanner.time_stamp
+                val localTimestamp: String = localPlanner!!.time_stamp
 
                 if (remoteTimestamp.equals(localTimestamp)) {
                     emit(BaseResult.Success(localTimestamp))
@@ -101,12 +101,13 @@ class PlanRepositoryImpl @Inject constructor(
                     val remoteDB_plan = planRemoteSource.fetchPlans(planner_id)
                     if (remoteDB_plan is BaseResult.Success) {
                         savePlanToLocal(remoteDB_plan.data, planner_id)
+                        emit(BaseResult.Success(remoteTimestamp))
+                    }else{
+                        emit(BaseResult.Error(Failure((remoteDB_plan as BaseResult.Error).err.code, remoteDB_plan.err.message)))
                     }
-                    emit(BaseResult.Success(remoteTimestamp))
                 }
             }else{
-                // 연결 시도 실패
-                emit(BaseResult.Error(Failure(408,"Request Timeout")))
+                emit(BaseResult.Error(Failure((remotePlanner as BaseResult.Error).err.code, remotePlanner.err.message)))
             }
         }
     }
@@ -128,10 +129,5 @@ class PlanRepositoryImpl @Inject constructor(
                 }
             }
         }.flowOn(Dispatchers.IO)
-    }
-
-    suspend fun findPlanner(planner_id : Long) : PlannerEntity{
-        val planner = planDao.findPlanner(planner_id)
-        return planner
     }
 }

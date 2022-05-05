@@ -2,6 +2,7 @@ package ajou.paran.entrip.screen.planner.mid
 
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.repository.Impl.PlanRepositoryImpl
+import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -80,8 +81,11 @@ class MidViewModel @Inject constructor(
 
     fun deletePlan(plan_id: Long, planner_id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
+            setLoading()
             val res = planRepository.deletePlan(plan_id, planner_id)
-            if(res is BaseResult.Error) Log.e(TAG,"Error Code : ${res.err.code}, Error Message : ${res.err.message}")
+            hideLoading()
+            if(res is BaseResult.Success) _state.value = PlanState.Success
+            else _state.value = PlanState.Failure((res as BaseResult.Error).err.code)
         }
     }
 }
@@ -90,4 +94,6 @@ sealed class PlanState {
     object Init : PlanState()
     data class IsLoading(val isLoading: Boolean) : PlanState()
     data class IsUpdate(val isUpdate: Boolean) : PlanState()
+    object Success : PlanState()
+    data class Failure(val code : Int) : PlanState()
 }

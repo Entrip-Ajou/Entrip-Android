@@ -2,15 +2,20 @@ package ajou.paran.entrip.screen.planner.mid
 
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.model.PlanEntity
+import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import ajou.paran.entrip.util.ui.SwipeHelperCallback
 import ajou.paran.entrip.util.ui.VerticalSpaceItemDecoration
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -116,6 +121,32 @@ constructor(
             is PlanState.Init -> Unit
             is PlanState.IsLoading -> handleLoading(state.isLoading)
             is PlanState.IsUpdate -> handleUpdate(state.isUpdate)
+            is PlanState.Success -> Unit
+            is PlanState.Failure -> handleError(state.code)
+        }
+    }
+
+    private fun handleError(code : Int){
+        when(code){
+            0 -> {
+                val builder = AlertDialog.Builder(activity!!)
+                builder.setMessage("네트워크를 확인해주세요")
+                    .setPositiveButton("확인",
+                        DialogInterface.OnClickListener{ dialog, which -> })
+                builder.show()
+            }
+
+            500 -> {
+                Toast.makeText(activity,"다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
+            }
+
+            -1 -> {
+                Log.e(TAG, "최상위 Exception class에서 예외 발생 -> 코드 로직 오류")
+            }
+
+            else -> {
+                Log.e(TAG, "${code} Error handleError()에 추가 및 trouble shooting하기")
+            }
         }
     }
 

@@ -87,7 +87,7 @@ class InputViewModel @Inject constructor(
                             _inputState.value = InputState.Success
                         }else{
                             _inputState.value = InputState.IsLoading(false)
-                            _inputState.value = InputState.Failure
+                            _inputState.value = InputState.Failure((res as BaseResult.Error).err.code)
                         }
                     }
                 }else{
@@ -105,7 +105,7 @@ class InputViewModel @Inject constructor(
                             _inputState.value = InputState.Success
                         }else{
                             _inputState.value = InputState.IsLoading(false)
-                            _inputState.value = InputState.Failure
+                            _inputState.value = InputState.Failure((res as BaseResult.Error).err.code)
                         }
                     }
                 }

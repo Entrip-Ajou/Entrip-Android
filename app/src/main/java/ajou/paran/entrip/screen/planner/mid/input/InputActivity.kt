@@ -3,8 +3,10 @@ package ajou.paran.entrip.screen.planner.mid.input
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityInputBinding
+import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import android.app.TimePickerDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -14,6 +16,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -122,7 +125,27 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
                 }
 
                 is InputState.Failure -> {
-                    Toast.makeText(this, "네트워크를 확인 해주세요", Toast.LENGTH_LONG).show()
+                    when(it.code){
+                        0 -> {
+                            val builder = AlertDialog.Builder(this)
+                            builder.setMessage("네트워크를 확인해주세요")
+                                .setPositiveButton("확인",
+                                    DialogInterface.OnClickListener{ dialog, which -> })
+                            builder.show()
+                        }
+
+                        500 -> {
+                            Toast.makeText(this,"다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
+                        }
+
+                        -1 -> {
+                            Log.e(TAG, "최상위 Exception class에서 예외 발생 -> 코드 로직 오류")
+                        }
+
+                        else -> {
+                            Log.e(TAG, "${it.code} Error handleError()에 추가 및 trouble shooting하기")
+                        }
+                    }
                 }
             }
         }
