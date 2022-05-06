@@ -24,4 +24,7 @@ interface PlannerRepository {
 
     // step 4. Home 화면에서 planner를 선택했을 때
     suspend fun findPlanner(plannerId : Long) : BaseResult<PlannerEntity, Failure>
+
+    // step 5. 서버와 sync를 맞춤(PlanRepository -> PlannerRepository로 Migration)
+    suspend fun syncRemoteDB(planner_id: Long) : Flow<BaseResult<Any, Failure>>
 }

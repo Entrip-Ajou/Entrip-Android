@@ -7,7 +7,6 @@ import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
-import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.ui.hideKeyboard
 import android.annotation.SuppressLint
 import android.content.DialogInterface
@@ -78,6 +77,8 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             }
         }
         observeState()
+        viewModel.syncRemoteDB(selectedPlanner.planner_id)
+        viewModel.observeTimeStamp(selectedPlanner.planner_id)
         initDateRecyclerView()
         subscribeObservers()
     }
@@ -254,12 +255,13 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             .launchIn(lifecycleScope)
     }
 
-    private fun handleState(state : ApiState){
+    private fun handleState(state : PlannerState){
         when(state){
-            is ApiState.Init -> Unit
-            is ApiState.IsLoading -> handleLoading(state.isLoading)
-            is ApiState.Success -> handleSuccess(state.data)
-            is ApiState.Failure -> handleError(state.code)
+            is PlannerState.Init -> Unit
+            is PlannerState.IsLoading -> handleLoading(state.isLoading)
+            is PlannerState.IsUpdate -> handleUpdate(state.isUpdate)
+            is PlannerState.Success -> handleSuccess(state.data)
+            is PlannerState.Failure -> handleError(state.code)
         }
     }
 
@@ -269,6 +271,10 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         }else{
             binding.plannerLoadingBar.visibility = View.INVISIBLE
         }
+    }
+
+    private fun handleUpdate(isUpdate : Boolean){
+        if(isUpdate) viewModel.syncRemoteDB(selectedPlanner.planner_id)
     }
 
     private fun handleSuccess(data : Any){
@@ -290,7 +296,15 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             }
 
             500 -> {
-                Toast.makeText(this,"다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("다른 사용자로 의해 삭제되었습니다.")
+                    .setPositiveButton("확인",
+                        DialogInterface.OnClickListener{ dialog, which ->
+                            val intent = Intent(this, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        })
+                builder.show()
             }
 
             -1 -> {

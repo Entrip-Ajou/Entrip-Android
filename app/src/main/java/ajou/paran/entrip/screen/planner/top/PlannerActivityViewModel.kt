@@ -3,17 +3,13 @@ package ajou.paran.entrip.screen.planner.top
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
 import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
-import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 /**
@@ -31,15 +27,27 @@ constructor(
         private const val TAG = "[PlannerActViewModel]"
     }
 
-    private val _state = MutableStateFlow<ApiState>(ApiState.Init)
-    val state : StateFlow<ApiState> get() = _state
+    private val _state = MutableStateFlow<PlannerState>(PlannerState.Init)
+    val state : StateFlow<PlannerState> get() = _state
+
+    private lateinit var lastTimeStamp: String
+    private lateinit var job: Job
+
 
     fun setLoading() {
-        _state.value = ApiState.IsLoading(true)
+        _state.value = PlannerState.IsLoading(true)
     }
 
     fun hideLoading() {
-        _state.value = ApiState.IsLoading(false)
+        _state.value = PlannerState.IsLoading(false)
+    }
+
+    private fun setUpdate(){
+        _state.value = PlannerState.IsUpdate(true)
+    }
+
+    private fun setNotUpdate(){
+        _state.value = PlannerState.IsUpdate(false)
     }
 
 
@@ -52,8 +60,8 @@ constructor(
             delay(500)
             hideLoading()
             when(res){
-                is BaseResult.Success -> _state.value = ApiState.Success(res.data)
-                is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
+                is BaseResult.Success -> _state.value = PlannerState.Success(res.data)
+                is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
             }
         }
     }
@@ -70,8 +78,8 @@ constructor(
             delay(500)
             hideLoading()
             when(res){
-                is BaseResult.Success -> _state.value = ApiState.Success(Unit)
-                is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
+                is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
+                is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
             }
         }
     }
@@ -89,9 +97,52 @@ constructor(
             delay(500)
             hideLoading()
             when(res){
-                is BaseResult.Success -> _state.value = ApiState.Success(Unit)
-                is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
+                is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
+                is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
             }
         }
     }
+
+    fun syncRemoteDB(planner_id: Long) {
+        job = viewModelScope.launch(Dispatchers.IO) {
+            plannerRepository.syncRemoteDB(planner_id)
+                .catch { e ->
+                    Log.e(TAG, "Error message = " + e.message)
+                }
+                .collect { res ->
+                    when (res) {
+                        is BaseResult.Success -> {
+                            lastTimeStamp = res.data as String
+                        }
+                        is BaseResult.Error -> {
+                            _state.value = PlannerState.Failure(500)
+                        }
+                    }
+                }
+        }
+    }
+
+    fun observeTimeStamp(planner_id: Long){
+        runBlocking{
+            job.join()
+        }
+        viewModelScope.launch{
+            plannerRepository.latestTimeStamp(planner_id).collectLatest{
+                when {
+                    it == "NotExist" -> _state.value = PlannerState.Failure(500)
+                    lastTimeStamp != it -> setUpdate()
+                    else -> setNotUpdate()
+                }
+            }
+        }
+    }
+
+}
+
+sealed class PlannerState {
+    object Init : PlannerState()
+    data class IsLoading(val isLoading: Boolean) : PlannerState()
+    data class IsUpdate(val isUpdate: Boolean) : PlannerState()
+    data class Success(val data : Any) : PlannerState()
+    data class Failure(val code : Int) : PlannerState()
 }

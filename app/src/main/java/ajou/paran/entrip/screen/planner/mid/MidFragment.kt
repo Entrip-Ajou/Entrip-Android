@@ -4,6 +4,7 @@ import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
+import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.ui.SwipeHelperCallback
 import ajou.paran.entrip.util.ui.VerticalSpaceItemDecoration
 import android.annotation.SuppressLint
@@ -58,8 +59,6 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         binding.rvPlan.addItemDecoration(VerticalSpaceItemDecoration(-8))
         observeState()
-        viewModel.syncRemoteDB(plannerId)
-        viewModel.observeTimeStamp(plannerId)
         setAdapter(date)
     }
 
@@ -116,13 +115,12 @@ constructor(
             .launchIn(lifecycleScope)
     }
 
-    private fun handleState(state : PlanState){
+    private fun handleState(state : ApiState){
         when(state){
-            is PlanState.Init -> Unit
-            is PlanState.IsLoading -> handleLoading(state.isLoading)
-            is PlanState.IsUpdate -> handleUpdate(state.isUpdate)
-            is PlanState.Success -> Unit
-            is PlanState.Failure -> handleError(state.code)
+            is ApiState.Init -> Unit
+            is ApiState.IsLoading -> handleLoading(state.isLoading)
+            is ApiState.Success -> Unit
+            is ApiState.Failure -> handleError(state.code)
         }
     }
 
@@ -148,10 +146,6 @@ constructor(
                 Log.e(TAG, "${code} Error handleError()에 추가 및 trouble shooting하기")
             }
         }
-    }
-
-    private fun handleUpdate(isUpdate : Boolean){
-        if(isUpdate) viewModel.syncRemoteDB(plannerId)
     }
 
     private fun handleLoading(isLoading : Boolean){

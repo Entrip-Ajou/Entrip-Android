@@ -11,28 +11,6 @@ import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
 
 
 class PlanRemoteSource constructor(private val planApi: PlanApi) {
-
-    suspend fun fetchPlans(planner_idFK: Long): BaseResult<List<PlanEntity>, Failure> {
-        try {
-            val response = planApi.fetchPlans(planner_idFK)
-            return if (response.status == 200) {
-                val plans = mutableListOf<PlanEntity>()
-                response.data?.forEach { t ->
-                    plans.add(
-                        PlanEntity(t.id, t.planner_idFK, t.todo, t.rgb, t.time, t.location, t.date)
-                    )
-                }
-                BaseResult.Success(plans)
-            } else {
-                BaseResult.Error(Failure(response.status, response.message))
-            }
-        } catch (e: NoInternetException) {
-            return BaseResult.Error(Failure(0, e.message))
-        } catch (e: Exception) {
-            return BaseResult.Error(Failure(-1, e.message.toString()))
-        }
-    }
-
     suspend fun fetchPlanner(planner_id: Long): BaseResult<PlannerEntity, Failure> {
         try {
             val response = planApi.fetchPlanner(planner_id)
