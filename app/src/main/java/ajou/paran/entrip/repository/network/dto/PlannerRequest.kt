@@ -12,5 +12,5 @@ data class PlannerRequest(
 data class PlannerUpdateRequest(
     @SerializedName("title") var title: String,
     @SerializedName("start_date") var start_date: String,
-    @SerializedName("end_date") var end_date: String,
+    @SerializedName("end_date") var end_date: String
 )

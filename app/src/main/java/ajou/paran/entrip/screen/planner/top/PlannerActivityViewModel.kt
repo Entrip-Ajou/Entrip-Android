@@ -1,7 +1,7 @@
 package ajou.paran.entrip.screen.planner.top
 
 import ajou.paran.entrip.model.PlannerEntity
-import ajou.paran.entrip.repository.Impl.PlannerRepository
+import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
 import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +25,7 @@ import javax.inject.Inject
 class PlannerActivityViewModel
 @Inject
 constructor(
-    private val plannerRepository: PlannerRepository
+    private val plannerRepository: PlannerRepositoryImpl
 ) : ViewModel() {
     companion object{
         private const val TAG = "[PlannerActViewModel]"
@@ -48,6 +49,7 @@ constructor(
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
             val res = plannerRepository.createPlanner(userId)
+            delay(500)
             hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = ApiState.Success(res.data)
@@ -62,9 +64,10 @@ constructor(
                 PlannerUpdateRequest(
                     title = t.title,
                     start_date = list.first().date,
-                    end_date = list.last().date,
+                    end_date = list.last().date
                 )
             })
+            delay(500)
             hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = ApiState.Success(Unit)
@@ -80,9 +83,10 @@ constructor(
                 PlannerUpdateRequest(
                     title = title,
                     start_date = t.start_date,
-                    end_date = t.end_date,
+                    end_date = t.end_date
                 )
             })
+            delay(500)
             hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = ApiState.Success(Unit)

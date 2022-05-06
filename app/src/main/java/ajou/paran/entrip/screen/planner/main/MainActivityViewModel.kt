@@ -1,29 +1,20 @@
 package ajou.paran.entrip.screen.planner.main
 
-import ajou.paran.entrip.model.PlannerEntity
-import ajou.paran.entrip.repository.Impl.PlannerRepository
-import ajou.paran.entrip.screen.planner.mid.PlanState
-import ajou.paran.entrip.screen.planner.top.PlannerActivity
+import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
-import android.app.AlertDialog
-import android.content.Intent
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel
 @Inject
-constructor(private val plannerRepository: PlannerRepository)
+constructor(private val plannerRepository: PlannerRepositoryImpl)
     : ViewModel() {
 
     private val _state = MutableStateFlow<ApiState>(ApiState.Init)
@@ -43,6 +34,7 @@ constructor(private val plannerRepository: PlannerRepository)
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
             val res = plannerRepository.createPlanner(userId)
+            delay(500)
             hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = ApiState.Success(res.data)
@@ -55,6 +47,7 @@ constructor(private val plannerRepository: PlannerRepository)
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
             val res = plannerRepository.deletePlanner(plannerId)
+            delay(500)
             hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = ApiState.Success(Unit)
@@ -67,6 +60,7 @@ constructor(private val plannerRepository: PlannerRepository)
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
             val res = plannerRepository.findPlanner(plannerId)
+            delay(500)
             hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = ApiState.Success(res.data)

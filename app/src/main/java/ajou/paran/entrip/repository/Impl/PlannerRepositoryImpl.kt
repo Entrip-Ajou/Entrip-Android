@@ -1,6 +1,5 @@
 package ajou.paran.entrip.repository.Impl
 
-import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.PlannerRemoteSource
 import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
@@ -39,8 +38,8 @@ constructor(
 
     override suspend fun selectAllPlanner(): Flow<List<PlannerEntity>> = planDao.selectAllPlanner()
 
-    override suspend fun createPlanner(user_id: String): BaseResult<PlannerEntity, Failure> {
-        val remotePlanner = plannerRemoteSource.createPlanner(user_id)
+    override suspend fun createPlanner(userId: String): BaseResult<PlannerEntity, Failure> {
+        val remotePlanner = plannerRemoteSource.createPlanner(userId)
         return if (remotePlanner is BaseResult.Success) {
             planDao.insertPlanner(remotePlanner.data)
             return BaseResult.Success(remotePlanner.data)

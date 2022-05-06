@@ -1,6 +1,5 @@
 package ajou.paran.entrip.repository.Impl
 
-import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
 import ajou.paran.entrip.util.network.BaseResult
@@ -18,7 +17,7 @@ interface PlannerRepository {
     suspend fun selectAllPlanner(): Flow<List<PlannerEntity>>
 
     // step 2. Planner 추가 버튼을 눌렀을 때
-    suspend fun createPlanner(userId: String) : BaseResult<PlannerEntity, Failure>
+    suspend fun createPlanner(user: String) : BaseResult<PlannerEntity, Failure>
 
     // step 3. Planner 삭제 버튼을 눌렀을 때
     suspend fun deletePlanner(plannerId: Long) : BaseResult<Unit, Failure>

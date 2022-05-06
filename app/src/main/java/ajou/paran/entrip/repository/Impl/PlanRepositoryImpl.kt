@@ -124,8 +124,10 @@ class PlanRepositoryImpl @Inject constructor(
                 if(planner is BaseResult.Success){
                     val latestTimeStamp = planner.data.time_stamp
                     emit(latestTimeStamp)
-                    Log.d("PlanRepository", "LatestTimeStamp = " + latestTimeStamp)
                     delay(5000)
+                }else{
+
+                    break
                 }
             }
         }.flowOn(Dispatchers.IO)

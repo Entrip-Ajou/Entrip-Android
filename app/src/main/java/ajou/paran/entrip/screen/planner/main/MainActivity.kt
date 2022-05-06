@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener{
         if(isLoading){
             binding.pbLoadingBar.visibility = View.VISIBLE
         }else{
-            binding.pbLoadingBar.visibility = View.INVISIBLE
+            binding.pbLoadingBar.visibility = View.GONE
         }
     }
 
@@ -131,6 +131,6 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener{
 
     override fun onPlannerAddClickListener() {
         // todo : 추후에 userId는 sharedpreference로 관리해서 넣기.
-        viewModel.createPlanner("test1")
+        viewModel.createPlanner("test2")
     }
 }

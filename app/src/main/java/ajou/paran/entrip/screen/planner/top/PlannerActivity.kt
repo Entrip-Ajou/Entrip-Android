@@ -4,6 +4,7 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityPlannerBinding
 import ajou.paran.entrip.model.PlannerEntity
+import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
 import ajou.paran.entrip.util.ApiState
@@ -99,7 +100,8 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             when(it.id){
                 binding.plannerActIvClose.id -> {
                     Log.d(TAG, "Case: Close")
-                    onBackPressed()
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
                 }
                 binding.plannerActEtTitle.id -> {
                     Log.d(TAG, "Case: Click planner title button")
@@ -113,7 +115,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 }
                 binding.plannerActIvPlannerAdd.id -> {
                     Log.d(TAG, "Case: Add planner")
-                    viewModel.createPlanner("test1")
+                    viewModel.createPlanner("test2")
                 }
                 binding.plannerActPersonAdd.id -> {
                     Log.d(TAG, "Case: Add user")

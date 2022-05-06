@@ -1,7 +1,7 @@
 package ajou.paran.entrip.screen.planner.mid.input
 
 import ajou.paran.entrip.R
-import ajou.paran.entrip.repository.Impl.PlanRepository
+import ajou.paran.entrip.repository.Impl.PlanRepositoryImpl
 import ajou.paran.entrip.repository.network.dto.PlanRequest
 import ajou.paran.entrip.repository.network.dto.PlanUpdateRequest
 import ajou.paran.entrip.util.network.BaseResult
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InputViewModel @Inject constructor(
-    private val planRepository: PlanRepository
+    private val planRepository: PlanRepositoryImpl
     ): ViewModel() {
     companion object{
         private const val TAG = "[InputViewModel]"

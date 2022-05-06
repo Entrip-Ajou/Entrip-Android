@@ -22,9 +22,6 @@ interface PlanDao {
     @Query("SELECT * FROM `plan` WHERE date = :planDate AND planner_idFK = :plannerId ORDER BY time ASC")
     fun selectPlan(planDate : String, plannerId : Long) : Flow<List<PlanEntity>>
 
-    @Query("SELECT * FROM 'plan' WHERE planner_idFK = :plannerId")
-    suspend fun selectAllPlan(plannerId: Long) : List<PlanEntity>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAllPlan(plans : List<PlanEntity>)
 
@@ -44,5 +41,5 @@ interface PlanDao {
     suspend fun updatePlan(planEntity: PlanEntity)
 
     @Query("SELECT * FROM 'planner'")
-    suspend fun selectAllPlanner() : Flow<List<PlannerEntity>>
+    fun selectAllPlanner() : Flow<List<PlannerEntity>>
 }

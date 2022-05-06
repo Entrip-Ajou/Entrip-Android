@@ -6,15 +6,16 @@ import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+import android.util.Log
 
 class PlannerRemoteSource constructor(private val planApi: PlanApi) {
     /**
      * @POST : save(2ntrip.com/api/v1/planners)
      * @RequestBody : String user_id
      * **/
-    suspend fun createPlanner(user_id : String): BaseResult<PlannerEntity, Failure> {
+    suspend fun createPlanner(userId : String): BaseResult<PlannerEntity, Failure> {
         try {
-            val response = planApi.createPlanner(user_id)
+            val response = planApi.createPlanner(userId)
             return if (response.status == 200) {
                 val planner = response.data?.let { t ->
                     PlannerEntity(t.planner_id, t.title, t.start_date, t.end_date, t.timeStamp, t.comment_timeStamp)
@@ -46,7 +47,7 @@ class PlannerRemoteSource constructor(private val planApi: PlanApi) {
                     start_date = t.start_date,
                     end_date = t.end_date,
                     time_stamp = t.time_stamp,
-                    comment_timestamp = t.comment_timestamp
+                    comment_timeStamp = t.comment_timeStamp
                 )
             }
             BaseResult.Success(updatePlanner)
