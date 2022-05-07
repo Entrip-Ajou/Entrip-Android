@@ -6,6 +6,7 @@ import ajou.paran.entrip.databinding.FragmentIntroThreeBinding
 import ajou.paran.entrip.screen.intro.login.LoginActivity
 import ajou.paran.entrip.screen.intro.register.RegisterActivity
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
+import ajou.paran.entrip.util.network.BaseResult
 import android.content.Intent
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
@@ -54,21 +55,30 @@ class IntroThreeFragment: BaseFragment<FragmentIntroThreeBinding>(R.layout.fragm
             Log.d(TAG, "Case: Click Next")
             startActivity(Intent(activity, PlannerActivity::class.java))
         }
+        subscribeObservers()
+    }
+
+    private fun subscribeObservers() {
+        viewModel.existUserResult.observe(viewLifecycleOwner){
+            if (it is BaseResult.Success){
+                if (it.data){
+                    // 이미 존재하는 아이디
+                    startActivity(Intent(context, PlannerActivity::class.java))
+                } else {
+                    // 존재하지 않는 아이디
+                    startActivity(Intent(context, RegisterActivity::class.java))
+                }
+            } else {
+                TODO("네트워크 오류 발생")
+            }
+        }
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account  = completedTask.getResult(ApiException::class.java)
             Log.d(LoginActivity.TAG, account.email.toString())
-
-            lifecycleScope.launch {
-                viewModel.isExistUser(user_id = account.email.toString()).collect {
-                    if (it == 0){
-                        viewModel.insertUserId(account.email.toString())
-                        startActivity(Intent(context, RegisterActivity::class.java))
-                    }
-                }
-            }
+            viewModel.insertUserId(account.email.toString())
         } catch (e: ApiException){
             Log.e(LoginActivity.TAG, "signInResult:failed code=" + e.statusCode)
         }

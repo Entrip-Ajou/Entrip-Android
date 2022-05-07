@@ -12,7 +12,7 @@ interface UserApi {
     @GET("api/v1/users/{user_id}")
     suspend fun findUserId(
         @Path("user_id") user_id: String
-    ) : BaseResponse<CreatePlannerDto>
+    ) : BaseResponse<Boolean>
 
     @GET("")
     suspend fun checkNickName(
