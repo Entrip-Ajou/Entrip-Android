@@ -16,6 +16,9 @@
             android:name=".screen.intro.login.LoginActivity"
             android:exported="false" />
         <activity
+            android:name=".screen.intro.register.RegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

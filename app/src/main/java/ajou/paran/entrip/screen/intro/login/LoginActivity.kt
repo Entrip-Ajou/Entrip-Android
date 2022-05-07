@@ -4,19 +4,18 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityLoginBinding
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
-import android.R.attr
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
 import javax.inject.Inject
-import android.R.attr.data
+import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 
@@ -24,10 +23,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 
 import com.google.android.gms.tasks.Task
-
-
-
-
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity
@@ -37,13 +34,14 @@ class LoginActivity
         const val TAG = "[LoginActivity]"
     }
 
-    @Inject private lateinit var googleSignInClient: GoogleSignInClient
+    @Inject lateinit var googleSignInClient: GoogleSignInClient
 
+    private val viewModel: LoginActivityViewModel by viewModels()
     private lateinit var getResult: ActivityResultLauncher<Intent>
 
     override fun init(savedInstanceState: Bundle?) {
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-            if (it.resultCode == 0){
+            if (it.resultCode == RESULT_OK){
                 val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
                 handleSignInResult(task)
             }
@@ -76,13 +74,17 @@ class LoginActivity
         try {
             val account  = completedTask.getResult(ApiException::class.java)
             Log.d(TAG, account.email.toString())
-            Log.d(TAG, account.id.toString())
-            Log.d(TAG, account.displayName.toString())
-            Log.d(TAG, account.idToken.toString())
-            Log.d(TAG, account.photoUrl.toString())
+
+            lifecycleScope.launch {
+                viewModel.isExistUser(user_id = account.email.toString()).collect {
+                    if (it == 0){
+                        viewModel.insertUserId(account.email.toString())
+                        startActivity(Intent(this@LoginActivity, PlannerActivity::class.java))
+                    }
+                }
+            }
         } catch (e: ApiException){
             Log.e(TAG, "signInResult:failed code=" + e.statusCode)
         }
     }
-
 }

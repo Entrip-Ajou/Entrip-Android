@@ -45,5 +45,4 @@ class IntroActivity: BaseActivity<ActivityIntroBinding>(R.layout.activity_intro)
             }
         }
     }
-
 }
