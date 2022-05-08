@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
-private const val NUM_PAGES = 3
+private const val NUM_PAGES = 4
 
 @AndroidEntryPoint
 class IntroActivity: BaseActivity<ActivityIntroBinding>(R.layout.activity_intro) {
@@ -41,6 +41,7 @@ class IntroActivity: BaseActivity<ActivityIntroBinding>(R.layout.activity_intro)
                 0 -> IntroOneFragment()
                 1 -> IntroTwoFragment()
                 2 -> IntroThreeFragment()
+                3 -> IntroFourFragment()
                 else -> IntroOneFragment()
             }
         }
