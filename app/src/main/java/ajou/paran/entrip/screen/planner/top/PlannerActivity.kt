@@ -56,10 +56,28 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     override fun init(savedInstanceState: Bundle?) {
         selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
 
-        midFragment = MidFragment(
-            date = selectedPlanner.start_date,
-            plannerId = selectedPlanner.planner_id
-        )
+        /**
+         *  Case 1) Planner List -> Planner Activity
+         *          - selectedPlanner를 intent로 넘겨준다.
+         *
+         *  Case 2) InputActivity -> Planner Activity
+         *          - date를 intent로 넘겨준다.
+         *
+         */
+        // Case 2에 대한 flag
+        var isFromInput = intent.getBooleanExtra("isFromInput", false)
+        if(isFromInput){
+            midFragment = MidFragment(
+                date = intent.getStringExtra("date")!!,
+                plannerId = selectedPlanner.planner_id
+            )
+        }else{
+            midFragment = MidFragment(
+                date = selectedPlanner.start_date,
+                plannerId = selectedPlanner.planner_id
+            )
+        }
+        midFragment.selectedPlanner = selectedPlanner
 
         if (savedInstanceState == null)
             setUpBottomNavigationBar()
@@ -103,6 +121,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     Log.d(TAG, "Case: Close")
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
+                    finish()
                 }
                 binding.plannerActEtTitle.id -> {
                     Log.d(TAG, "Case: Click planner title button")

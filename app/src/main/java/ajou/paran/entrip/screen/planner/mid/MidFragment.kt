@@ -2,6 +2,7 @@ package ajou.paran.entrip.screen.planner.mid
 
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.model.PlanEntity
+import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import ajou.paran.entrip.util.ApiState
@@ -42,6 +43,8 @@ constructor(
     private val viewModel: MidViewModel by viewModels()
     private lateinit var binding: FragmentMidBinding
 
+    lateinit var selectedPlanner : PlannerEntity
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -76,6 +79,7 @@ constructor(
             this.putExtra("Time",planEntity.time)
             this.putExtra("Location",planEntity.location)
             this.putExtra("date", planEntity.date)
+            this.putExtra("PlannerEntity", selectedPlanner)
         }
         startActivity(intent)
     }
@@ -94,6 +98,7 @@ constructor(
         }
         planAdapter.date = date
         planAdapter.plannerId = plannerId
+        planAdapter.selectedPlanner = selectedPlanner
         binding.rvPlan.adapter = planAdapter
 
         lifecycle.coroutineScope.launch {
