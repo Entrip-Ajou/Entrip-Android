@@ -1,17 +1,16 @@
 package ajou.paran.entrip.repository.Impl
 
 import ajou.paran.entrip.model.PlanEntity
-import ajou.paran.entrip.model.PlannerDate
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.PlannerRemoteSource
+import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import android.util.Log
-import androidx.lifecycle.asLiveData
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -20,128 +19,146 @@ class PlannerRepositoryImpl
 constructor(
     private val plannerRemoteSource: PlannerRemoteSource,
     private val planDao: PlanDao
-): PlannerRepository {
+) : PlannerRepository {
 
-    /**
-     * @name : createPlanner
-     * @param : user_id - String
-     * @return : Success - planner_id - Long, Fail - -1L
-     * **/
-    override suspend fun createPlanner(user_id: String) : Long {
-        val remotePlanner = plannerRemoteSource.createPlanner(user_id)
+    override suspend fun updatePlanner(
+        plannerId: Long,
+        plannerUpdateRequest: PlannerUpdateRequest
+    ): BaseResult<Unit, Failure> {
+        val planner = plannerRemoteSource.updatePlanner(plannerId, plannerUpdateRequest)
+
+        if(planner is BaseResult.Success){
+            planDao.updatePlanner(planner.data)
+            return BaseResult.Success(Unit)
+        }else{
+            return BaseResult.Error(Failure((planner as BaseResult.Error).err.code, planner.err.message))
+        }
+    }
+
+    override fun getFlowPlanner(plannerId: Long): Flow<PlannerEntity> =
+        planDao.findFlowPlanner(planner_Id = plannerId)
+
+
+    override suspend fun selectAllPlanner(): Flow<List<PlannerEntity>> = planDao.selectAllPlanner()
+
+    override suspend fun createPlanner(userId: String): BaseResult<PlannerEntity, Failure> {
+        val remotePlanner = plannerRemoteSource.createPlanner(userId)
         return if (remotePlanner is BaseResult.Success) {
             planDao.insertPlanner(remotePlanner.data)
-            remotePlanner.data.planner_id
+            return BaseResult.Success(remotePlanner.data)
         } else {
-            Log.e("[PlannerRepositoryImpl]", "Network를 확인하세요 $remotePlanner")
-            -1
+            return BaseResult.Error(Failure((remotePlanner as BaseResult.Error).err.code, remotePlanner.err.message))
         }
     }
 
-    /**
-     * @name : updatePlanner
-     * @param : plannerId - Long, plannerEntity - PlannerEntity
-     * @return : Success - BaseResult.Success, Fail - BaseResult.Error
-     * **/
-    override suspend fun updatePlanner(plannerId: Long, plannerEntity: PlannerEntity): BaseResult<Int, Failure> {
-        val response = plannerRemoteSource.isExist(plannerId)
-        return if (response is BaseResult.Success){
-            val planner = plannerRemoteSource.updatePlanner(plannerId, plannerEntity)
-            if(planner is BaseResult.Success){
-                planDao.updatePlanner(plannerEntity)
-                val planner = plannerRemoteSource.findPlanner(planner.data.planner_id)
-                if(planner is BaseResult.Success){
-                    planDao.updatePlanner(planner.data)
-                    BaseResult.Success(200)
-                }else{
-                    BaseResult.Error(Failure(408, "Request TimeOut"))
-                }
-            } else {
-                BaseResult.Error(Failure(408, "Request TimeOut"))
-            }
-        } else {
-            BaseResult.Error(Failure(408, "Request TimeOut"))
-        }
-    }
-
-    /**
-     * @name : findPlanner
-     * @param : plannerId - Long
-     * @return : Success - PlannerEntity, Fail - PlannerEntity(id = -1L)
-     * **/
-    override suspend fun findPlanner(plannerId: Long): PlannerEntity {
-        val plannerExist = plannerRemoteSource.isExist(plannerId)
-        return if(plannerExist is BaseResult.Success){
-            val planner = plannerRemoteSource.findPlanner(plannerId)
-            if (planner is BaseResult.Success){
-                planner.data.let { t ->
-                    PlannerEntity(
-                        planner_id = t.planner_id,
-                        title = t.title,
-                        start_date = t.start_date,
-                        end_date = t.end_date,
-                        timeStamp = t.timeStamp
-                    )
-                }
-            } else {
-                PlannerEntity(
-                    planner_id = -1L,
-                    title = "제목 없음",
-                    start_date = "1000/01/01",
-                    end_date = "1000/12/30",
-                    timeStamp = "null"
-                )
-            }
-        }else{
-            PlannerEntity(
-                planner_id = -1L,
-                title = "제목 없음",
-                start_date = "1000/01/01",
-                end_date = "1000/12/30",
-                timeStamp = "null"
-            )
-        }
-    }
-
-    /**
-     * @name : deletePlanner
-     * @param : plannerId - Long
-     * @return : Success - 1L, Fail - -1L
-     * **/
-    override suspend fun deletePlanner(plannerId: Long): Long {
+    override suspend fun deletePlanner(plannerId: Long): BaseResult<Unit, Failure> {
         val deletePlanner = plannerRemoteSource.deletePlanner(plannerId)
         return if (deletePlanner is BaseResult.Success) {
-            if (planDao.findPlanner(plannerId) != null)
-                planDao.deletePlanner(plannerId)
-            deletePlanner.data
+            planDao.deletePlanner(plannerId)
+            return BaseResult.Success(Unit)
         } else {
-            Log.e("[PlannerRepositoryImpl]", "Network를 확인하세요 $deletePlanner")
-            -1
+            return BaseResult.Error(Failure((deletePlanner as BaseResult.Error).err.code, deletePlanner.err.message))
         }
     }
 
-    override suspend fun insertPlanner(plannerEntity: PlannerEntity): BaseResult<Int, Failure> {
-        val planner = plannerRemoteSource.findPlanner(plannerEntity.planner_id)
-        return if (planner is BaseResult.Success){
-            planDao.insertPlanner(plannerEntity)
-            Log.d("TAG", "Success")
-            BaseResult.Success(200)
-        }else{
-            Log.d("TAG", "Fail")
-            BaseResult.Error(Failure(408, "Request TimeOut"))
+    /**
+     *  findPlanner 설명서 : HomeActivity에서는 local DB에 저장된 플래너들만 가져와 화면을 구성하기 때문에 isExist를 통해
+     *  서버에도 해당 planner_id가 존재하는지 확인해야 하므로 1차적으로 확인(true -> 존재 / false -> 존재 x) 후
+     *  존재할 때 서버 DB에서 planner_id에 해당하는 Planner 객체를 가져와야 한다.
+     *
+     *  예외 1) isExist = false : 서버에 planner가 존재하지 않으므로 Local DB에 planner 삭제
+     *         -> Flow를 통해 동적으로 Planner를 가져오므로 화면 변경 가능
+     *
+     *  예외 2) isExist = true -> findPlanner를 호출하는 과정에서 다른 사용자로 인해 삭제된 경우
+     *         -> err.code = 500 으로 return (서버에서 IllegalArgumentException로 처리)
+     *
+     *  예외 3) isExist = true -> findPlanner를 호출하는 과정에서 네트워크 지연으로 인한 request 실패
+     *         -> err.code = 0 으로 return (클라이언트에서 NoInternetException로 처리)
+     */
+
+    override suspend fun findPlanner(plannerId: Long): BaseResult<PlannerEntity, Failure> {
+        val plannerExist = plannerRemoteSource.isExist(plannerId)
+        return if (plannerExist is BaseResult.Success) {
+            if (plannerExist.data) {
+                val planner = plannerRemoteSource.findPlanner(plannerId)
+                if (planner is BaseResult.Success) {
+                    return BaseResult.Success(planner.data)
+                } else {
+                    return BaseResult.Error(Failure((planner as BaseResult.Error).err.code, planner.err.message))
+                }
+            } else {
+                // 존재하지 않는다 -> err code가 1일 경우 Message를 띄워 사용자에게 알려줘야 한다.
+                planDao.deletePlanner(plannerId)
+                return BaseResult.Error(Failure(500, "Already deleted"))
+            }
+        } else {
+            return BaseResult.Error(Failure((plannerExist as BaseResult.Error).err.code, plannerExist.err.message))
         }
     }
 
-    override suspend fun selectAllPlan(plannerId: Long): List<PlanEntity>
-            = planDao.selectAllPlan(plannerId)
+    /**
+     * Home 화면에서 기존의 planner를 선택했을 때 호출되는 함수 -> Server DB와 Local DB를 동기화
+     * Logic 1) RemoteDB에서 planner fetch
+     *       2) LocalDB에서 planner fetch
+     *       3) timestamp 비교 -> 같을 때 : 최신상태 / 다를 때 : Update 필요
+     *       4) 위의 3) 결과가 같을 때 -> local planner + plan fetch
+     *       5) 위의 3) 결과가 다를 때 -> 1)에서 가져온 planner로 내부 DB update & Remote DB에서 plan 가져오기
+     *       5-1) transcation
+     */
+    override suspend fun syncRemoteDB(
+        planner_id: Long
+    ): Flow<BaseResult<Any, Failure>> {
+        return flow {
+            val remotePlanner = plannerRemoteSource.fetchPlanner(planner_id)
+            val localPlanner = planDao.findPlanner(planner_id)
 
-    override fun deleteAllPlan(plannerId: Long) {
-        planDao.deleteAllPlan(plannerId)
+            if (remotePlanner is BaseResult.Success) {
+                val remoteTimestamp: String = remotePlanner.data.time_stamp
+                val localTimestamp: String = localPlanner!!.time_stamp
+
+                if (remoteTimestamp.equals(localTimestamp)) {
+                    emit(BaseResult.Success(localTimestamp))
+                }else{
+                    // 최신 상태 x -> remoteDB fetch
+                    planDao.updatePlanner(remotePlanner.data)
+                    val remoteDB_plan = plannerRemoteSource.fetchPlans(planner_id)
+                    if (remoteDB_plan is BaseResult.Success) {
+                        savePlanToLocal(remoteDB_plan.data, planner_id)
+                        emit(BaseResult.Success(remoteTimestamp))
+                    }else{
+                        emit(BaseResult.Error(Failure((remoteDB_plan as BaseResult.Error).err.code, remoteDB_plan.err.message)))
+                    }
+                }
+            }else{
+                emit(BaseResult.Error(Failure((remotePlanner as BaseResult.Error).err.code, remotePlanner.err.message)))
+            }
+        }
     }
 
-    override fun getFlowPlanner(plannerId: Long): Flow<PlannerEntity>
-            = planDao.findFlowPlanner(planner_Id = plannerId)
+    private fun savePlanToLocal(plans: List<PlanEntity>, planner_idFK: Long) {
+        planDao.deleteAllPlan(planner_idFK)
+        planDao.insertAllPlan(plans)
+    }
 
-    override fun findDBPlanner(plannerId: Long): PlannerEntity?
-        = planDao.findPlanner(plannerId)
+    fun latestTimeStamp(planner_id: Long) : Flow<String>{
+        return flow{
+            while(true){
+                val planner = plannerRemoteSource.fetchPlanner(planner_id)
+                if(planner is BaseResult.Success){
+                    val latestTimeStamp = planner.data.time_stamp
+                    emit(latestTimeStamp)
+                    delay(5000)
+                }else{
+                    if((planner as BaseResult.Error).err.code == 0){
+                        emit("NoInternet")
+                    }else{
+                        emit("NotExist")
+                    }
+                    break
+                }
+
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
 }

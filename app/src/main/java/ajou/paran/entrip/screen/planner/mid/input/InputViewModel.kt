@@ -1,9 +1,11 @@
 package ajou.paran.entrip.screen.planner.mid.input
 
 import ajou.paran.entrip.R
-import ajou.paran.entrip.repository.Impl.PlanRepository
+import ajou.paran.entrip.model.PlannerEntity
+import ajou.paran.entrip.repository.Impl.PlanRepositoryImpl
 import ajou.paran.entrip.repository.network.dto.PlanRequest
 import ajou.paran.entrip.repository.network.dto.PlanUpdateRequest
+import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
 import android.graphics.Color
 import androidx.lifecycle.LiveData
@@ -12,12 +14,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class InputViewModel @Inject constructor(
-    private val planRepository: PlanRepository
+    private val planRepository: PlanRepositoryImpl
     ): ViewModel() {
     companion object{
         private const val TAG = "[InputViewModel]"
@@ -28,6 +33,8 @@ class InputViewModel @Inject constructor(
 
     lateinit var date : String
     var planner_id : Long = -1L
+
+    lateinit var selectedPlanner : PlannerEntity
 
     val todo : MutableLiveData<String> by lazy{
         MutableLiveData<String>()
@@ -45,15 +52,14 @@ class InputViewModel @Inject constructor(
         MutableLiveData<String>()
     }
 
-    private var _inputState = MutableLiveData<InputState>()
-    val inputState : LiveData<InputState>
-        get() = _inputState
+    private var _inputState = MutableStateFlow<InputState>(InputState.Init)
+    val inputState : StateFlow<InputState> get() = _inputState
 
     // 필수 기입 항목 확인
     fun checkInput(){
         when{
             todo.value.isNullOrEmpty() && time.value.isNullOrEmpty() -> {
-                _inputState.value = InputState.initialized
+                _inputState.value = InputState.Empty
             }
             todo.value.isNullOrEmpty() -> {
                 _inputState.value = InputState.NoTodo
@@ -82,12 +88,13 @@ class InputViewModel @Inject constructor(
                             planner_idFK = planner_id
                         )
                         val res = planRepository.insertPlan(planRequest)
+                        delay(500)
                         if(res is BaseResult.Success){
                             _inputState.value = InputState.IsLoading(false)
                             _inputState.value = InputState.Success
                         }else{
                             _inputState.value = InputState.IsLoading(false)
-                            _inputState.value = InputState.Failure
+                            _inputState.value = InputState.Failure((res as BaseResult.Error).err.code)
                         }
                     }
                 }else{
@@ -100,17 +107,38 @@ class InputViewModel @Inject constructor(
                             RGB = rgb.value!!
                         )
                         val res = planRepository.updatePlan(update_id, planUpdateRequest)
+                        delay(500)
                         if(res is BaseResult.Success){
                             _inputState.value = InputState.IsLoading(false)
                             _inputState.value = InputState.Success
                         }else{
                             _inputState.value = InputState.IsLoading(false)
-                            _inputState.value = InputState.Failure
+                            _inputState.value = InputState.Failure((res as BaseResult.Error).err.code)
                         }
                     }
                 }
             }
         }
     }
+}
 
+sealed class InputState{
+
+    object Init : InputState()
+
+    // 아무것도 기입하지 않은 상태
+    object Empty : InputState()
+
+    // todo를 기입하지 않은 상태
+    object NoTodo : InputState()
+
+    // Time을 기입하지 않은 상태
+    object NoTime : InputState()
+
+    // 필수 기입 항목들을 모두 기입한 상태
+    object Success : InputState()
+
+    data class Failure(val code : Int) : InputState()
+
+    data class IsLoading(val isLoading : Boolean) : InputState()
 }

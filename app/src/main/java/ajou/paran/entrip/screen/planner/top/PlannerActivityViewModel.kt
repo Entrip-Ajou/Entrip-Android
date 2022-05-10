@@ -1,20 +1,15 @@
 package ajou.paran.entrip.screen.planner.top
 
-import ajou.paran.entrip.model.PlannerDate
 import ajou.paran.entrip.model.PlannerEntity
-import ajou.paran.entrip.repository.Impl.PlannerRepository
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
+import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
+import ajou.paran.entrip.util.network.BaseResult
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 /**
@@ -26,64 +21,138 @@ import javax.inject.Inject
 class PlannerActivityViewModel
 @Inject
 constructor(
-    private val plannerRepository: PlannerRepository
+    private val plannerRepository: PlannerRepositoryImpl
 ) : ViewModel() {
     companion object{
         private const val TAG = "[PlannerActViewModel]"
     }
 
-    private var plannerId: Long = 0L
+    private val _state = MutableStateFlow<PlannerState>(PlannerState.Init)
+    val state : StateFlow<PlannerState> get() = _state
 
-    fun getFlowPlanner(): Flow<PlannerEntity> = plannerRepository.getFlowPlanner(plannerId)
+    private lateinit var lastTimeStamp: String
+    private lateinit var job: Job
 
-    fun plannerDataDelete(){
-        TODO("Case: Delete Planner Data")
+    fun setLoading() {
+        _state.value = PlannerState.IsLoading(true)
     }
 
-    fun getPlannerStartDate() = plannerRepository.findDBPlanner(plannerId)?.start_date
+    fun hideLoading() {
+        _state.value = PlannerState.IsLoading(false)
+    }
 
-    fun plannerAdd(userId: String): Flow<Long> = flow {
-        val planenrId = plannerRepository.createPlanner(userId)
-        if(planenrId != -1L){
-            plannerRepository.insertPlanner(plannerRepository.findPlanner(plannerId))
-            emit(planenrId)
-        } else {
-            emit(plannerId)
+    private fun setUpdate(){
+        _state.value = PlannerState.IsUpdate(true)
+    }
+
+    private fun setNotUpdate(){
+        _state.value = PlannerState.IsUpdate(false)
+    }
+
+
+    fun getFlowPlanner(plannerId : Long): Flow<PlannerEntity> = plannerRepository.getFlowPlanner(plannerId)
+
+    fun createPlanner(userId : String){
+        viewModelScope.launch(Dispatchers.IO){
+            setLoading()
+            val res = plannerRepository.createPlanner(userId)
+            delay(500)
+            hideLoading()
+            when(res){
+                is BaseResult.Success -> _state.value = PlannerState.Success(res.data)
+                is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
+            }
+        }
+    }
+    fun plannerChange(list: List<PlannerDate>, planner : PlannerEntity){
+        viewModelScope.launch(Dispatchers.IO) {
+            setLoading()
+            val fetch = plannerRepository.findPlanner(planner.planner_id)
+            if(fetch is BaseResult.Success){
+                val res = plannerRepository.updatePlanner(planner.planner_id, planner.let { t ->
+                    PlannerUpdateRequest(
+                        title = t.title,
+                        start_date = list.first().date,
+                        end_date = list.last().date
+                    )
+                })
+                delay(500)
+                hideLoading()
+                when(res){
+                    is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
+                    is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
+                }
+            }else{
+                _state.value = PlannerState.Failure((fetch as BaseResult.Error).err.code)
+            }
         }
     }
 
-    fun setting(planner_id: Long) = CoroutineScope(Dispatchers.IO).launch {
-        plannerId = planner_id
-        if (plannerId > 0L) {
-            plannerRepository.insertPlanner(plannerRepository.findPlanner(plannerId))
-        } else {
-            TODO("planner가 존재하지 않는 경우")
+    fun plannerChange(title: String, planner : PlannerEntity){
+        viewModelScope.launch(Dispatchers.IO) {
+            setLoading()
+            val fetch = plannerRepository.findPlanner(planner.planner_id)
+            if(fetch is BaseResult.Success){
+                val res = plannerRepository.updatePlanner(planner.planner_id, planner.let { t ->
+                    PlannerUpdateRequest(
+                        title = title,
+                        start_date = t.start_date,
+                        end_date = t.end_date
+                    )
+                })
+                delay(500)
+                hideLoading()
+                when(res){
+                    is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
+                    is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
+                }
+            }else{
+                _state.value = PlannerState.Failure((fetch as BaseResult.Error).err.code)
+            }
         }
     }
 
-    fun plannerChange(list: List<PlannerDate>) = CoroutineScope(Dispatchers.IO).launch {
-        val planner = plannerRepository.findPlanner(plannerId)
-        plannerRepository.updatePlanner(plannerId, planner.let { t ->
-            PlannerEntity(
-                planner_id = t.planner_id,
-                title = t.title,
-                start_date = list.first().date,
-                end_date = list.last().date,
-                timeStamp = t.timeStamp
-            )
-        })
+    fun syncRemoteDB(planner_id: Long) {
+        job = viewModelScope.launch(Dispatchers.IO) {
+            plannerRepository.syncRemoteDB(planner_id)
+                .catch { e ->
+                    Log.e(TAG, "Error message = " + e.message)
+                }
+                .collect { res ->
+                    when (res) {
+                        is BaseResult.Success -> {
+                            lastTimeStamp = res.data as String
+                        }
+                        is BaseResult.Error -> {
+                            _state.value = PlannerState.Failure(500)
+                        }
+                    }
+                }
+        }
     }
 
-    fun plannerChange(title: String) = CoroutineScope(Dispatchers.IO).launch {
-        val planner = plannerRepository.findPlanner(plannerId)
-        plannerRepository.updatePlanner(plannerId, planner.let { t ->
-            PlannerEntity(
-                planner_id = t.planner_id,
-                title = title,
-                start_date = t.start_date,
-                end_date = t.end_date,
-                timeStamp = t.timeStamp
-            )
-        })
+    fun observeTimeStamp(planner_id: Long){
+        runBlocking{
+            job.join()
+        }
+        viewModelScope.launch{
+            plannerRepository.latestTimeStamp(planner_id).collectLatest{
+                when {
+                    it == "NotExist" -> _state.value = PlannerState.Failure(500)
+                    it == "NoInternet" -> _state.value = PlannerState.Failure(0)
+                    lastTimeStamp != it -> setUpdate()
+                    else -> setNotUpdate()
+                }
+            }
+        }
     }
+
+}
+
+sealed class PlannerState {
+    object Init : PlannerState()
+    data class IsLoading(val isLoading: Boolean) : PlannerState()
+    data class IsUpdate(val isUpdate: Boolean) : PlannerState()
+    data class Success(val data : Any) : PlannerState()
+    data class Failure(val code : Int) : PlannerState()
 }

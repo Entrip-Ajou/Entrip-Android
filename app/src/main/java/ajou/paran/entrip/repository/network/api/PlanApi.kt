@@ -14,6 +14,9 @@ interface PlanApi {
     @POST("api/v1/planners")
     suspend fun createPlanner(@Body user_id : String) : BaseResponse<PlannerResponse>
 
+    @DELETE("api/v1/planners/{planner_id}")
+    suspend fun deletePlanner(@Path("planner_id") planner_id : Long) : BaseResponse<Long>
+
     // Home화면 Planner 선택란에서 기존에 저장된 Planner를 눌렀을 때
     @GET("api/v1/planners/{planner_id}")
     suspend fun fetchPlanner(@Path("planner_id") planner_id : Long) : BaseResponse<PlannerResponse>
@@ -34,10 +37,5 @@ interface PlanApi {
     suspend fun updatePlan(@Path("plan_id") plan_id: Long, @Body plan: PlanUpdateRequest) : BaseResponse<PlanResponse>
 
     @PUT("api/v1/planners/{planner_id}")
-    suspend fun updatePlanner(@Path("planner_id") planner_id : Long, @Body plannerEntity: PlannerEntity) : BaseResponse<PlannerEntity>
-
-    @GET("api/v1/planners/{planner_id}")
-    suspend fun findPlanner(
-        @Path("planner_id") planner_id: Long
-    ) : BaseResponse<PlannerData>
+    suspend fun updatePlanner(@Path("planner_id") planner_id : Long, @Body planner : PlannerUpdateRequest) : BaseResponse<PlannerEntity>
 }

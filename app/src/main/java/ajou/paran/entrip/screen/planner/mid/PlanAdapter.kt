@@ -4,6 +4,7 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.databinding.ItemLayoutPlanBinding
 import ajou.paran.entrip.databinding.ItemLayoutPlanFooterBinding
 import ajou.paran.entrip.model.PlanEntity
+import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
@@ -22,6 +23,8 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
     lateinit var date: String
     var plannerId: Long = -1
 
+    lateinit var selectedPlanner : PlannerEntity
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == FOOTER_VIEW_TYPE) {
             val binding = ItemLayoutPlanFooterBinding.inflate(
@@ -39,10 +42,12 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
                             // 오류가 발생하면 position 크기를 더 줄이면 된다!
                             this.putExtra("date", getItem(adapterPosition-1).date)
                             this.putExtra("plannerId", getItem(adapterPosition-1).planner_idFK)
+                            this.putExtra("PlannerEntity", selectedPlanner)
                         } else {
                             this.putExtra("isUpdate", false)
                             this.putExtra("date", date)
                             this.putExtra("plannerId", plannerId)
+                            this.putExtra("PlannerEntity", selectedPlanner)
                         }
                     }
                     ContextCompat.startActivity(binding.btnPlanAdd.context, intent, null)
