@@ -66,17 +66,16 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
          */
         // Case 2에 대한 flag
         var isFromInput = intent.getBooleanExtra("isFromInput", false)
-        if(isFromInput){
-            midFragment = MidFragment(
-                date = intent.getStringExtra("date")!!,
-                plannerId = selectedPlanner.planner_id
-            )
-        }else{
-            midFragment = MidFragment(
-                date = selectedPlanner.start_date,
-                plannerId = selectedPlanner.planner_id
-            )
-        }
+        val date : String
+        if(isFromInput)
+            date = intent.getStringExtra("date")!!
+        else
+            date = selectedPlanner.start_date
+
+        midFragment = MidFragment(
+            date = date,
+            plannerId = selectedPlanner.planner_id
+        )
         midFragment.selectedPlanner = selectedPlanner
 
         if (savedInstanceState == null)
@@ -97,7 +96,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         observeState()
         viewModel.syncRemoteDB(selectedPlanner.planner_id)
         viewModel.observeTimeStamp(selectedPlanner.planner_id)
-        initDateRecyclerView()
+        initDateRecyclerView(date)
         subscribeObservers()
     }
 
@@ -154,8 +153,8 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
      * @Date: 2022.03.08
      * @Made: Jeon
      * **/
-    private fun initDateRecyclerView() = binding.plannerActRv1.apply {
-        dateRecyclerViewAdapter = DateRecyclerViewAdapter(midFragment)
+    private fun initDateRecyclerView(date : String) = binding.plannerActRv1.apply {
+        dateRecyclerViewAdapter = DateRecyclerViewAdapter(midFragment, date)
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         adapter = dateRecyclerViewAdapter
     }
@@ -301,6 +300,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             val intent = Intent(baseContext, PlannerActivity::class.java)
             intent.putExtra("PlannerEntity", data)
             startActivity(intent)
+            finish()
         }
     }
 
