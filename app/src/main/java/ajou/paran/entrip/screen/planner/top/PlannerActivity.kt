@@ -11,6 +11,7 @@ import ajou.paran.entrip.util.ui.hideKeyboard
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -37,6 +38,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 @AndroidEntryPoint
@@ -239,11 +242,11 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 .split("/")
                 .map { it.toInt() }
 
-            val mutableList = getDates(
+            val list = getDates(
                 start_date = "$s_year/$s_month/$s_day",
                 end_date = "$e_year/$e_month/$e_day"
             )
-            viewModel.plannerChange(mutableList.toList(), selectedPlanner)
+            viewModel.plannerChange(list, selectedPlanner)
             init_start_date = "$s_year/$s_month/$s_day"
             init_end_date = "$e_year/$e_month/$e_day"
             midFragment.setAdapter(format.format(pairDate.first))
@@ -257,29 +260,26 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         val (s_year, s_month, s_day) = start_date
             .split("/")
             .map { it.toInt() }
-        val (e_year, e_month, e_day) = end_date
-            .split("/")
-            .map { it.toInt() }
 
-        val cal = Calendar.getInstance()
-        cal.set(s_year, s_month, s_day)
+        val time = Calendar.getInstance()
+        time.set(s_year,s_month, s_day)
+        val t = kotlin.math.abs(format.parse(start_date).time - format.parse(end_date).time)
+        val dates = t / (24 * 60 * 60 * 1000)
+        var i = -1
         val mutableList = mutableListOf<PlannerDate>()
-        while (cal.get(Calendar.YEAR) != e_year
-            || cal.get(Calendar.MONTH) != e_month
-            || cal.get(Calendar.DAY_OF_MONTH) != e_day
-        ) {
-            // 플래너에 집어 넣을 Date 생성 로직
-            cal.add(Calendar.MONTH, -1)
-            mutableList.add(
-                PlannerDate(format.format(cal.time))
-            )
-            cal.add(Calendar.MONTH, 1)
-            cal.add(Calendar.DAY_OF_MONTH, 1)
-        }
-        cal.add(Calendar.MONTH, -1)
-        mutableList.add(PlannerDate(format.format(cal.time)))
 
-        return mutableList
+        // time 한달 더해져있는 상태로 나와서 한달 빼기
+        time.add(Calendar.MONTH, -1)
+
+        while (i < dates){
+            mutableList.add(
+                PlannerDate(format.format(time.time))
+            )
+            Log.d(TAG, format.format(time.time))
+            time.add(Calendar.DAY_OF_MONTH, 1)
+            i += 1
+        }
+        return mutableList.toList()
     }
 
     private fun observeState(){
