@@ -33,7 +33,6 @@ constructor(
     private lateinit var lastTimeStamp: String
     private lateinit var job: Job
 
-
     fun setLoading() {
         _state.value = PlannerState.IsLoading(true)
     }
@@ -68,18 +67,23 @@ constructor(
     fun plannerChange(list: List<PlannerDate>, planner : PlannerEntity){
         viewModelScope.launch(Dispatchers.IO) {
             setLoading()
-            val res = plannerRepository.updatePlanner(planner.planner_id, planner.let { t ->
-                PlannerUpdateRequest(
-                    title = t.title,
-                    start_date = list.first().date,
-                    end_date = list.last().date
-                )
-            })
-            delay(500)
-            hideLoading()
-            when(res){
-                is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
-                is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
+            val fetch = plannerRepository.findPlanner(planner.planner_id)
+            if(fetch is BaseResult.Success){
+                val res = plannerRepository.updatePlanner(planner.planner_id, planner.let { t ->
+                    PlannerUpdateRequest(
+                        title = t.title,
+                        start_date = list.first().date,
+                        end_date = list.last().date
+                    )
+                })
+                delay(500)
+                hideLoading()
+                when(res){
+                    is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
+                    is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
+                }
+            }else{
+                _state.value = PlannerState.Failure((fetch as BaseResult.Error).err.code)
             }
         }
     }
@@ -87,18 +91,23 @@ constructor(
     fun plannerChange(title: String, planner : PlannerEntity){
         viewModelScope.launch(Dispatchers.IO) {
             setLoading()
-            val res = plannerRepository.updatePlanner(planner.planner_id, planner.let { t ->
-                PlannerUpdateRequest(
-                    title = title,
-                    start_date = t.start_date,
-                    end_date = t.end_date
-                )
-            })
-            delay(500)
-            hideLoading()
-            when(res){
-                is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
-                is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
+            val fetch = plannerRepository.findPlanner(planner.planner_id)
+            if(fetch is BaseResult.Success){
+                val res = plannerRepository.updatePlanner(planner.planner_id, planner.let { t ->
+                    PlannerUpdateRequest(
+                        title = title,
+                        start_date = t.start_date,
+                        end_date = t.end_date
+                    )
+                })
+                delay(500)
+                hideLoading()
+                when(res){
+                    is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
+                    is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
+                }
+            }else{
+                _state.value = PlannerState.Failure((fetch as BaseResult.Error).err.code)
             }
         }
     }

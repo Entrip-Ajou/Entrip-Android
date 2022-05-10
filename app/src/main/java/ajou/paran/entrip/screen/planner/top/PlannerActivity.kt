@@ -31,9 +31,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,10 +53,15 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
 
     private lateinit var selectedPlanner : PlannerEntity
 
+    private lateinit var init_start_date : String
+    private lateinit var init_end_date : String
+
     private val viewModel: PlannerActivityViewModel by viewModels()
 
     override fun init(savedInstanceState: Bundle?) {
         selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
+        init_start_date = selectedPlanner.start_date
+        init_end_date = selectedPlanner.end_date
 
         /**
          *  Case 1) Planner List -> Planner Activity
@@ -205,12 +212,18 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     @SuppressLint("RestrictedApi")
     private fun startDateRangePicker() {
         val selector = CustomMaterialDatePicker()
+
+        val formatter = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        formatter.timeZone = TimeZone.getTimeZone("UTC")
+        val formattedStartDate = formatter.parse(init_start_date)
+        val formattedEndDate = formatter.parse(init_end_date)
+
         val dateRangePicker = MaterialDatePicker.Builder.customDatePicker(selector)
             .setTitleText("Select dates")
             .setSelection(
                 Pair(
-                    MaterialDatePicker.thisMonthInUtcMilliseconds(),
-                    MaterialDatePicker.todayInUtcMilliseconds()
+                    formattedStartDate.time,
+                    formattedEndDate.time
                 )
             )
             .build()
@@ -231,6 +244,8 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 end_date = "$e_year/$e_month/$e_day"
             )
             viewModel.plannerChange(mutableList.toList(), selectedPlanner)
+            init_start_date = "$s_year/$s_month/$s_day"
+            init_end_date = "$e_year/$e_month/$e_day"
             midFragment.setAdapter(format.format(pairDate.first))
         }
     }
