@@ -149,7 +149,11 @@ constructor(
                     emit(latestTimeStamp)
                     delay(5000)
                 }else{
-                    emit("NotExist")
+                    if((planner as BaseResult.Error).err.code == 0){
+                        emit("NoInternet")
+                    }else{
+                        emit("NotExist")
+                    }
                     break
                 }
 

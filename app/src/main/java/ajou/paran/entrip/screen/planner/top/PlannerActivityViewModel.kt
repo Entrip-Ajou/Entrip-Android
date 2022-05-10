@@ -130,6 +130,7 @@ constructor(
             plannerRepository.latestTimeStamp(planner_id).collectLatest{
                 when {
                     it == "NotExist" -> _state.value = PlannerState.Failure(500)
+                    it == "NoInternet" -> _state.value = PlannerState.Failure(0)
                     lastTimeStamp != it -> setUpdate()
                     else -> setNotUpdate()
                 }

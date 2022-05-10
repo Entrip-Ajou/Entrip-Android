@@ -36,6 +36,8 @@ constructor(
 
         if (dateItemList!!.get(position) == selectedDate && selectedItemPos == -1){
             (holder as DateItemViewHolder).selected()
+            selectedItemPos = holder.adapterPosition
+            lastItemSelectedPos = holder.adapterPosition
         }
         else if(selectedItemPos != -1 && position == selectedItemPos){
             (holder as DateItemViewHolder).selected()
