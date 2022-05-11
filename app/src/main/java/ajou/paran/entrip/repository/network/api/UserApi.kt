@@ -1,6 +1,7 @@
 package ajou.paran.entrip.repository.network.api
 
 import ajou.paran.entrip.repository.network.dto.BaseResponse
+import ajou.paran.entrip.repository.network.dto.UserRequest
 import ajou.paran.entrip.repository.network.dto.UserResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -21,5 +22,5 @@ interface UserApi {
     @POST("api/v1/users")
     suspend fun saveUser(
         @Body userResponse: UserResponse
-    ) : BaseResponse<Boolean>
+    ) : BaseResponse<UserRequest>
 }

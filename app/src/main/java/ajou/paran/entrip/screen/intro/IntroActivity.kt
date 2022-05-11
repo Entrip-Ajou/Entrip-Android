@@ -20,7 +20,6 @@ class IntroActivity: BaseActivity<ActivityIntroBinding>(R.layout.activity_intro)
     override fun init(savedInstanceState: Bundle?) {
         val pagerAdapter = ScreenSlidePagerAdapter(this)
         binding.introActVp2.adapter = pagerAdapter
-//        binding.introActVp2.setPageTransformer(ZoomOutPageTransformer())
     }
 
     override fun onBackPressed() {

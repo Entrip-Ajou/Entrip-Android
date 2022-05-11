@@ -18,18 +18,26 @@ class IntroOneFragment: BaseFragment<FragmentIntroOneBinding>(R.layout.fragment_
     }
 
     override fun init() {
-        CoroutineScope(Dispatchers.Main).launch {
-                val animation = TranslateAnimation(0f, 0f, 500f, 0f)
-                animation.duration = 500
-                animation.setAnimationListener(object: Animation.AnimationListener{
-                    override fun onAnimationStart(p0: Animation?) {
-                        binding.introOneText.visibility = View.VISIBLE
-                    }
-                    override fun onAnimationEnd(p0: Animation?) {}
-                    override fun onAnimationRepeat(p0: Animation?) {}
-                })
-                binding.introOneText.startAnimation(animation)
-        }
+        animating()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        animating()
+    }
+
+    private fun animating() = CoroutineScope(Dispatchers.Main).launch {
+        binding.introOneText.visibility = View.INVISIBLE
+        val animation = TranslateAnimation(0f, 0f, 500f, 0f)
+        animation.duration = 500
+        animation.setAnimationListener(object: Animation.AnimationListener{
+            override fun onAnimationStart(p0: Animation?) {
+                binding.introOneText.visibility = View.VISIBLE
+            }
+            override fun onAnimationEnd(p0: Animation?) {}
+            override fun onAnimationRepeat(p0: Animation?) {}
+        })
+        binding.introOneText.startAnimation(animation)
     }
 
 }

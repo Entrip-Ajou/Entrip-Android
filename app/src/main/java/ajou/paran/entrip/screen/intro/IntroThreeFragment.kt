@@ -18,19 +18,28 @@ class IntroThreeFragment: BaseFragment<FragmentIntroThreeBinding>(R.layout.fragm
     }
 
     override fun init() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val animation = TranslateAnimation(500f, 0f, 0f, 0f)
-            animation.duration = 1500
-            animation.setAnimationListener(object: Animation.AnimationListener{
-                override fun onAnimationStart(p0: Animation?) {
-                }
-                override fun onAnimationEnd(p0: Animation?) {
-                    binding.introThreeActText1.visibility = View.VISIBLE
-                    binding.introThreeActText2.visibility = View.VISIBLE
-                }
-                override fun onAnimationRepeat(p0: Animation?) {}
-            })
-            binding.introThreeActPlanner.startAnimation(animation)
-        }
+        animation()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        animation()
+    }
+
+    private fun animation() = CoroutineScope(Dispatchers.Main).launch {
+        binding.introThreeActText1.visibility = View.INVISIBLE
+        binding.introThreeActText2.visibility = View.INVISIBLE
+        val animation = TranslateAnimation(500f, 0f, 0f, 0f)
+        animation.duration = 1000
+        animation.setAnimationListener(object: Animation.AnimationListener{
+            override fun onAnimationStart(p0: Animation?) {
+            }
+            override fun onAnimationEnd(p0: Animation?) {
+                binding.introThreeActText1.visibility = View.VISIBLE
+                binding.introThreeActText2.visibility = View.VISIBLE
+            }
+            override fun onAnimationRepeat(p0: Animation?) {}
+        })
+        binding.introThreeActPlanner.startAnimation(animation)
     }
 }

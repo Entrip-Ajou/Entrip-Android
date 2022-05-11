@@ -18,20 +18,28 @@ class IntroTwoFragment: BaseFragment<FragmentIntroTwoBinding>(R.layout.fragment_
     }
 
     override fun init() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val animation = TranslateAnimation(-500f, 0f, 0f, 0f)
-            animation.duration = 1500
-            animation.setAnimationListener(object: Animation.AnimationListener{
-                override fun onAnimationStart(p0: Animation?) {
-                }
-                override fun onAnimationEnd(p0: Animation?) {
-                    binding.introTwoActText1.visibility = View.VISIBLE
-                    binding.introTwoActText2.visibility = View.VISIBLE
-                }
-                override fun onAnimationRepeat(p0: Animation?) {}
-            })
-            binding.introTwoActPlanner.startAnimation(animation)
-        }
+        animating()
     }
 
+    override fun onResume() {
+        super.onResume()
+        animating()
+    }
+
+    private fun animating() = CoroutineScope(Dispatchers.Main).launch {
+        binding.introTwoActText1.visibility = View.INVISIBLE
+        binding.introTwoActText2.visibility = View.INVISIBLE
+        val animation = TranslateAnimation(-500f, 0f, 0f, 0f)
+        animation.duration = 1000
+        animation.setAnimationListener(object: Animation.AnimationListener{
+            override fun onAnimationStart(p0: Animation?) {
+            }
+            override fun onAnimationEnd(p0: Animation?) {
+                binding.introTwoActText1.visibility = View.VISIBLE
+                binding.introTwoActText2.visibility = View.VISIBLE
+            }
+            override fun onAnimationRepeat(p0: Animation?) {}
+        })
+        binding.introTwoActPlanner.startAnimation(animation)
+    }
 }

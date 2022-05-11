@@ -1,6 +1,7 @@
 package ajou.paran.entrip.repository.Impl
 
 import ajou.paran.entrip.repository.network.UserRemoteSource
+import ajou.paran.entrip.repository.network.dto.UserRequest
 import ajou.paran.entrip.repository.network.dto.UserResponse
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
@@ -46,7 +47,7 @@ constructor(
         }
     }
 
-    override fun saveUser(user_id: String, gender: Int, nickname: String): Flow<BaseResult<Boolean, Failure>>
+    override fun saveUser(user_id: String, gender: Int, nickname: String): Flow<BaseResult<UserRequest, Failure>>
      = flow {
         try {
             val userResponse = UserResponse(user_id, gender, nickname)
