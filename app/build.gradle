@@ -106,4 +106,7 @@ dependencies {
     // okhttp
     def okhttp_logging_version = "4.9.0"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_logging_version"
+
+    // Google Login
+    implementation 'com.google.android.gms:play-services-auth:20.2.0'
 }
