@@ -33,24 +33,20 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
         const val TAG = "[IntroFourFragment]"
     }
 
+    private val viewModel: IntroFragmentViewModel by viewModels()
+
     @Inject
     lateinit var googleSignInClient: GoogleSignInClient
 
-    private val viewModel: IntroFragmentViewModel by viewModels()
-    private lateinit var getResult: ActivityResultLauncher<Intent>
-
+    lateinit var getResult: ActivityResultLauncher<Intent>
     private lateinit var user_id: String
 
     override fun init() {
+
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-//            Log.d(TAG, GoogleSignIn.getSignedInAccountFromIntent(it.data).getResult(ApiException::class.java).email.toString())
             if (it.resultCode == AppCompatActivity.RESULT_OK){
                 val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
                 handleSignInResult(task)
-            } else {
-                /*테스트용*/
-                user_id = "test"
-                subscribeObservers()
             }
         }
 
@@ -69,6 +65,23 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
     override fun onResume() {
         super.onResume()
         animating()
+    }
+
+    private fun animating() = CoroutineScope(Dispatchers.Main).launch {
+        binding.introFourActBtnLogin.visibility = View.INVISIBLE
+        binding.introFourActBtnNext.visibility = View.INVISIBLE
+        val animation = TranslateAnimation(0f, 0f, 200f, 0f)
+        animation.duration = 1000
+        animation.setAnimationListener(object: Animation.AnimationListener{
+            override fun onAnimationStart(p0: Animation?) {
+            }
+            override fun onAnimationEnd(p0: Animation?) {
+                binding.introFourActBtnLogin.visibility = View.VISIBLE
+                binding.introFourActBtnNext.visibility = View.VISIBLE
+            }
+            override fun onAnimationRepeat(p0: Animation?) {}
+        })
+        binding.introFourActText.startAnimation(animation)
     }
 
     private fun subscribeObservers() {
@@ -115,20 +128,5 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
         }
     }
 
-    private fun animating() = CoroutineScope(Dispatchers.Main).launch {
-        binding.introFourActBtnLogin.visibility = View.INVISIBLE
-        binding.introFourActBtnNext.visibility = View.INVISIBLE
-        val animation = TranslateAnimation(0f, 0f, 200f, 0f)
-        animation.duration = 1000
-        animation.setAnimationListener(object: Animation.AnimationListener{
-            override fun onAnimationStart(p0: Animation?) {
-            }
-            override fun onAnimationEnd(p0: Animation?) {
-                binding.introFourActBtnLogin.visibility = View.VISIBLE
-                binding.introFourActBtnNext.visibility = View.VISIBLE
-            }
-            override fun onAnimationRepeat(p0: Animation?) {}
-        })
-        binding.introFourActText.startAnimation(animation)
-    }
+
 }

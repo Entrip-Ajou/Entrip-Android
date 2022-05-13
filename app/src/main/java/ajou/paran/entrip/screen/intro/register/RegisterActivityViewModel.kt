@@ -61,7 +61,7 @@ constructor(
             .execute(user_id, gender, nickname)
             .collect {
                 if (it is BaseResult.Success){
-                    if (!it.data.userId.isNullOrEmpty()){
+                    if (it.data.userId.isNotBlank()){
                         _isSaveUserResult.value = ApiState.Success(it)
                     } else {
                         _isSaveUserResult.value = ApiState.Failure(999)

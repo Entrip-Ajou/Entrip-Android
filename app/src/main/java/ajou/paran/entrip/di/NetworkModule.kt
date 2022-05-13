@@ -2,12 +2,12 @@ package ajou.paran.entrip.di
 
 import ajou.paran.entrip.R
 import ajou.paran.entrip.repository.network.api.PlanApi
-import ajou.paran.entrip.util.ConfigurationSetting
 import ajou.paran.entrip.util.network.networkinterceptor.NetworkInterceptor
 import android.content.Context
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,11 +52,17 @@ object NetworkModule {
     @Singleton
     fun provideGoogleSignInClient(@ApplicationContext applicationContext: Context): GoogleSignInClient {
         val mGoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(ConfigurationSetting.default_web_client_id)
+            .requestIdToken(applicationContext.getString(R.string.default_web_client_id2))
             .requestProfile()
             .requestEmail()
             .build()
         return GoogleSignIn.getClient(applicationContext, mGoogleSignInOptions)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebase(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
     }
 
 }
