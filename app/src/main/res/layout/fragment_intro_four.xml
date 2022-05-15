@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/image_intro_last">
+
+        <ImageView
+            android:id="@+id/introFourAct_text"
+            android:layout_width="280dp"
+            android:layout_height="106dp"
+            android:layout_marginTop="160dp"
+            android:src="@drawable/image_intro_last_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/introFourAct_btn_login"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="190dp"
+            android:text="로그인 하기"
+            android:textSize="16sp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/introFourAct_text" />
+
+        <Button
+            android:id="@+id/introFourAct_btn_next"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="다음으로"
+            android:textSize="16sp"
+            android:layout_marginTop="24dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/introFourAct_btn_login" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

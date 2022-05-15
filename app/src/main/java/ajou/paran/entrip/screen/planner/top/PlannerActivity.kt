@@ -275,7 +275,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             mutableList.add(
                 PlannerDate(format.format(time.time))
             )
-            Log.d(TAG, format.format(time.time))
             time.add(Calendar.DAY_OF_MONTH, 1)
             i += 1
         }

@@ -16,6 +16,21 @@
         android:theme="@style/Theme.Entrip">
 
         <activity
+            android:name=".screen.intro.SplashActivity"
+            android:exported="true" >
+            <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".screen.intro.IntroActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screen.intro.register.RegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".screen.planner.mid.map.MapActivity"
             android:exported="false" />
         <activity
@@ -23,13 +38,7 @@
             android:exported="false" />
         <activity
             android:name=".screen.planner.main.MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".screen.planner.top.PlannerActivity"
             android:exported="false"/>
