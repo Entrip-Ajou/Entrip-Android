@@ -30,10 +30,6 @@ class IntroActivity: BaseActivity<ActivityIntroBinding>(R.layout.activity_intro)
         const val TAG = "[IntroActivity]"
     }
 
-
-
-
-
     override fun init(savedInstanceState: Bundle?) {
         val pagerAdapter = ScreenSlidePagerAdapter(this)
         binding.introActVp2.adapter = pagerAdapter

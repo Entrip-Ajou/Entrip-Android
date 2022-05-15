@@ -131,6 +131,7 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
             Log.d(TAG, account.email.toString())
             user_id = account.email.toString()
             subscribeObservers()
+            googleSignInClient.signOut()
         } catch (e: ApiException){
             Log.e(TAG, "signInResult:failed code=" + e.statusCode)
         }
