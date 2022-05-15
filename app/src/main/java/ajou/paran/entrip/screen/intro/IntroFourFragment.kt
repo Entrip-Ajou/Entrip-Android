@@ -6,6 +6,7 @@ import ajou.paran.entrip.databinding.FragmentIntroFourBinding
 import ajou.paran.entrip.screen.intro.register.RegisterActivity
 import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.util.ApiState
+import android.content.DialogInterface
 import android.content.Intent
 import android.util.Log
 import android.view.View
@@ -13,6 +14,7 @@ import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -47,6 +49,12 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
             if (it.resultCode == AppCompatActivity.RESULT_OK){
                 val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
                 handleSignInResult(task)
+            }else{
+                val builder = AlertDialog.Builder(activity!!)
+                builder.setMessage("네트워크를 확인해주세요")
+                    .setPositiveButton("확인",
+                        DialogInterface.OnClickListener{ dialog, which -> })
+                builder.show()
             }
         }
 
@@ -127,6 +135,5 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
             Log.e(TAG, "signInResult:failed code=" + e.statusCode)
         }
     }
-
 
 }
