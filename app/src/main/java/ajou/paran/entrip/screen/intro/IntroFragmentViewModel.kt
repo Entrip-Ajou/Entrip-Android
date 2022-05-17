@@ -46,5 +46,5 @@ constructor(
             }
     }
 
-    fun userIdShared(user_id: String) = sharedPreferences.edit().putString("user_id", user_id)
+    fun userIdShared(user_id: String) = sharedPreferences.edit().putString("user_id", user_id).commit()
 }
