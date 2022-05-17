@@ -25,9 +25,11 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
     override fun onClick(view: View?) {
         view?.let {
             when(it.id){
+                /*
                 binding.userAddActBtnClose.id -> {
                     onBackPressed()
                 }
+                 */
             }
 
         }

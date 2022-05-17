@@ -1,7 +1,9 @@
 package ajou.paran.entrip.di
 
 import ajou.paran.entrip.R
+import ajou.paran.entrip.repository.network.api.FcmApi.Companion.FCM_URL
 import ajou.paran.entrip.repository.network.api.PlanApi
+import ajou.paran.entrip.util.network.fcm.FcmInterceptor
 import ajou.paran.entrip.util.network.networkinterceptor.NetworkInterceptor
 import android.content.Context
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -17,14 +19,25 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class Entrip
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class FCM
+
     @Provides
     @Singleton
-    fun provideRetrofit(client: OkHttpClient) : Retrofit {
+    @Entrip
+    fun provideRetrofit(@Entrip client: OkHttpClient) : Retrofit {
         return Retrofit.Builder().apply {
             baseUrl(PlanApi.BASE_URL)
             addConverterFactory(GsonConverterFactory.create())
@@ -34,6 +47,18 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @FCM
+    fun provideFCMRetrofit(@FCM client : OkHttpClient) : Retrofit{
+        return Retrofit.Builder().apply{
+            baseUrl(FCM_URL)
+            addConverterFactory(GsonConverterFactory.create())
+            client(client)
+        }.build()
+    }
+
+    @Provides
+    @Singleton
+    @Entrip
     fun provideHttpClient(networkInterceptor: NetworkInterceptor) : OkHttpClient {
         return OkHttpClient.Builder().apply {
             readTimeout(10, TimeUnit.SECONDS)
@@ -44,8 +69,24 @@ object NetworkModule {
     }
 
     @Provides
+    @Singleton
+    @FCM
+    fun provideFCMHttpClient(
+        fcmInterceptor : FcmInterceptor
+    ) : OkHttpClient = OkHttpClient.Builder()
+        .run{
+            addInterceptor(fcmInterceptor)
+            build()
+        }
+
+    @Provides
     fun provideInterceptor(@ApplicationContext context: Context) : NetworkInterceptor{
         return NetworkInterceptor(context)
+    }
+
+    @Provides
+    fun provideFcmInterceptor() : FcmInterceptor{
+        return FcmInterceptor()
     }
 
     @Provides
@@ -64,5 +105,4 @@ object NetworkModule {
     fun provideFirebase(): FirebaseAuth {
         return FirebaseAuth.getInstance()
     }
-
 }

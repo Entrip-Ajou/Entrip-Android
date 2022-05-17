@@ -4,10 +4,13 @@ import ajou.paran.entrip.repository.Impl.*
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.repository.network.PlanRemoteSource
 import ajou.paran.entrip.repository.network.PlannerRemoteSource
+import ajou.paran.entrip.repository.network.UserAddRemoteSource
 import ajou.paran.entrip.repository.network.UserRemoteSource
+import ajou.paran.entrip.repository.network.api.FcmApi
 import ajou.paran.entrip.repository.network.api.PlanApi
 import ajou.paran.entrip.repository.network.api.UserApi
 import ajou.paran.entrip.repository.room.AppDatabase
+import ajou.paran.entrip.repository.room.plan.dao.UserDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,14 +24,20 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePlanRemoteApi(retrofit: Retrofit) : PlanApi {
+    fun providePlanRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : PlanApi {
         return retrofit.create(PlanApi::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideUserRemoteApi(retrofit: Retrofit) : UserApi {
+    fun provideUserRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : UserApi {
         return retrofit.create(UserApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFcmRemoteApi(@NetworkModule.FCM retrofit: Retrofit) : FcmApi {
+        return retrofit.create(FcmApi::class.java)
     }
 
     @Provides
@@ -51,14 +60,14 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(userRemoteSource: UserRemoteSource) : UserRepository{
-        return UserRepositoryImpl(userRemoteSource)
+    fun providePlanDao(appDatabase: AppDatabase) : PlanDao {
+        return appDatabase.planDao()
     }
 
     @Provides
     @Singleton
-    fun providePlanDao(appDatabase: AppDatabase) : PlanDao {
-        return appDatabase.planDao()
+    fun provideUserDao(appDatabase: AppDatabase) : UserDao {
+        return appDatabase.userDao()
     }
 
     @Provides
@@ -73,4 +82,15 @@ object RepositoryModule {
         return PlannerRepositoryImpl(plannerRemoteSource, planDao)
     }
 
+    @Provides
+    @Singleton
+    fun provideUserRepository(userRemoteSource: UserRemoteSource) : UserRepository{
+        return UserRepositoryImpl(userRemoteSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserAddRepository(userAddRemoteSource: UserAddRemoteSource, userDao: UserDao) : UserAddRepository{
+        return UserAddRepositoryImpl(userAddRemoteSource, userDao)
+    }
 }

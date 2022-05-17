@@ -7,6 +7,7 @@ import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -21,9 +22,13 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener{
+
+    @Inject
+    lateinit var sharedPreferences : SharedPreferences
 
     private lateinit var binding : ActivityMainBinding
     private val viewModel: MainActivityViewModel by viewModels()
@@ -130,7 +135,8 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener{
     }
 
     override fun onPlannerAddClickListener() {
-        // todo : 추후에 userId는 sharedpreference로 관리해서 넣기.
-        viewModel.createPlanner("test2")
+        val user_id = sharedPreferences.getString("user_id", "null")
+        Log.d(TAG, "user_id = " + user_id)
+        viewModel.createPlanner(user_id!!)
     }
 }

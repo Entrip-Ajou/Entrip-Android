@@ -79,8 +79,8 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="16dp"
                 android:src="@drawable/icon_todo"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -93,7 +93,8 @@
                 android:background="@color/white"
                 android:ems="10"
                 android:hint="할 일"
-                android:inputType="text"
+                android:inputType="textMultiLine"
+                android:lines="4"
                 android:text="@={inputViewModel.todo}"
                 android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@+id/imageView"

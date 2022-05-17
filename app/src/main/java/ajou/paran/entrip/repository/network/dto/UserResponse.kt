@@ -7,3 +7,9 @@ data class UserResponse (
     @SerializedName("gender") var gender: Int,
     @SerializedName("nickname") var nickname: String
 )
+
+data class UserInformation(
+    @SerializedName("nickname") var nickname: String,
+    @SerializedName("photoUrl") var photoUrl : String,
+    @SerializedName("token") var token : String
+)

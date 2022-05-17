@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1058695871135",
+    "project_id": "entrip-api",
+    "storage_bucket": "entrip-api.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1058695871135:android:d17a0b1fabce7ed56f80aa",
+        "android_client_info": {
+          "package_name": "ajou.paran.entrip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1058695871135-sqhltm9a6lf63d2p6in2b9670pnggncn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ajou.paran.entrip",
+            "certificate_hash": "2c4dbade28c7dece1d2f26a632ccd380f8dca6bb"
+          }
+        },
+        {
+          "client_id": "1058695871135-035chngkijmfsbubeqccar7ug0q45el5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJbh2RQn1NLisTxswKadqPO2ZGC_yE3F0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1058695871135-035chngkijmfsbubeqccar7ug0q45el5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,15 @@
+package ajou.paran.entrip.model
+
+import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+@Entity(tableName = "invite")
+data class InviteEntity(
+    @PrimaryKey(autoGenerate = true) val invite_id : Int = 0,
+    val nickname: String,
+    val photoUrl: String,
+    val token: String
+) : Parcelable
