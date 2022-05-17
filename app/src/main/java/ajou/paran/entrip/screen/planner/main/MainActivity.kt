@@ -131,6 +131,6 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener{
 
     override fun onPlannerAddClickListener() {
         // todo : 추후에 userId는 sharedpreference로 관리해서 넣기.
-        viewModel.createPlanner("test2")
+        viewModel.createPlanner("huihun66@ajou.ac.kr")
     }
 }

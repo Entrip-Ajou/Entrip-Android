@@ -73,4 +73,10 @@ object RepositoryModule {
         return PlannerRepositoryImpl(plannerRemoteSource, planDao)
     }
 
+    @Provides
+    @Singleton
+    fun provideRecommendRepository() : RecommendRepository{
+        return RecommendRepositoryImpl()
+    }
+
 }

@@ -45,6 +45,9 @@
         <activity
             android:name=".screen.planner.top.useradd.PlannerUserAddActivity"
             android:exported="false"/>
+        <activity
+            android:name=".screen.recommendation.RecommendationActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>

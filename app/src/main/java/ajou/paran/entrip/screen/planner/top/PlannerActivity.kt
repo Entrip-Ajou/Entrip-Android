@@ -7,17 +7,16 @@ import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
+import ajou.paran.entrip.screen.recommendation.RecommendationActivity
 import ajou.paran.entrip.util.ui.hideKeyboard
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.util.Pair
@@ -26,20 +25,14 @@ import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 import java.util.*
 
 @AndroidEntryPoint
@@ -82,11 +75,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         else
             date = selectedPlanner.start_date
 
-        midFragment = MidFragment(
-            date = date,
-            plannerId = selectedPlanner.planner_id
-        )
-        midFragment.selectedPlanner = selectedPlanner
+        midFragment = MidFragment.newInstance(date, selectedPlanner.planner_id, selectedPlanner)
 
         if (savedInstanceState == null)
             setUpBottomNavigationBar()
@@ -193,22 +182,25 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     private fun setUpBottomNavigationBar(){
         supportFragmentManager.beginTransaction()
             .replace(R.id.plannerAct_nav_host_container, midFragment).commit()
-        val navHostFragment = supportFragmentManager.findFragmentById(
-            R.id.plannerAct_nav_host_container
-        ) as NavHostFragment
-        navController = navHostFragment.navController
-//        navController.setGraph(R.navigation.nav_planner)
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.plannerAct_bottom_nav)
-        bottomNavigationView.setOnItemReselectedListener {
+        bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.nav_planner -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.plannerAct_nav_host_container, midFragment).commit()
+                    true
                 }
+                R.id.nav_recommendation -> {
+                    val intent = Intent(applicationContext, RecommendationActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
             }
         }
-        bottomNavigationView.setupWithNavController(navController)
 
     }
 
