@@ -7,6 +7,7 @@ import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,11 +17,16 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home) {
         const val TAG = "[HomeActivity]"
     }
 
+    private val viewModel: HomeActivityViewModel by viewModels()
+
     override fun init(savedInstanceState: Bundle?) {
         setUpBottomNavigationBar()
     }
 
     private fun setUpBottomNavigationBar(){
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.homeAct_nav_host_container, HomeFragment()).commit()
+
         binding.homeActBottomNav.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.nav_home -> {
