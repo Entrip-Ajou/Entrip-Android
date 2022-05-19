@@ -2,7 +2,7 @@ package ajou.paran.entrip.repository.Impl
 
 import ajou.paran.entrip.repository.network.UserRemoteSource
 import ajou.paran.entrip.repository.network.dto.UserRequest
-import ajou.paran.entrip.repository.network.dto.UserResponse
+import ajou.paran.entrip.repository.network.dto.UserTemp
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
@@ -50,7 +50,7 @@ constructor(
     override fun saveUser(user_id: String, gender: Int, nickname: String): Flow<BaseResult<UserRequest, Failure>>
      = flow {
         try {
-            val userResponse = UserResponse(user_id, gender, nickname)
+            val userResponse = UserTemp(user_id, gender, nickname)
             val response = userRemoteSource.saveUser(userResponse)
             if (response.status == 200) {
                 val dto = response.data

@@ -3,26 +3,50 @@ package ajou.paran.entrip.repository.network
 import ajou.paran.entrip.repository.network.api.FcmApi
 import ajou.paran.entrip.repository.network.api.UserApi
 import ajou.paran.entrip.repository.network.dto.PushNotification
+import ajou.paran.entrip.repository.network.dto.SharingFriend
 import ajou.paran.entrip.repository.network.dto.UserInformation
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
 import android.util.Log
-import okhttp3.ResponseBody
-import retrofit2.Response
 import javax.inject.Inject
 
 class UserAddRemoteSource
 @Inject
 constructor(
-    private val fcmApi : FcmApi,
+    private val fcmApi: FcmApi,
     private val userApi: UserApi
 ) {
-    companion object{
+    companion object {
         const val TAG = "[UserAddRemoteSource]"
     }
 
-    suspend fun searchUser(user_id_or_nickname : String) : BaseResult<UserInformation, Failure>{
+    suspend fun findAllUsersWithPlannerId(planner_id: Long): BaseResult<List<SharingFriend>, Failure> {
+        try {
+            val response = userApi.findAllUsersWithPlannerId(planner_id)
+            return if (response.status == 200) {
+                val users = mutableListOf<SharingFriend>()
+                response.data?.forEach { t ->
+                    users.add(
+                        SharingFriend(
+                            user_id = t.userId,
+                            nickname = t.nickname,
+                            photoUrl = t.photoUrl
+                        )
+                    )
+                }
+                BaseResult.Success(users)
+            } else {
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        } catch (e: NoInternetException) {
+            return BaseResult.Error(Failure(0, e.message))
+        } catch (e: Exception) {
+            return BaseResult.Error(Failure(-1, e.message.toString()))
+        }
+    }
+
+    suspend fun searchUser(user_id_or_nickname: String): BaseResult<UserInformation, Failure> {
         try {
             val response = userApi.searchUser(user_id_or_nickname)
             return if (response.status == 200) {
@@ -44,16 +68,16 @@ constructor(
         }
     }
 
-    suspend fun postNotification(notification : PushNotification) : BaseResult<Unit, Failure>{
-        try{
+    suspend fun postNotification(notification: PushNotification): BaseResult<Unit, Failure> {
+        try {
             val response = fcmApi.postNotification(notification)
-            return if(response.isSuccessful){
+            return if (response.isSuccessful) {
                 BaseResult.Success(Unit)
-            }else{
+            } else {
                 Log.e(TAG, response.raw().toString())
                 BaseResult.Error(Failure(response.code(), response.errorBody().toString()))
             }
-        }catch (e: NoInternetException) {
+        } catch (e: NoInternetException) {
             return BaseResult.Error(Failure(0, e.message))
         } catch (e: Exception) {
             return BaseResult.Error(Failure(-1, e.message.toString()))

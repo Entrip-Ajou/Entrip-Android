@@ -1,9 +1,6 @@
 package ajou.paran.entrip.repository.network.api
 
-import ajou.paran.entrip.repository.network.dto.BaseResponse
-import ajou.paran.entrip.repository.network.dto.UserInformation
-import ajou.paran.entrip.repository.network.dto.UserRequest
-import ajou.paran.entrip.repository.network.dto.UserResponse
+import ajou.paran.entrip.repository.network.dto.*
 import retrofit2.http.*
 
 interface UserApi {
@@ -19,7 +16,7 @@ interface UserApi {
 
     @POST("api/v1/users")
     suspend fun saveUser(
-        @Body userResponse: UserResponse
+        @Body userResponse: UserTemp
     ) : BaseResponse<UserRequest>
 
     @PUT("api/v1/users/token/{user_id}/{token}")
@@ -32,4 +29,9 @@ interface UserApi {
     suspend fun searchUser(
         @Path("user_id_or_nickname") user_id_or_nickname : String
     ) : BaseResponse<UserInformation>
+
+    @GET("api/v1/planners/{planner_id}/getAllUser")
+    suspend fun findAllUsersWithPlannerId(
+        @Path("planner_id") planner_id : Long
+    ) : BaseResponse<List<UserResponse>>
 }
