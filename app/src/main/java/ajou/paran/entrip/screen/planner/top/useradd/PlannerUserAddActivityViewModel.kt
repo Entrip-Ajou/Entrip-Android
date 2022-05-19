@@ -2,6 +2,8 @@ package ajou.paran.entrip.screen.planner.top.useradd
 
 import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
 import ajou.paran.entrip.repository.Impl.UserAddRepositoryImpl
+import ajou.paran.entrip.repository.network.dto.PushNotification
+import ajou.paran.entrip.repository.network.dto.UserInformation
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
 import androidx.lifecycle.ViewModel
@@ -47,6 +49,28 @@ constructor(private val userAddRepository: UserAddRepositoryImpl) : ViewModel() 
     }
 
     fun searchUser(user_id_or_nickname : String){
+        viewModelScope.launch(Dispatchers.IO){
+            setLoading()
+            val res = userAddRepository.searchUser(user_id_or_nickname)
+            delay(500)
+            hideLoading()
+            when(res){
+                is BaseResult.Success -> _state.value = ApiState.Success(res.data)
+                is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
+            }
+        }
+    }
 
+    fun postNotification(notification: PushNotification, user : UserInformation){
+        viewModelScope.launch(Dispatchers.IO){
+            setLoading()
+            val res = userAddRepository.postNotification(notification, user)
+            delay(500)
+            hideLoading()
+            when(res){
+                is BaseResult.Success -> _state.value = ApiState.Success(Unit)
+                is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
+            }
+        }
     }
 }

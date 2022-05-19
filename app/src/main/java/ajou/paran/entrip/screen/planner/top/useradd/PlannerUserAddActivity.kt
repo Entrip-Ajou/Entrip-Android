@@ -3,14 +3,21 @@ package ajou.paran.entrip.screen.planner.top.useradd
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityUseraddBinding
+import ajou.paran.entrip.repository.network.dto.NotificationData
+import ajou.paran.entrip.repository.network.dto.PushNotification
 import ajou.paran.entrip.repository.network.dto.SharingFriend
+import ajou.paran.entrip.repository.network.dto.UserInformation
+import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.util.ApiState
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -25,6 +32,7 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
 
     private val viewModel: PlannerUserAddActivityViewModel by viewModels()
     private var planner_id : Long = 1       // todo : PlannerActivity에게 intent로 받기
+    private lateinit var userInformation : UserInformation
 
     override fun init(savedInstanceState: Bundle?) {
         binding.plannerActivityViewModel = viewModel
@@ -76,10 +84,27 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
      *
      */
     private fun handleSuccess(data : Any){
-        if(data is List<*>){
-            binding.rvSharingPlanner.adapter?.let{ a ->
-                if(a is SharingAdapter)
-                    a.update(data as List<SharingFriend>)
+        when (data) {
+            is List<*> -> {
+                binding.rvSharingPlanner.adapter?.let{ a ->
+                    if(a is SharingAdapter)
+                        a.update(data as List<SharingFriend>)
+                }
+            }
+            is UserInformation -> {
+                Glide.with(this)
+                    .load(data.photoUrl)
+                    .into(binding.imageProfile)
+                binding.tvUserOrNickname.text = data.nickname
+
+                userInformation.nickname = data.nickname
+                userInformation.token = data.token
+                userInformation.photoUrl = data.photoUrl
+
+                binding.layoutSearchSuccess.visibility = VISIBLE
+            }
+            is Unit -> {
+
             }
         }
     }
@@ -91,11 +116,31 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
     override fun onClick(view: View?) {
         view?.let {
             when(it.id){
-                /*
-                binding.userAddActBtnClose.id -> {
-                    onBackPressed()
+                binding.btnBackToPlanner.id -> {
+                    val intent = Intent(this, PlannerActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
-                 */
+
+                binding.imgUserSearch.id -> {
+                    viewModel.searchUser(binding.etUserSearch.text.toString())
+                }
+
+                binding.tvInvite.id -> {
+                    val notification = PushNotification(
+                        NotificationData(
+                            title = "Entrip",
+                            message = "님이 플래너 초대를 보냈습니다.",
+                            owner = "sharedPreference",
+                            owner_token = "에 저장한거 꺼내와야겠다",
+                            planner_id = planner_id,
+                            isInvite = true
+                        ), userInformation.token
+                    )
+                    viewModel.postNotification(notification, userInformation)
+                }
+
+
             }
 
         }
