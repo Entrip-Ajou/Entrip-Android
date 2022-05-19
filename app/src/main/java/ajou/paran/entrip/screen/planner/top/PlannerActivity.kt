@@ -4,10 +4,10 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityPlannerBinding
 import ajou.paran.entrip.model.PlannerEntity
+import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
-import ajou.paran.entrip.screen.recommendation.RecommendationActivity
 import ajou.paran.entrip.util.ui.hideKeyboard
 import android.annotation.SuppressLint
 import android.content.DialogInterface
@@ -44,7 +44,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     }
 
     private lateinit var dateRecyclerViewAdapter: DateRecyclerViewAdapter
-    private lateinit var navController: NavController
     private lateinit var midFragment: MidFragment
 
     private lateinit var selectedPlanner : PlannerEntity
@@ -180,27 +179,34 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     }
 
     private fun setUpBottomNavigationBar(){
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.plannerAct_nav_host_container, midFragment).commit()
-
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.plannerAct_bottom_nav)
-        bottomNavigationView.setOnItemSelectedListener {
+        binding.plannerActBottomNav.setOnItemSelectedListener {
             when(it.itemId){
+                R.id.nav_home -> {
+                    val intent = Intent(applicationContext, HomeActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.putExtra("last_pos", R.id.nav_home)
+                    startActivity(intent)
+                    true
+                }
                 R.id.nav_planner -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.plannerAct_nav_host_container, midFragment).commit()
                     true
                 }
                 R.id.nav_recommendation -> {
-                    val intent = Intent(applicationContext, RecommendationActivity::class.java)
+                    val intent = Intent(applicationContext, HomeActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.putExtra("last_pos", R.id.nav_recommendation)
                     startActivity(intent)
                     true
                 }
                 else -> false
             }
         }
+
+        binding.plannerActBottomNav.selectedItemId = R.id.nav_planner
 
     }
 

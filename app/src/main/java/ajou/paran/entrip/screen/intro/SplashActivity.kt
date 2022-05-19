@@ -3,8 +3,7 @@ package ajou.paran.entrip.screen.intro
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivitySplashBinding
-import ajou.paran.entrip.screen.planner.main.MainActivity
-import android.app.Activity
+import ajou.paran.entrip.screen.home.HomeActivity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -29,7 +28,7 @@ class SplashActivity: BaseActivity<ActivitySplashBinding>(R.layout.activity_spla
             if (checkFirst){
                 startActivity(Intent(this@SplashActivity, IntroActivity::class.java))
             } else {
-                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
             }
         }
     }

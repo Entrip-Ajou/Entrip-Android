@@ -3,8 +3,8 @@ package ajou.paran.entrip.screen.intro
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseFragment
 import ajou.paran.entrip.databinding.FragmentIntroFourBinding
+import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.intro.register.RegisterActivity
-import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
 import android.content.Intent
@@ -66,7 +66,7 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
         }
         binding.introFourActBtnNext.setOnClickListener{
             Log.d(IntroThreeFragment.TAG, "Case: Click Next")
-            startActivity(Intent(activity, MainActivity::class.java))
+            startActivity(Intent(activity, HomeActivity::class.java))
         }
     }
 
@@ -105,7 +105,7 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
                     if (it.code == 999){
                         // 이미 존재하는 아이디
                         viewModel.userIdShared(user_id)
-                        startActivity(Intent(context, MainActivity::class.java))
+                        startActivity(Intent(context, HomeActivity::class.java))
                     } else {
                         Log.e(
                             TAG,

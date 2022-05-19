@@ -37,6 +37,9 @@
             android:name=".screen.planner.mid.input.InputActivity"
             android:exported="false" />
         <activity
+            android:name=".screen.home.HomeActivity"
+            android:exported="false"/>
+        <activity
             android:name=".screen.planner.main.MainActivity"
             android:exported="false"/>
         <activity
@@ -44,9 +47,6 @@
             android:exported="false"/>
         <activity
             android:name=".screen.planner.top.useradd.PlannerUserAddActivity"
-            android:exported="false"/>
-        <activity
-            android:name=".screen.recommendation.RecommendationActivity"
             android:exported="false"/>
     </application>
 
