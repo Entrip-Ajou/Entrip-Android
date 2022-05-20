@@ -148,7 +148,10 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 }
                 binding.plannerActPersonAdd.id -> {
                     Log.d(TAG, "Case: Add user")
-                    startActivity(Intent(this, PlannerUserAddActivity::class.java))
+                    val intent = Intent(this, PlannerUserAddActivity::class.java)
+                    intent.putExtra("planner_id", selectedPlanner.planner_id)
+                    intent.putExtra("planner_title", selectedPlanner.title)
+                    startActivity(intent)
                 }
                 else -> {
                     return

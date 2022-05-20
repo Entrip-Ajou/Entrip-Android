@@ -5,6 +5,8 @@ data class NotificationData(
     val message : String,
     val owner : String,
     val owner_token : String,
+    val photo_url : String,
     val planner_id : Long,
+    val planner_title : String,
     val isInvite : Boolean
 )

@@ -108,6 +108,7 @@ class RegisterActivity
             if (it is ApiState.Success) {
                 Log.d(TAG, "유저 저장 성공")
                 viewModel.userIdShared()
+                viewModel.updateUserToken()
                 startActivity(Intent(this@RegisterActivity, MainActivity::class.java))
             } else if (it is ApiState.Failure) {
                 if (it.code == 999) {

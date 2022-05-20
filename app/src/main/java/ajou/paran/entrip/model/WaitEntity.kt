@@ -12,5 +12,6 @@ data class WaitEntity(
     @PrimaryKey(autoGenerate = true) val wait_id : Int = 0,
     val nickname: String,
     val photoUrl: String,
-    val token: String
+    val token: String,
+    val planner_id : Long
 ) : Parcelable

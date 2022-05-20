@@ -8,6 +8,7 @@ import ajou.paran.entrip.repository.network.dto.UserInformation
 import ajou.paran.entrip.repository.room.plan.dao.UserDao
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
+import kotlinx.coroutines.flow.Flow
 import okhttp3.internal.wait
 import javax.inject.Inject
 
@@ -34,16 +35,17 @@ class UserAddRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun postNotification(notification: PushNotification, user : UserInformation): BaseResult<Unit, Failure> {
+    override suspend fun postNotification(notification: PushNotification, user : UserInformation): BaseResult<Flow<List<WaitEntity>>, Failure> {
         val fcm = userAddRemoteSource.postNotification(notification)
         if(fcm is BaseResult.Success){
             val waitEntity = WaitEntity(
                 nickname = user.nickname,
                 photoUrl = user.photoUrl,
-                token = user.token
+                token = user.token,
+                planner_id = notification.data.planner_id
             )
             userDao.insertWait(waitEntity)
-            return BaseResult.Success(Unit)
+            return BaseResult.Success(userDao.selectWaiting(notification.data.planner_id))
         }else{
             return BaseResult.Error(Failure((fcm as BaseResult.Error).err.code, fcm.err.message))
         }
