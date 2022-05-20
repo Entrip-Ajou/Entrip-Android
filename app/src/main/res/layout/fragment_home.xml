@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/homeFrag_rv"
+            android:id="@+id/homeFrag_rv_planner"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:paddingStart="12dp"
@@ -23,6 +23,30 @@
             app:spanCount="3"
             tools:listitem="@layout/item_planner" />
 
+        <ImageButton
+            android:id="@+id/homeFrag_btn_recommendation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeFrag_rv_planner" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/homeFrag_rv_recommendation"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeFrag_btn_recommendation" />
+
+        <ImageButton
+            android:id="@+id/homeFRag_btn_test"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeFrag_rv_recommendation"/>
 
         <ProgressBar
             android:id="@+id/homeFrag_pb_loading_bar"

@@ -7,7 +7,9 @@ import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
+import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -56,5 +58,14 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home) {
         binding.homeActBottomNav.selectedItemId = intent.getIntExtra("last_pos", R.id.nav_home)
     }
 
+    fun changeFrag(fragment: Fragment){
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.homeAct_nav_host_container, fragment).commit()
+        when(fragment){
+            is HomeFragment -> binding.homeActBottomNav.selectedItemId = R.id.nav_home
+            is RecommendationFragment -> binding.homeActBottomNav.selectedItemId = R.id.nav_recommendation
+            else -> R.id.nav_home
+        }
+    }
 
 }

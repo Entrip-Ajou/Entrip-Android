@@ -4,7 +4,10 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseFragment
 import ajou.paran.entrip.databinding.FragmentHomeBinding
 import ajou.paran.entrip.model.PlannerEntity
+import ajou.paran.entrip.model.test.fakeRecommenItem
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
+import ajou.paran.entrip.screen.recommendation.RecommendItemAdapter
+import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
 import android.content.Intent
@@ -14,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -26,22 +30,37 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home), HomePlannerAdapter.ItemClickListener {
+class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
+    HomePlannerAdapter.ItemClickListener {
     companion object{
         const val TAG = "[HomeFragment]"
     }
 
     private val viewModel: HomeFragmentViewModel by viewModels()
 
+    private lateinit var recommendItemAdapter: HomeRecommendAdapter
+
     override fun init() {
+        viewModel.getFakeTestItem()
+        binding.homeFragBtnRecommendation.setOnClickListener{
+            (activity as HomeActivity).changeFrag(RecommendationFragment())
+        }
+        binding.homeFRagBtnTest.setOnClickListener{
+            Log.d(TAG, "성향 테스트 버튼 눌림")
+        }
+
         observeState()
         setUpRecyclerView()
     }
 
     private fun setUpRecyclerView(){
-        val adapter = HomePlannerAdapter(this)
-        binding.homeFragRv.adapter = adapter
-        binding.homeFragRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        val plannerAdapter = HomePlannerAdapter(this)
+        binding.homeFragRvPlanner.adapter = plannerAdapter
+        binding.homeFragRvPlanner.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+        recommendItemAdapter = HomeRecommendAdapter()
+        binding.homeFragRvRecommendation.adapter = recommendItemAdapter
+        binding.homeFragRvRecommendation.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         lifecycle.coroutineScope.launch{
             viewModel.selectAllPlanner()
@@ -51,7 +70,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home), H
                 }
                 .collect {
                     viewModel.hideLoading()
-                    adapter.submitList(it.toList())
+                    plannerAdapter.submitList(it.toList())
                 }
         }
     }
@@ -60,6 +79,12 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home), H
         viewModel.state.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .onEach{ handleState(it) }
             .launchIn(lifecycleScope)
+        viewModel.recommendItemList.observe(
+            this, Observer {
+                recommendItemAdapter.apply {
+                    setList(fakeRecommenItem)
+                }
+            })
     }
 
     private fun handleState(state : ApiState){
@@ -130,4 +155,5 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home), H
         // todo : 추후에 userId는 sharedpreference로 관리해서 넣기.
         viewModel.createPlanner("huihun66@ajou.ac.kr")
     }
+
 }
