@@ -16,7 +16,7 @@ class SharingAdapter(private val users: MutableList<SharingFriend>) : RecyclerVi
 
     inner class ViewHolder(private val itemBinding : ItemLayoutSharingBinding) : RecyclerView.ViewHolder(itemBinding.root){
         fun bind(t : SharingFriend){
-            if(t.user_id != sharedPreferences.getString("user_id", "default")){
+            if(t.user_id != sharedPreferences.getString("user_id", null)){
                 Glide.with(itemView)
                     .load(t.photoUrl)
                     .into(itemBinding.imgItemProfile)

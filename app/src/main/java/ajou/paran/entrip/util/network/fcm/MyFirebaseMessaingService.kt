@@ -28,9 +28,9 @@ class MyFirebaseMessaingService : FirebaseMessagingService() {
         super.onNewToken(token)
         sharedPreferences.edit().putString("token", token).commit()
         CoroutineScope(Dispatchers.IO).launch{
-            val user_id = sharedPreferences.getString("user_id", "default").toString()
+            val user_id = sharedPreferences.getString("user_id", null)?.toString()
 
-            if(user_id != "default"){
+            if(!user_id.isNullOrEmpty()){
                 val res = userRemoteSource.updateUserToken(token, user_id)
                 if(res is BaseResult.Success){
                     Log.d(TAG, "Update the user's token Success")

@@ -135,8 +135,7 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener{
     }
 
     override fun onPlannerAddClickListener() {
-        val user_id = sharedPreferences.getString("user_id", "null")
-        Log.d(TAG, "user_id = " + user_id)
-        viewModel.createPlanner(user_id!!)
+        val user_id = sharedPreferences.getString("user_id", null).toString()
+        viewModel.createPlanner(user_id)
     }
 }

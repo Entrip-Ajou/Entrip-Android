@@ -37,7 +37,7 @@ constructor(
 
     private val _isExistNicknameResult = MutableStateFlow<ApiState>(ApiState.Init)
 
-    val isExistNicknameReuslt: StateFlow<ApiState>
+    val isExistNicknameResult: StateFlow<ApiState>
         get() = _isExistNicknameResult
 
     private val _isSaveUserResult = MutableStateFlow<ApiState>(ApiState.Init)
@@ -68,6 +68,7 @@ constructor(
                 if (it is BaseResult.Success){
                     if (it.data.userId.isNotBlank()){
                         sharedPreferences.edit().putString("nickname", nickname).commit()
+                        sharedPreferences.edit().putString("gender", gender.toString()).commit()
                         sharedPreferences.edit().putString("photo_url","https://user-images.githubusercontent.com/77181865/169517449-f000a59d-5659-4957-9cb4-c6e5d3f4b197.png").commit()
                         _isSaveUserResult.value = ApiState.Success(it)
                     } else {
@@ -82,11 +83,11 @@ constructor(
     fun userIdShared() = sharedPreferences.edit().putString("user_id", user_id).commit()
 
     fun updateUserToken(){
-        val user_id = sharedPreferences.getString("user_id", "default").toString()
-        val user_token = sharedPreferences.getString("token", "default").toString()
+        val user_id = sharedPreferences.getString("user_id", null)?.toString()
+        val user_token = sharedPreferences.getString("token", null)?.toString()
 
         viewModelScope.launch(Dispatchers.IO) {
-            val res = userRemoteSource.updateUserToken(user_id,user_token)
+            val res = userRemoteSource.updateUserToken(user_id!!,user_token!!)
             if(res is BaseResult.Success){
                 Log.d(TAG, "초기 사용자가 등록할 때 Token 등록 완료")
             }else{

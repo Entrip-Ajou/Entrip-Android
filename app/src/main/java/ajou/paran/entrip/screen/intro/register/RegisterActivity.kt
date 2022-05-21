@@ -63,7 +63,7 @@ class RegisterActivity
     }
 
     private fun observeNickname() = lifecycleScope.launchWhenStarted {
-        viewModel.isExistNicknameReuslt.collect {
+        viewModel.isExistNicknameResult.collect {
             if (it is ApiState.Success){
                 // 존재하지 않는 닉네임
                 Log.d(TAG, "존재하지 않는 닉네임")
@@ -85,7 +85,7 @@ class RegisterActivity
                 } else {
                     Log.e(
                         TAG,
-                        "code: ${it.code}"
+                        "observeNickname() code: ${it.code}"
                     )
                 }
             } else if (it is ApiState.Init) {}
@@ -122,7 +122,7 @@ class RegisterActivity
                 } else {
                     Log.e(
                         TAG,
-                        "code: ${it.code}"
+                        "observeSave() code: ${it.code}"
                     )
                 }
             } else if (it is ApiState.Init) {
