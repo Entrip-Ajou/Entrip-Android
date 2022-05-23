@@ -35,13 +35,13 @@ class SplashActivity: BaseActivity<ActivitySplashBinding>(R.layout.activity_spla
             if (checkFirst){
                 startActivity(Intent(this@SplashActivity, IntroActivity::class.java))
             } else {
-                val user_id = sharedPreferences.getString("user_id", null).toString()
-                val token = sharedPreferences.getString("token", null).toString()
+                val user_id = sharedPreferences.getString("user_id", null)?.toString()
+                val token = sharedPreferences.getString("token", null)?.toString()
                 if(!token.isNullOrEmpty()){
                     lifecycleScope.launch(Dispatchers.IO) {
-                        val res = userRemoteSource.updateUserToken(user_id,token)
+                        val res = userRemoteSource.updateUserToken(user_id!!,token!!)
                         if(res is BaseResult.Success){
-                            Log.d(TAG, "초기 사용자가 등록할 때 Token 등록 완료")
+                            Log.d(TAG, "사용자 Token update 완료")
                         }else{
                             Log.e(TAG, "Err code = "+(res as BaseResult.Error).err.code+ " Err message = "+res.err.message)
                         }

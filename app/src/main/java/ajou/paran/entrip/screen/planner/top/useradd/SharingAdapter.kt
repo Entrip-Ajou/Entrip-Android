@@ -9,14 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import javax.inject.Inject
 
-class SharingAdapter(private val users: MutableList<SharingFriend>) : RecyclerView.Adapter<SharingAdapter.ViewHolder>(){
-
-    @Inject
-    lateinit var sharedPreferences : SharedPreferences
+class SharingAdapter(private val users: MutableList<SharingFriend>, private val user_id : String) : RecyclerView.Adapter<SharingAdapter.ViewHolder>(){
 
     inner class ViewHolder(private val itemBinding : ItemLayoutSharingBinding) : RecyclerView.ViewHolder(itemBinding.root){
         fun bind(t : SharingFriend){
-            if(t.user_id != sharedPreferences.getString("user_id", null)){
+            if(t.user_id != user_id){
                 Glide.with(itemView)
                     .load(t.photoUrl)
                     .into(itemBinding.imgItemProfile)

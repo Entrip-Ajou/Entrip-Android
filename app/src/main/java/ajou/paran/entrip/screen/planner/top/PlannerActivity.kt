@@ -11,6 +11,7 @@ import ajou.paran.entrip.util.ui.hideKeyboard
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
@@ -41,6 +42,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
@@ -49,6 +51,9 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     companion object{
         const val TAG = "[PlannerActivity]"
     }
+
+    @Inject
+    lateinit var sharedPreferences : SharedPreferences
 
     private lateinit var dateRecyclerViewAdapter: DateRecyclerViewAdapter
     private lateinit var navController: NavController
@@ -73,6 +78,8 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
          *  Case 2) InputActivity -> Planner Activity
          *          - date를 intent로 넘겨준다.
          *
+         *  Case 3) PlannerAddActivity -> PlannerActivity
+         *          - selectedPlanner를 intent로 넘겨준다.
          */
         // Case 2에 대한 flag
         var isFromInput = intent.getBooleanExtra("isFromInput", false)
@@ -144,14 +151,15 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 }
                 binding.plannerActIvPlannerAdd.id -> {
                     Log.d(TAG, "Case: Add planner")
-                    viewModel.createPlanner("test2")
+                    val user_id = sharedPreferences.getString("user_id", null)?.toString()
+                    viewModel.createPlanner(user_id!!)
                 }
                 binding.plannerActPersonAdd.id -> {
                     Log.d(TAG, "Case: Add user")
                     val intent = Intent(this, PlannerUserAddActivity::class.java)
-                    intent.putExtra("planner_id", selectedPlanner.planner_id)
-                    intent.putExtra("planner_title", selectedPlanner.title)
+                    intent.putExtra("PlannerEntity", selectedPlanner)
                     startActivity(intent)
+                    finish()
                 }
                 else -> {
                     return

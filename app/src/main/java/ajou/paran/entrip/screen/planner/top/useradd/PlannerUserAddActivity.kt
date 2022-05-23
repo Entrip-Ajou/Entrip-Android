@@ -3,6 +3,7 @@ package ajou.paran.entrip.screen.planner.top.useradd
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityUseraddBinding
+import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.model.WaitEntity
 import ajou.paran.entrip.repository.network.dto.NotificationData
 import ajou.paran.entrip.repository.network.dto.PushNotification
@@ -49,12 +50,15 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
 
     private var planner_id : Long = -1L
     private lateinit var planner_title : String
+    private lateinit var selectedPlanner : PlannerEntity
     private lateinit var userInformation : UserInformation
 
     override fun init(savedInstanceState: Bundle?) {
         binding.plannerActivityViewModel = viewModel
-        planner_id = intent.getLongExtra("planner_id",-1)
-        planner_title = intent.getStringExtra("planner_title").toString()
+        selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
+        planner_id = selectedPlanner.planner_id
+        planner_title = selectedPlanner.title
+
         observeState()
         setUpSharingRecyclerView()
         viewModel.findAllUserWithPlannerId(planner_id)
@@ -63,7 +67,7 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
 
     private fun setUpSharingRecyclerView(){
         binding.rvSharingPlanner.apply{
-            adapter = SharingAdapter(mutableListOf())
+            adapter = SharingAdapter(mutableListOf(), sharedPreferences.getString("user_id", null).toString())
         }
     }
 
@@ -177,6 +181,7 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
             when(it.id){
                 binding.btnBackToPlanner.id -> {
                     val intent = Intent(this, PlannerActivity::class.java)
+                    intent.putExtra("PlannerEntity", selectedPlanner)
                     startActivity(intent)
                     finish()
                 }
@@ -190,10 +195,10 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
                     val notification = PushNotification(
                         NotificationData(
                             title = "Entrip",
-                            message = "${sharedPreferences.getString("nickname", "default").toString()}님이 플래너 초대를 보냈습니다.",
-                            owner = sharedPreferences.getString("nickname", "default").toString(),
-                            owner_token = sharedPreferences.getString("token", "default").toString(),
-                            photo_url = sharedPreferences.getString("photo_url", "default").toString(),
+                            message = "${sharedPreferences.getString("nickname", null).toString()}님이 플래너 초대를 보냈습니다.",
+                            owner = sharedPreferences.getString("nickname", null).toString(),
+                            owner_token = sharedPreferences.getString("token", null).toString(),
+                            photo_url = sharedPreferences.getString("photo_url", null).toString(),
                             planner_id = planner_id,
                             planner_title = planner_title,
                             isInvite = true
