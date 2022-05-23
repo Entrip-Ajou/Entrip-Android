@@ -15,6 +15,7 @@ import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -27,8 +28,10 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -138,10 +141,17 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                 binding.layoutSearchSuccess.visibility = View.VISIBLE
                 binding.tvSearchFailure.visibility = View.INVISIBLE
 
-                if(sharedPreferences.getString("nickname", null) == data.nickname){
-                    binding.tvInvite.visibility = View.INVISIBLE
-                }else{
-                    binding.tvInvite.visibility = View.VISIBLE
+                lifecycle.coroutineScope.launch(Dispatchers.IO){
+                    val isExist = viewModel.isExistNickname(data.nickname)
+                    withContext(Dispatchers.Main){
+                        if(isExist || sharedPreferences.getString("nickname", null) == data.nickname){
+                            binding.tvInvite.visibility = View.INVISIBLE
+                        }else{
+                            binding.tvInvite.visibility = View.VISIBLE
+                            binding.tvInvite.isClickable = true
+                            binding.tvInvite.setTextColor(Color.parseColor("#0d82eb"))
+                        }
+                    }
                 }
             }
             is Unit -> {}
@@ -217,6 +227,8 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                         ), userInformation.token
                     )
                     viewModel.postNotification(notification, userInformation)
+                    binding.tvInvite.isClickable = false
+                    binding.tvInvite.setTextColor(Color.parseColor("#9e9e9e"))
                 }
 
 

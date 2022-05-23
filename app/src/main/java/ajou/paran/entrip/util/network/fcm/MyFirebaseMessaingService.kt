@@ -1,7 +1,9 @@
 package ajou.paran.entrip.util.network.fcm
 
 import ajou.paran.entrip.R
+import ajou.paran.entrip.model.InviteEntity
 import ajou.paran.entrip.repository.network.UserRemoteSource
+import ajou.paran.entrip.repository.room.plan.dao.UserDao
 import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.util.network.BaseResult
 import android.app.NotificationChannel
@@ -38,6 +40,9 @@ class MyFirebaseMessaingService : FirebaseMessagingService() {
 
     @Inject
     lateinit var userRemoteSource : UserRemoteSource
+
+    @Inject
+    lateinit var userDao: UserDao
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -88,7 +93,23 @@ class MyFirebaseMessaingService : FirebaseMessagingService() {
         Log.d(TAG, "planner_title = " + message.data["planner_title"])
         Log.d(TAG, "isInvite = " + message.data["isInvite"])
 
-        // 위의 결과가 잘 출력되면 room db invitation 저장하기 -> isInvite에 따라 나눠서
+        /**
+         *   isInvite = true -> 초대장을 받는 로직
+         */
+        if(message.data["isInvite"].toBoolean()){
+            CoroutineScope(Dispatchers.IO).launch{
+                val inviteEntity = InviteEntity(
+                    nickname = message.data["owner"].toString(),
+                    photoUrl = message.data["photo_url"].toString(),
+                    token = message.data["owner_token"].toString(),
+                    planner_title = message.data["planner_title"].toString(),
+                    planner_id = message.data["planner_id"].toString().toLong()
+                )
+                userDao.insertInvite(inviteEntity)
+            }
+        }
+        notificationManager.notify(notificationID, notification)
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

@@ -78,4 +78,7 @@ constructor(private val userAddRepository: UserAddRepositoryImpl) : ViewModel() 
     }
 
     fun selectWait(planner_id: Long) : Flow<List<WaitEntity>> = userAddRepository.selectWait(planner_id)
+
+    fun isExistNickname(nickname: String) : Boolean = userAddRepository.isExistNickname(nickname)
+
 }

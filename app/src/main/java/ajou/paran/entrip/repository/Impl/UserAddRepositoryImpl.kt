@@ -52,4 +52,6 @@ class UserAddRepositoryImpl @Inject constructor(
     }
 
     fun selectWait(planner_id: Long) : Flow<List<WaitEntity>> = userDao.selectWaiting(planner_id)
+
+    fun isExistNickname(nickname:String) : Boolean = userDao.isExistNickname(nickname)
 }

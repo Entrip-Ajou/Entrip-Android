@@ -11,5 +11,7 @@ data class InviteEntity(
     @PrimaryKey(autoGenerate = true) val invite_id : Int = 0,
     val nickname: String,
     val photoUrl: String,
-    val token: String
+    val token: String,
+    val planner_title : String,
+    val planner_id : Long
 ) : Parcelable
