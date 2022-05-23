@@ -35,7 +35,7 @@ class UserAddRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun postNotification(notification: PushNotification, user : UserInformation): BaseResult<Flow<List<WaitEntity>>, Failure> {
+    override suspend fun postNotification(notification: PushNotification, user : UserInformation): BaseResult<Unit, Failure> {
         val fcm = userAddRemoteSource.postNotification(notification)
         if(fcm is BaseResult.Success){
             val waitEntity = WaitEntity(
@@ -45,10 +45,11 @@ class UserAddRepositoryImpl @Inject constructor(
                 planner_id = notification.data.planner_id
             )
             userDao.insertWait(waitEntity)
-            return BaseResult.Success(userDao.selectWaiting(notification.data.planner_id))
+            return BaseResult.Success(Unit)
         }else{
             return BaseResult.Error(Failure((fcm as BaseResult.Error).err.code, fcm.err.message))
         }
     }
 
+    fun selectWait(planner_id: Long) : Flow<List<WaitEntity>> = userDao.selectWaiting(planner_id)
 }

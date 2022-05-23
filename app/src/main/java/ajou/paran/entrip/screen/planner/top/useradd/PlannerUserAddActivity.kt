@@ -22,36 +22,33 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
+class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
     R.layout.activity_useradd
 ), View.OnClickListener {
 
-    companion object{
+    companion object {
         private const val TAG = "[UserAddActivity]"
     }
 
     private val viewModel: PlannerUserAddActivityViewModel by viewModels()
 
     @Inject
-    lateinit var sharedPreferences : SharedPreferences
+    lateinit var sharedPreferences: SharedPreferences
 
-    private var planner_id : Long = -1L
-    private lateinit var planner_title : String
-    private lateinit var selectedPlanner : PlannerEntity
-    private lateinit var userInformation : UserInformation
+    private var planner_id: Long = -1L
+    private lateinit var planner_title: String
+    private lateinit var selectedPlanner: PlannerEntity
+    private lateinit var userInformation: UserInformation
 
     override fun init(savedInstanceState: Bundle?) {
         binding.plannerActivityViewModel = viewModel
@@ -61,30 +58,41 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
 
         observeState()
         setUpSharingRecyclerView()
-        viewModel.findAllUserWithPlannerId(planner_id)
         setUpWaitingRecyclerView()
     }
 
-    private fun setUpSharingRecyclerView(){
+    private fun setUpSharingRecyclerView() {
         binding.rvSharingPlanner.apply{
             adapter = SharingAdapter(mutableListOf(), sharedPreferences.getString("user_id", null).toString())
         }
+        viewModel.findAllUserWithPlannerId(planner_id)
     }
 
-    private fun setUpWaitingRecyclerView(){
-        binding.rvWaitingPlanner.apply{
-            adapter = WaitingAdapter(mutableListOf())
+    private fun setUpWaitingRecyclerView() {
+        val waitAdapter = WaitingAdapter()
+        binding.rvWaitingPlanner.adapter = waitAdapter
+
+        lifecycle.coroutineScope.launch{
+            viewModel.selectWait(planner_id)
+                .onStart{ viewModel.setLoading() }
+                .catch{e ->
+                    viewModel.hideLoading()
+                }
+                .collect{
+                    viewModel.hideLoading()
+                    waitAdapter.submitList(it.toList())
+                }
         }
     }
 
-    private fun observeState(){
+    private fun observeState() {
         viewModel.state.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-            .onEach{ handleState(it) }
+            .onEach { handleState(it) }
             .launchIn(lifecycleScope)
     }
 
-    private fun handleState(state : ApiState){
-        when(state){
+    private fun handleState(state: ApiState) {
+        when (state) {
             is ApiState.Init -> Unit
             is ApiState.IsLoading -> handleLoading(state.isLoading)
             is ApiState.Success -> handleSuccess(state.data)
@@ -92,10 +100,10 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
         }
     }
 
-    private fun handleLoading(isLoading : Boolean){
-        if(isLoading){
+    private fun handleLoading(isLoading: Boolean) {
+        if (isLoading) {
             binding.sharingProgress.visibility = View.VISIBLE
-        }else{
+        } else {
             binding.sharingProgress.visibility = View.GONE
         }
     }
@@ -106,51 +114,53 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
      *   WaitEntity -> waitingRecyclerView
      *
      */
-    private fun handleSuccess(data : Any){
+    private fun handleSuccess(data: Any) {
         when (data) {
             is List<*> -> {
-                binding.rvSharingPlanner.adapter?.let{ a ->
-                    if(a is SharingAdapter)
+                binding.rvSharingPlanner.adapter?.let { a ->
+                    if (a is SharingAdapter)
                         a.update(data as List<SharingFriend>)
                 }
             }
+
             is UserInformation -> {
                 Glide.with(this)
                     .load(data.photoUrl)
                     .into(binding.imageProfile)
                 binding.tvUserOrNickname.text = data.nickname
 
-                userInformation.nickname = data.nickname
-                userInformation.token = data.token
-                userInformation.photoUrl = data.photoUrl
+                userInformation = UserInformation(
+                    nickname = data.nickname,
+                    token = data.token,
+                    photoUrl = data.photoUrl
+                )
 
                 binding.layoutSearchSuccess.visibility = View.VISIBLE
-                binding.tvSearchFailure.visibility = View.GONE
-            }
-            is Flow<*> -> {
-                binding.rvWaitingPlanner.adapter?.let{ a ->
-                    if(a is WaitingAdapter)
-                        CoroutineScope(Dispatchers.IO).launch{
-                            a.update(data as List<WaitEntity>)
-                        }
+                binding.tvSearchFailure.visibility = View.INVISIBLE
+
+                if(sharedPreferences.getString("nickname", null) == data.nickname){
+                    binding.tvInvite.visibility = View.INVISIBLE
+                }else{
+                    binding.tvInvite.visibility = View.VISIBLE
                 }
             }
+            is Unit -> {}
         }
     }
 
-    private fun handleError(code : Int){
-        when(code){
+    private fun handleError(code: Int) {
+        when (code) {
             0 -> {
                 val builder = AlertDialog.Builder(this)
                 builder.setMessage("네트워크를 확인해주세요")
                     .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which -> })
+                        DialogInterface.OnClickListener { dialog, which -> })
                 builder.show()
             }
 
             404 -> {
                 Toast.makeText(this, "검색 결과가 없습니다", Toast.LENGTH_LONG).show()
-                binding.layoutSearchSuccess.visibility = View.GONE
+                binding.layoutSearchSuccess.visibility = View.INVISIBLE
                 binding.tvSearchFailure.visibility = View.VISIBLE
             }
 
@@ -158,7 +168,7 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
                 val builder = AlertDialog.Builder(this)
                 builder.setMessage("다른 사용자로 의해 삭제되었습니다.")
                     .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which ->
+                        DialogInterface.OnClickListener { dialog, which ->
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
                             finish()
@@ -178,7 +188,7 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
 
     override fun onClick(view: View?) {
         view?.let {
-            when(it.id){
+            when (it.id) {
                 binding.btnBackToPlanner.id -> {
                     val intent = Intent(this, PlannerActivity::class.java)
                     intent.putExtra("PlannerEntity", selectedPlanner)
@@ -188,14 +198,16 @@ class PlannerUserAddActivity: BaseActivity<ActivityUseraddBinding>(
 
                 binding.imgUserSearch.id -> {
                     val user = binding.etUserSearch.text.toString()
-                    if(user.isNotBlank()) viewModel.searchUser(user)
+                    if (user.isNotBlank()) viewModel.searchUser(user)
                 }
 
                 binding.tvInvite.id -> {
                     val notification = PushNotification(
                         NotificationData(
                             title = "Entrip",
-                            message = "${sharedPreferences.getString("nickname", null).toString()}님이 플래너 초대를 보냈습니다.",
+                            message = "${
+                                sharedPreferences.getString("nickname", null).toString()
+                            }님이 플래너 초대를 보냈습니다.",
                             owner = sharedPreferences.getString("nickname", null).toString(),
                             owner_token = sharedPreferences.getString("token", null).toString(),
                             photo_url = sharedPreferences.getString("photo_url", null).toString(),

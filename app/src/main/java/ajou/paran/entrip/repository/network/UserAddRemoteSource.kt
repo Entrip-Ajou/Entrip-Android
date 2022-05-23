@@ -64,7 +64,7 @@ constructor(
         } catch (e: NoInternetException) {
             return BaseResult.Error(Failure(0, e.message))
         } catch (e: Exception) {
-            return BaseResult.Error(Failure(-1, e.message.toString()))
+            return BaseResult.Error(Failure(404, e.message.toString()))
         }
     }
 

@@ -1,5 +1,6 @@
 package ajou.paran.entrip.screen.planner.top.useradd
 
+import ajou.paran.entrip.model.WaitEntity
 import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
 import ajou.paran.entrip.repository.Impl.UserAddRepositoryImpl
 import ajou.paran.entrip.repository.network.dto.PushNotification
@@ -12,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -67,11 +69,13 @@ constructor(private val userAddRepository: UserAddRepositoryImpl) : ViewModel() 
             setLoading()
             val res = userAddRepository.postNotification(notification, user)
             when(res){
-                is BaseResult.Success -> _state.value = ApiState.Success(Unit)
+                is BaseResult.Success -> _state.value = ApiState.Success(res.data)
                 is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
             }
             delay(500)
             hideLoading()
         }
     }
+
+    fun selectWait(planner_id: Long) : Flow<List<WaitEntity>> = userAddRepository.selectWait(planner_id)
 }

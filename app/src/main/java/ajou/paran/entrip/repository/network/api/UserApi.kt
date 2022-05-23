@@ -28,7 +28,7 @@ interface UserApi {
     @GET("api/v1/users/findUserWithNicknameOrUserId/{user_id_or_nickname}")
     suspend fun searchUser(
         @Path("user_id_or_nickname") user_id_or_nickname : String
-    ) : BaseResponse<UserInformation>
+    ) : BaseResponse<UserInformation?>
 
     @GET("api/v1/planners/{planner_id}/getAllUser")
     suspend fun findAllUsersWithPlannerId(

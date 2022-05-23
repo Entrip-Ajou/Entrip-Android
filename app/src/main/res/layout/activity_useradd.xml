@@ -158,7 +158,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="12dp"
                 android:clickable="true"
-                android:onClick="onClick"
+                android:onClick = "onClick"
                 android:text="초대"
                 android:textColor="#0d82eb"
                 android:textSize="18sp"
