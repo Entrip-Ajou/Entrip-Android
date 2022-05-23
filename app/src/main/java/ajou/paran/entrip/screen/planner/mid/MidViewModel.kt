@@ -40,10 +40,10 @@ class MidViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             setLoading()
             val res = planRepository.deletePlan(plan_id, planner_id)
-            delay(500)
-            hideLoading()
             if(res is BaseResult.Success) _state.value = ApiState.Success(Unit)
             else _state.value = ApiState.Failure((res as BaseResult.Error).err.code)
+            delay(500)
+            hideLoading()
         }
     }
 }

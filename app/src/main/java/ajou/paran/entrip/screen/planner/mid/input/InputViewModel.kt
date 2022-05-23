@@ -88,13 +88,14 @@ class InputViewModel @Inject constructor(
                             planner_idFK = planner_id
                         )
                         val res = planRepository.insertPlan(planRequest)
-                        delay(500)
                         if(res is BaseResult.Success){
-                            _inputState.value = InputState.IsLoading(false)
                             _inputState.value = InputState.Success
-                        }else{
+                            delay(500)
                             _inputState.value = InputState.IsLoading(false)
+                        }else{
                             _inputState.value = InputState.Failure((res as BaseResult.Error).err.code)
+                            delay(500)
+                            _inputState.value = InputState.IsLoading(false)
                         }
                     }
                 }else{

@@ -6,6 +6,7 @@ import ajou.paran.entrip.repository.network.dto.PushNotification
 import ajou.paran.entrip.repository.network.dto.UserInformation
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,7 @@ class PlannerUserAddActivityViewModel
 @Inject
 constructor(private val userAddRepository: UserAddRepositoryImpl) : ViewModel() {
     companion object {
-        const val TAG = "[PlannerUserAddActivityViewModel]"
+        const val TAG = "[UserAdd_VM]"
     }
 
     private val _state = MutableStateFlow<ApiState>(ApiState.Init)
@@ -39,12 +40,12 @@ constructor(private val userAddRepository: UserAddRepositoryImpl) : ViewModel() 
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
             val res = userAddRepository.findAllUsersWithPlannerId(planner_id)
-            delay(500)
-            hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = ApiState.Success(res.data)
                 is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
             }
+            delay(500)
+            hideLoading()
         }
     }
 
@@ -52,12 +53,12 @@ constructor(private val userAddRepository: UserAddRepositoryImpl) : ViewModel() 
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
             val res = userAddRepository.searchUser(user_id_or_nickname)
-            delay(500)
-            hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = ApiState.Success(res.data)
                 is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
             }
+            delay(500)
+            hideLoading()
         }
     }
 
@@ -65,12 +66,12 @@ constructor(private val userAddRepository: UserAddRepositoryImpl) : ViewModel() 
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
             val res = userAddRepository.postNotification(notification, user)
-            delay(500)
-            hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = ApiState.Success(Unit)
                 is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
             }
+            delay(500)
+            hideLoading()
         }
     }
 }
