@@ -1,6 +1,7 @@
 package ajou.paran.entrip.screen.planner.main
 
 import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
+import ajou.paran.entrip.repository.Impl.UserAddRepositoryImpl
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
 import androidx.lifecycle.ViewModel
@@ -14,8 +15,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel
 @Inject
-constructor(private val plannerRepository: PlannerRepositoryImpl)
-    : ViewModel() {
+constructor(
+    private val plannerRepository: PlannerRepositoryImpl,
+    private val userAddRepositoryImpl: UserAddRepositoryImpl
+) : ViewModel() {
 
     private val _state = MutableStateFlow<ApiState>(ApiState.Init)
     val state : StateFlow<ApiState> get() = _state
@@ -29,6 +32,10 @@ constructor(private val plannerRepository: PlannerRepositoryImpl)
     }
 
     suspend fun selectAllPlanner() = plannerRepository.selectAllPlanner()
+
+    fun selectAllInvite() = userAddRepositoryImpl.selectInvite()
+
+    fun countInvite() = userAddRepositoryImpl.countInvite()
 
     fun createPlanner(userId : String){
         viewModelScope.launch(Dispatchers.IO){

@@ -22,6 +22,9 @@ interface UserDao {
     @Query("SELECT * FROM 'invite'")
     fun selectInvite() : Flow<List<InviteEntity>>
 
+    @Query("SELECT COUNT(*) FROM 'invite'")
+    fun countInvite() : Flow<Int>
+
     @Query("SELECT EXISTS(SELECT * FROM 'waiting' WHERE nickname = :nickname)")
     fun isExistNickname(nickname: String) : Boolean
 }

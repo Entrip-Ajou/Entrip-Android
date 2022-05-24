@@ -1,5 +1,6 @@
 package ajou.paran.entrip.repository.Impl
 
+import ajou.paran.entrip.model.InviteEntity
 import ajou.paran.entrip.model.WaitEntity
 import ajou.paran.entrip.repository.network.UserAddRemoteSource
 import ajou.paran.entrip.repository.network.dto.PushNotification
@@ -52,6 +53,10 @@ class UserAddRepositoryImpl @Inject constructor(
     }
 
     fun selectWait(planner_id: Long) : Flow<List<WaitEntity>> = userDao.selectWaiting(planner_id)
+
+    fun selectInvite() : Flow<List<InviteEntity>> = userDao.selectInvite()
+
+    fun countInvite() : Flow<Int> = userDao.countInvite()
 
     fun isExistNickname(nickname:String) : Boolean = userDao.isExistNickname(nickname)
 }
