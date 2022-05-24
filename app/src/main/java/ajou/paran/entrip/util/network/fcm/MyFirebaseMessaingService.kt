@@ -84,17 +84,9 @@ class MyFirebaseMessaingService : FirebaseMessagingService() {
             .setContentIntent(pendingIntent)
             .build()
 
-        Log.d(TAG, "Title = " + message.data["title"])
-        Log.d(TAG, "message = " + message.data["message"])
-        Log.d(TAG, "owner = " + message.data["owner"])
-        Log.d(TAG, "owner_token = " + message.data["owner_token"])
-        Log.d(TAG, "photo_url = " + message.data["photo_url"])
-        Log.d(TAG, "planner_id = " + message.data["planner_id"])
-        Log.d(TAG, "planner_title = " + message.data["planner_title"])
-        Log.d(TAG, "isInvite = " + message.data["isInvite"])
-
         /**
          *   isInvite = true -> 초대장을 받는 로직
+         *   isInvite = false -> 받은 초대장을 응답하는 로직
          */
         if(message.data["isInvite"].toBoolean()){
             CoroutineScope(Dispatchers.IO).launch{
@@ -106,6 +98,10 @@ class MyFirebaseMessaingService : FirebaseMessagingService() {
                     planner_id = message.data["planner_id"].toString().toLong()
                 )
                 userDao.insertInvite(inviteEntity)
+            }
+        }else{
+            CoroutineScope(Dispatchers.IO).launch{
+                userDao.deleteWaiting(message.data["owner_id"].toString(), message.data["planner_id"].toString().toLong())
             }
         }
         notificationManager.notify(notificationID, notification)

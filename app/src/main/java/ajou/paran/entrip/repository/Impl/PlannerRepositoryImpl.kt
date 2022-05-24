@@ -161,4 +161,19 @@ constructor(
         }.flowOn(Dispatchers.IO)
     }
 
+    suspend fun acceptInvitation(planner_id : Long) : BaseResult<Unit, Failure>{
+        val planner = plannerRemoteSource.fetchPlanner(planner_id)
+        if(planner is BaseResult.Success){
+            planDao.insertPlanner(planner.data)
+            val plans = plannerRemoteSource.fetchPlans(planner_id)
+            if(plans is BaseResult.Success){
+                planDao.insertAllPlan(plans.data)
+                return BaseResult.Success(Unit)
+            }else{
+                return BaseResult.Error(Failure((plans as BaseResult.Error).err.code, plans.err.message))
+            }
+        }else{
+            return BaseResult.Error(Failure((planner as BaseResult.Error).err.code, planner.err.message))
+        }
+    }
 }

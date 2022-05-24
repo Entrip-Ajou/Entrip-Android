@@ -34,4 +34,10 @@ interface UserApi {
     suspend fun findAllUsersWithPlannerId(
         @Path("planner_id") planner_id : Long
     ) : BaseResponse<List<UserResponse>>
+
+    @PUT("api/v1/users/{planner_id}/{user_id}")
+    suspend fun addPlanners(
+        @Path("planner_id") planner_id : Long,
+        @Path("user_id") user_id : String
+    ) : BaseResponse<Unit>
 }

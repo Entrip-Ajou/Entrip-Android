@@ -5,6 +5,8 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.databinding.ActivityMainBinding
 import ajou.paran.entrip.model.InviteEntity
 import ajou.paran.entrip.model.PlannerEntity
+import ajou.paran.entrip.repository.network.dto.NotificationData
+import ajou.paran.entrip.repository.network.dto.PushNotification
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
@@ -31,7 +33,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener, InviteAdapter.TextViewClickListner {
+class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener,
+    InviteAdapter.TextViewClickListner {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
@@ -71,11 +74,11 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener, InviteA
     }
 
     private fun setUpInviteFlag() {
-        lifecycle.coroutineScope.launch{
+        lifecycle.coroutineScope.launch {
             viewModel.countInvite()
-                .collect{
-                    withContext(Dispatchers.Main){
-                        if(it == 0) binding.icInviteFlag.visibility = View.GONE
+                .collect {
+                    withContext(Dispatchers.Main) {
+                        if (it == 0) binding.icInviteFlag.visibility = View.GONE
                         else binding.icInviteFlag.visibility = View.VISIBLE
                     }
                 }
@@ -171,7 +174,7 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener, InviteA
         }
     }
 
-    private fun setUpInvitationRecyclerView(v : View){
+    private fun setUpInvitationRecyclerView(v: View) {
         val inviteAdapter = InviteAdapter(this@MainActivity)
         v.rv_invite_log.adapter = inviteAdapter
 
@@ -185,11 +188,11 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener, InviteA
                     viewModel.hideLoading()
                     inviteAdapter.submitList(it.toList())
 
-                    withContext(Dispatchers.Main){
-                        if(inviteAdapter.itemCount == 0){
+                    withContext(Dispatchers.Main) {
+                        if (inviteAdapter.itemCount == 0) {
                             v.isInviteText.text = "도착한 초대장이 없어요"
                             v.rv_invite_log.visibility = View.GONE
-                        }else{
+                        } else {
                             v.isInviteText.text = "초대장이 도착했어요 !"
                             v.rv_invite_log.visibility = View.VISIBLE
                         }
@@ -199,10 +202,40 @@ class MainActivity : AppCompatActivity(), MainAdapter.ItemClickListener, InviteA
     }
 
     override fun onAcceptInvitation(inviteEntity: InviteEntity) {
-        
+        val notificationData = PushNotification(
+            NotificationData(
+                title = "Entrip",
+                message = "${sharedPreferences.getString("nickname", null).toString()
+                }님이 플래너 초대를 수락하셨습니다",
+                owner_id = sharedPreferences.getString("user_id", null).toString(),
+                owner = sharedPreferences.getString("nickname", null).toString(),
+                owner_token = sharedPreferences.getString("token", null).toString(),
+                photo_url = sharedPreferences.getString("photo_url", null).toString(),
+                planner_id = inviteEntity.planner_id,
+                planner_title = inviteEntity.planner_title,
+                isInvite = false
+            ), inviteEntity.token
+        )
+
+        val user_id = sharedPreferences.getString("user_id", null)?.toString()
+        viewModel.acceptInvitation(inviteEntity, user_id!!, notificationData)
     }
 
     override fun onRejectInvitation(inviteEntity: InviteEntity) {
-
+        val notificationData = PushNotification(
+            NotificationData(
+                title = "Entrip",
+                message = "${sharedPreferences.getString("nickname", null).toString()
+                }님이 플래너 초대를 거절하셨습니다",
+                owner_id = sharedPreferences.getString("user_id", null).toString(),
+                owner = sharedPreferences.getString("nickname", null).toString(),
+                owner_token = sharedPreferences.getString("token", null).toString(),
+                photo_url = sharedPreferences.getString("photo_url", null).toString(),
+                planner_id = inviteEntity.planner_id,
+                planner_title = inviteEntity.planner_title,
+                isInvite = false
+            ), inviteEntity.token
+        )
+        viewModel.rejectInvitation(inviteEntity, notificationData)
     }
 }

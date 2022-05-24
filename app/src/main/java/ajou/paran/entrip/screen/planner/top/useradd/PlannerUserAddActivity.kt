@@ -133,6 +133,7 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                 binding.tvUserOrNickname.text = data.nickname
 
                 userInformation = UserInformation(
+                    user_id = data.user_id,
                     nickname = data.nickname,
                     token = data.token,
                     photoUrl = data.photoUrl
@@ -218,6 +219,7 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                             message = "${
                                 sharedPreferences.getString("nickname", null).toString()
                             }님이 플래너 초대를 보냈습니다.",
+                            owner_id = sharedPreferences.getString("user_id", null).toString(),
                             owner = sharedPreferences.getString("nickname", null).toString(),
                             owner_token = sharedPreferences.getString("token", null).toString(),
                             photo_url = sharedPreferences.getString("photo_url", null).toString(),

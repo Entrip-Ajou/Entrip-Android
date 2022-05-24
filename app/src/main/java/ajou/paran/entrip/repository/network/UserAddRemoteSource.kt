@@ -52,6 +52,7 @@ constructor(
             return if (response.status == 200) {
                 val user = response.data?.let { t ->
                     UserInformation(
+                        user_id = t.user_id,
                         nickname = t.nickname,
                         photoUrl = t.photoUrl,
                         token = t.token
@@ -76,6 +77,21 @@ constructor(
             } else {
                 Log.e(TAG, response.raw().toString())
                 BaseResult.Error(Failure(response.code(), response.errorBody().toString()))
+            }
+        } catch (e: NoInternetException) {
+            return BaseResult.Error(Failure(0, e.message))
+        } catch (e: Exception) {
+            return BaseResult.Error(Failure(-1, e.message.toString()))
+        }
+    }
+
+    suspend fun addUserToPlanner(planner_id: Long, user_id: String): BaseResult<Unit, Failure> {
+        try {
+            val response = userApi.addPlanners(planner_id, user_id)
+            return if(response.status == 200){
+                BaseResult.Success(Unit)
+            }else{
+                BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
             return BaseResult.Error(Failure(0, e.message))

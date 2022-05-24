@@ -40,6 +40,7 @@ class UserAddRepositoryImpl @Inject constructor(
         val fcm = userAddRemoteSource.postNotification(notification)
         if(fcm is BaseResult.Success){
             val waitEntity = WaitEntity(
+                user_id = user.user_id,
                 nickname = user.nickname,
                 photoUrl = user.photoUrl,
                 token = user.token,
@@ -50,6 +51,23 @@ class UserAddRepositoryImpl @Inject constructor(
         }else{
             return BaseResult.Error(Failure((fcm as BaseResult.Error).err.code, fcm.err.message))
         }
+    }
+
+    override suspend fun postNotification(notification : PushNotification, inviteEntity: InviteEntity) : BaseResult<Unit, Failure>{
+        val fcm = userAddRemoteSource.postNotification(notification)
+        if(fcm is BaseResult.Success){
+            userDao.deleteInvite(inviteEntity)
+            return BaseResult.Success(Unit)
+        }else{
+            return BaseResult.Error(Failure((fcm as BaseResult.Error).err.code, fcm.err.message))
+        }
+    }
+
+    override suspend fun addUserToPlanner(planner_id : Long, user_id : String) : BaseResult<Unit, Failure>{
+        val res = userAddRemoteSource.addUserToPlanner(planner_id, user_id)
+        if(res is BaseResult.Success)
+            return BaseResult.Success(Unit)
+        else return BaseResult.Error(Failure((res as BaseResult.Error).err.code, res.err.message))
     }
 
     fun selectWait(planner_id: Long) : Flow<List<WaitEntity>> = userDao.selectWaiting(planner_id)

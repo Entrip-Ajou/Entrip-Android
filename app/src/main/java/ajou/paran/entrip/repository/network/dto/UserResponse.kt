@@ -3,6 +3,7 @@ package ajou.paran.entrip.repository.network.dto
 import com.google.gson.annotations.SerializedName
 
 data class UserInformation(
+    @SerializedName("user_id") var user_id : String,
     @SerializedName("nickname") var nickname: String,
     @SerializedName("photoUrl") var photoUrl : String,
     @SerializedName("token") var token : String
