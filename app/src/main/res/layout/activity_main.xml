@@ -6,14 +6,45 @@
     android:layout_height="match_parent"
     tools:context=".screen.planner.main.MainActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_planner"
-        android:layout_width="0dp"
+    <RelativeLayout
+        android:id="@+id/relativeLayout5"
+        android:layout_width="match_parent"
         android:layout_height="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="플래너" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_planner"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            app:title="플래너" />
+
+        <RelativeLayout
+            android:id="@+id/layout_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="30dp"
+            android:onClick="click_notification">
+
+            <ImageView
+                android:id="@+id/ic_notification"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_notification" />
+
+            <ImageView
+                android:id="@+id/ic_inviteFlag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@id/ic_notification"
+                android:src="@drawable/ic_baseline_circle_24"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_planner_list"
@@ -24,8 +55,10 @@
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_planner"
+        app:layout_constraintTop_toBottomOf="@id/relativeLayout5"
+        app:layout_constraintVertical_bias="1.0"
         app:spanCount="3"
         tools:listitem="@layout/item_planner" />
 

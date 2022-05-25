@@ -56,12 +56,12 @@ constructor(
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
             val res = plannerRepository.createPlanner(userId)
-            delay(500)
-            hideLoading()
             when(res){
                 is BaseResult.Success -> _state.value = PlannerState.Success(res.data)
                 is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
             }
+            delay(500)
+            hideLoading()
         }
     }
     fun plannerChange(list: List<PlannerDate>, planner : PlannerEntity){
@@ -76,8 +76,6 @@ constructor(
                         end_date = list.last().date
                     )
                 })
-                delay(500)
-                hideLoading()
                 when(res){
                     is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
                     is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
@@ -85,6 +83,8 @@ constructor(
             }else{
                 _state.value = PlannerState.Failure((fetch as BaseResult.Error).err.code)
             }
+            delay(500)
+            hideLoading()
         }
     }
 
@@ -100,8 +100,6 @@ constructor(
                         end_date = t.end_date
                     )
                 })
-                delay(500)
-                hideLoading()
                 when(res){
                     is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
                     is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
@@ -109,6 +107,8 @@ constructor(
             }else{
                 _state.value = PlannerState.Failure((fetch as BaseResult.Error).err.code)
             }
+            delay(500)
+            hideLoading()
         }
     }
 
