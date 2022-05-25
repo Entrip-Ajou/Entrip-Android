@@ -29,11 +29,13 @@ constructor
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder is HomePlannerViewHolder){
-            holder.bind(getItem(position))
+            holder.bind(getItem(position-1))
         }else if(holder is HeaderHomePlannerViewHolder){
             holder.bind()
         }
     }
+
+    override fun getItemCount(): Int = super.getItemCount()+1
 
     override fun getItemViewType(position : Int) : Int
     =   if(position == 0) {
@@ -49,7 +51,7 @@ constructor
                 homePlannerClick.setOnClickListener {
                     val position = adapterPosition
                     if(position != RecyclerView.NO_POSITION){
-                        listener.onPlannerClickListener(getItem(position))
+                        listener.onPlannerClickListener(getItem(position-1))
                     }
                 }
             }

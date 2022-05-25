@@ -63,6 +63,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         recommendItemAdapter = HomeRecommendAdapter()
         binding.homeFragRvRecommendation.adapter = recommendItemAdapter
         binding.homeFragRvRecommendation.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.homeFragRvRecommendation.addItemDecoration(RecyclerViewDecoration(30))
 
         lifecycle.coroutineScope.launch{
             viewModel.selectAllPlanner()
