@@ -42,8 +42,10 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:text="리버 사이드 카페"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:textStyle="normal"
+                android:textSize="17sp"
+                android:textColor="#010101"
+                android:lineSpacingExtra="-15sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recomItem_image" />
 
@@ -54,7 +56,10 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="경기도 수원시 팔달구 중부대로207번길 13 1층"
-                android:textSize="12sp"
+                android:textStyle="normal"
+                android:textSize="11sp"
+                android:textColor="#959595"
+                android:lineSpacingExtra="5sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recomItem_name" />
 

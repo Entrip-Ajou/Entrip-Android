@@ -1,7 +1,7 @@
 package ajou.paran.entrip.screen.home
 
-import ajou.paran.entrip.databinding.ItemHomePlannerBinding
-import ajou.paran.entrip.databinding.ItemHomePlannerFooterBinding
+import ajou.paran.entrip.databinding.ItemLayoutHomePlannerBinding
+import ajou.paran.entrip.databinding.ItemLayoutHomePlannerHeaderBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.planner.main.PlannerDiffCallback
 import android.view.LayoutInflater
@@ -15,44 +15,34 @@ constructor
     val listener : ItemClickListener
 ) : ListAdapter<PlannerEntity, RecyclerView.ViewHolder>(PlannerDiffCallback()) {
     companion object{
-        private const val FOOTER_VIEW_TYPE = 1
+        private const val HEADER_VIEW_TYPE = 0
+        private const val ITEM_VIEW_TYPE = 1
     }
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        if(viewType == FOOTER_VIEW_TYPE){
-            val binding = ItemHomePlannerFooterBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-            return FooterHomePlannerViewHolder(binding, listener)
-        }
-        val binding =
-            ItemHomePlannerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return HomePlannerViewHolder(binding, listener)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
+    =   if(viewType == HEADER_VIEW_TYPE)
+            HeaderHomePlannerViewHolder(ItemLayoutHomePlannerHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false), listener)
+        else
+            HomePlannerViewHolder(ItemLayoutHomePlannerBinding.inflate(LayoutInflater.from(parent.context), parent, false), listener)
+
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder is HomePlannerViewHolder){
             holder.bind(getItem(position))
-        }else if(holder is FooterHomePlannerViewHolder){
+        }else if(holder is HeaderHomePlannerViewHolder){
             holder.bind()
         }
     }
 
-    override fun getItemCount(): Int{
-        return super.getItemCount()+1
-    }
-
-    override fun getItemViewType(position : Int) : Int{
-        if(position == itemCount-1){
-            return FOOTER_VIEW_TYPE
+    override fun getItemViewType(position : Int) : Int
+    =   if(position == 0) {
+            HEADER_VIEW_TYPE
+        } else {
+            ITEM_VIEW_TYPE
         }
-        return super.getItemViewType(position)
-    }
 
-    inner class HomePlannerViewHolder(private val binding: ItemHomePlannerBinding, listener: ItemClickListener)
+    inner class HomePlannerViewHolder(private val binding: ItemLayoutHomePlannerBinding, listener: ItemClickListener)
         : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.apply {
@@ -67,16 +57,18 @@ constructor
 
         fun bind(plannerEntity: PlannerEntity){
             binding.homeTvPlannerName.text = plannerEntity.title
+            binding.homeTvPlannerDate.text = "${plannerEntity.start_date.split("/")[1]}/${plannerEntity.start_date.split("/")[2]}~${plannerEntity.end_date.split("/")[1]}/${plannerEntity.end_date.split("/")[2]}"
+            binding.homeTvPlannerMonth.text = "${plannerEntity.start_date.split("/")[1].toInt().toString()}월"
             binding.homeImgPlannerDelete.setOnClickListener {
                 listener.onDeletePlannerClickListener(plannerEntity)
             }
         }
     }
 
-    inner class FooterHomePlannerViewHolder(binding: ItemHomePlannerFooterBinding, listener: ItemClickListener)
+    inner class HeaderHomePlannerViewHolder(binding: ItemLayoutHomePlannerHeaderBinding, listener: ItemClickListener)
         : RecyclerView.ViewHolder(binding.root) {
         init{
-            binding.btnPlannerAdd.setOnClickListener {
+            binding.btnPlanAdd.setOnClickListener {
                 val position = adapterPosition
                 if(position != RecyclerView.NO_POSITION){
                     listener.onPlannerAddClickListener()

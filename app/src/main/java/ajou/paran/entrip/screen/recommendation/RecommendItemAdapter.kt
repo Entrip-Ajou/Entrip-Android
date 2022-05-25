@@ -28,7 +28,6 @@ class RecommendItemAdapter
         private const val TYPE_ITEM = 1;
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
         =   if (viewType != TYPE_HEADER)
                 RecommendItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_layout_recommedation, parent, false))

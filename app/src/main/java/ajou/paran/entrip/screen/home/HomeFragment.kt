@@ -9,6 +9,7 @@ import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.screen.recommendation.RecommendItemAdapter
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.util.ApiState
+import ajou.paran.entrip.util.ui.RecyclerViewDecoration
 import android.content.DialogInterface
 import android.content.Intent
 import android.util.Log
@@ -57,6 +58,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         val plannerAdapter = HomePlannerAdapter(this)
         binding.homeFragRvPlanner.adapter = plannerAdapter
         binding.homeFragRvPlanner.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.homeFragRvPlanner.addItemDecoration(RecyclerViewDecoration(30))
 
         recommendItemAdapter = HomeRecommendAdapter()
         binding.homeFragRvRecommendation.adapter = recommendItemAdapter

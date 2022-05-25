@@ -11,42 +11,80 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/homeFrag_text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:textColor="#242424"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="나의 플래너" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/homeFrag_rv_planner"
             android:layout_width="match_parent"
             android:layout_height="100dp"
+            android:layout_marginTop="20dp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeFrag_text1"
             app:spanCount="3"
             tools:listitem="@layout/item_planner" />
 
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/homeFrag_btn_recommendation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="52dp"
             android:layout_marginEnd="32dp"
+            android:background="@drawable/shape_btn_round_recommend"
+            android:text="+"
+            android:textColor="#1982e6"
+            android:textSize="16sp"
+            android:textStyle="normal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/homeFrag_rv_planner" />
+
+        <TextView
+            android:id="@+id/homeFrag_text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="60dp"
+            android:textColor="#242424"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeFrag_rv_planner"
+            tools:text="이번주 추천 여행지" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/homeFrag_rv_recommendation"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/homeFrag_btn_recommendation" />
+            app:layout_constraintTop_toBottomOf="@+id/homeFrag_text2" />
 
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/homeFRag_btn_test"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:background="@drawable/shape_btn_round_recommend"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/homeFrag_rv_recommendation"/>
+            app:layout_constraintTop_toBottomOf="@+id/homeFrag_rv_recommendation"
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:textColor="#1982e6"
+            tools:text="여행 성향 테스트 하러 가기"/>
 
         <ProgressBar
             android:id="@+id/homeFrag_pb_loading_bar"

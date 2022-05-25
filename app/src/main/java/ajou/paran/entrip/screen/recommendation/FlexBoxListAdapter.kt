@@ -23,7 +23,7 @@ class FlexBoxListAdapter(val list: List<String>) :
     constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(tag: String) {
-            itemView.findViewById<TextView>(R.id.tv_tag).text = "${tag.trim()} >"
+            itemView.findViewById<TextView>(R.id.tv_tag).text = tag.trim()
         }
     }
 }
