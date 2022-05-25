@@ -93,4 +93,10 @@ object RepositoryModule {
     fun provideUserAddRepository(userAddRemoteSource: UserAddRemoteSource, userDao: UserDao) : UserAddRepository{
         return UserAddRepositoryImpl(userAddRemoteSource, userDao)
     }
+
+    @Provides
+    @Singleton
+    fun provideRecommendRepository() : RecommendRepository{
+        return RecommendRepositoryImpl()
+    }
 }

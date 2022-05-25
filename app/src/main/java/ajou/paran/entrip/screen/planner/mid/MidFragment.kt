@@ -31,19 +31,27 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
-class MidFragment
-constructor(
-    private var date: String,
-    private var plannerId: Long
-): Fragment(),PlanAdapter.RowClickListener {
+class MidFragment: Fragment(),PlanAdapter.RowClickListener {
     companion object {
         private const val TAG = "[MidFragment]"
+
+        private lateinit var selectedPlanner : PlannerEntity
+        private lateinit var date: String
+        private var plannerId: Long = -1L
+
+        fun newInstance(aDate: String, aPlannerId: Long, aSelectedPlanner: PlannerEntity): MidFragment{
+            val fragment = MidFragment()
+            date = aDate
+            plannerId = aPlannerId
+            selectedPlanner = aSelectedPlanner
+
+            return fragment
+        }
+
     }
 
     private val viewModel: MidViewModel by viewModels()
     private lateinit var binding: FragmentMidBinding
-
-    lateinit var selectedPlanner : PlannerEntity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

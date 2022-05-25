@@ -7,6 +7,7 @@ import ajou.paran.entrip.repository.network.UserRemoteSource
 import ajou.paran.entrip.screen.intro.register.RegisterActivityViewModel
 import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.util.network.BaseResult
+import ajou.paran.entrip.screen.home.HomeActivity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -46,12 +47,11 @@ class SplashActivity: BaseActivity<ActivitySplashBinding>(R.layout.activity_spla
                             Log.e(TAG, "Err code = "+(res as BaseResult.Error).err.code+ " Err message = "+res.err.message)
                         }
                         withContext(Dispatchers.Main){
-                            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                            startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
                         }
                     }
                 }
             }
         }
     }
-
 }
