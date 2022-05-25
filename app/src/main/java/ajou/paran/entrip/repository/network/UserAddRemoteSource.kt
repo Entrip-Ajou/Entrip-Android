@@ -9,6 +9,7 @@ import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
 import android.util.Log
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class UserAddRemoteSource

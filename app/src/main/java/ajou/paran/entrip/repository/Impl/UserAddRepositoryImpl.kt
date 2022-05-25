@@ -76,5 +76,6 @@ class UserAddRepositoryImpl @Inject constructor(
 
     fun countInvite() : Flow<Int> = userDao.countInvite()
 
-    fun isExistNickname(nickname:String, planner_id : Long) : Boolean = userDao.isExistNickname(nickname, planner_id)
+    fun isExistNickname(planner_id : Long,user_id:String) = userDao.isExistNickname(user_id, planner_id)
+
 }

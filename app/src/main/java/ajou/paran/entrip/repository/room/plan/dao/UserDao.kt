@@ -22,8 +22,8 @@ interface UserDao {
     @Query("SELECT COUNT(*) FROM 'invite'")
     fun countInvite() : Flow<Int>
 
-    @Query("SELECT EXISTS(SELECT * FROM 'waiting' WHERE nickname = :nickname AND planner_id = :planner_id)")
-    fun isExistNickname(nickname: String, planner_id : Long) : Boolean
+    @Query("SELECT EXISTS(SELECT * FROM 'waiting' WHERE user_id = :user_id AND planner_id = :planner_id)")
+    fun isExistNickname(user_id: String, planner_id : Long) : Boolean
 
     @Delete
     fun deleteInvite(inviteEntity: InviteEntity)

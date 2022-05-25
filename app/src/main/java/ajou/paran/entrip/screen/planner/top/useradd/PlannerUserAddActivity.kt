@@ -52,6 +52,7 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
     private lateinit var planner_title: String
     private lateinit var selectedPlanner: PlannerEntity
     private lateinit var userInformation: UserInformation
+    private val sharingList = mutableListOf<String>()
 
     override fun init(savedInstanceState: Bundle?) {
         binding.plannerActivityViewModel = viewModel
@@ -121,8 +122,12 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
         when (data) {
             is List<*> -> {
                 binding.rvSharingPlanner.adapter?.let { a ->
-                    if (a is SharingAdapter)
+                    if (a is SharingAdapter){
                         a.update(data as List<SharingFriend>)
+                        data?.forEach{ t ->
+                            sharingList.add(t.user_id)
+                        }
+                    }
                 }
             }
 
@@ -143,9 +148,9 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                 binding.tvSearchFailure.visibility = View.INVISIBLE
 
                 lifecycle.coroutineScope.launch(Dispatchers.IO){
-                    val isExist = viewModel.isExistNickname(data.nickname, planner_id)
+                    val isExist = viewModel.isExistNickname(data.user_id, planner_id)
                     withContext(Dispatchers.Main){
-                        if(isExist || sharedPreferences.getString("nickname", null) == data.nickname){
+                        if(isExist || sharedPreferences.getString("user_id", null) == data.user_id || isExistInSharing(data.user_id)){
                             binding.tvInvite.visibility = View.INVISIBLE
                         }else{
                             binding.tvInvite.visibility = View.VISIBLE
@@ -157,6 +162,19 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
             }
             is Unit -> {}
         }
+    }
+
+    private fun isExistInSharing(user_id : String) : Boolean{
+        var res = false
+        run {
+            sharingList.forEach{ i ->
+                if(i == user_id){
+                    res = true
+                    return@run
+                }
+            }
+        }
+        return res
     }
 
     private fun handleError(code: Int) {
