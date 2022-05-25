@@ -143,7 +143,7 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                 binding.tvSearchFailure.visibility = View.INVISIBLE
 
                 lifecycle.coroutineScope.launch(Dispatchers.IO){
-                    val isExist = viewModel.isExistNickname(data.nickname)
+                    val isExist = viewModel.isExistNickname(data.nickname, planner_id)
                     withContext(Dispatchers.Main){
                         if(isExist || sharedPreferences.getString("nickname", null) == data.nickname){
                             binding.tvInvite.visibility = View.INVISIBLE
