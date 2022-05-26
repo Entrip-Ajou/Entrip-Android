@@ -63,44 +63,41 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:id="@+id/input_cl_1"
             android:layout_width="320dp"
             android:layout_height="106dp"
             android:layout_marginTop="40dp"
-            android:background="@drawable/background_todo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
+            <EditText
+                android:id="@+id/et_todo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/et_round_style"
+                android:hint="할 일"
+                android:ems="10"
+                android:inputType="text"
+                android:text="@={inputViewModel.todo}"
+                android:paddingLeft="52dp"
+                android:paddingBottom="55dp"
+                android:textColor="#959595"
+                android:textSize="14sp"
+                android:textStyle="normal" />
 
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginStart="15dp"
-                android:src="@drawable/icon_todo"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/ic_todo"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:id="@+id/et_todo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/white"
-                android:ems="10"
-                android:hint="할 일"
-                android:inputType="textMultiLine"
-                android:lines="4"
-                android:text="@={inputViewModel.todo}"
-                android:textSize="14sp"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/todo_star"
@@ -233,8 +230,10 @@
 
             <TextView
                 android:id="@+id/tv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="30dp"
+                android:paddingTop = "15dp"
                 android:layout_marginStart="25dp"
                 android:ems="10"
                 android:hint="시간"
@@ -294,8 +293,10 @@
 
             <TextView
                 android:id="@+id/tv_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="30dp"
+                android:paddingTop = "25dp"
                 android:layout_marginStart="25dp"
                 android:ems="10"
                 android:hint="위치"

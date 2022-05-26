@@ -127,4 +127,8 @@ dependencies {
 
     // flexbox
     implementation "com.google.android:flexbox:2.0.1"
+
+    // KakaoMap
+    implementation fileTree(include: ['*.jar'], dir:'libs')
+    implementation files('libs/libDaumMapAndroid.jar')
 }

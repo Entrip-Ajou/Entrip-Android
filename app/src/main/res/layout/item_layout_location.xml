@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/result_layout">
+
+    <TextView
+        android:id="@+id/tv_place"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="#545454"
+        android:layout_marginTop = "12dp"
+        android:layout_marginLeft = "20dp"
+        android:text="커피바구니" />
+
+    <TextView
+        android:id="@+id/tv_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="normal"
+        android:textSize="16sp"
+        android:textColor="#545454"
+        android:layout_marginTop = "10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft = "20dp"
+        android:text="경기도 수원시 팔달구 중부대로207번길 13" />
+
+</LinearLayout>

@@ -5,6 +5,7 @@ import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityInputBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.planner.mid.MidFragment
+import ajou.paran.entrip.screen.planner.mid.map.MapActivity
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import android.app.TimePickerDialog
 import android.content.DialogInterface
@@ -232,7 +233,20 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             }
 
             binding.tvLocation.id -> {
-
+                val intent = Intent(this, MapActivity::class.java)
+                intent.apply {
+                    this.putExtra("isUpdate", true)
+                    this.putExtra("Id", viewModel.update_id)
+                    this.putExtra("Todo",viewModel.todo.value)
+                    this.putExtra("Rgb",viewModel.rgb.value)
+                    this.putExtra("Time",viewModel.time.value)
+                    this.putExtra("Location",viewModel.location.value)
+                    this.putExtra("date", viewModel.date)
+                    this.putExtra("plannerId", viewModel.selectedPlanner.planner_id)
+                    this.putExtra("PlannerEntity", viewModel.selectedPlanner)
+                }
+                startActivity(intent)
+                finish()
             }
         }
     }

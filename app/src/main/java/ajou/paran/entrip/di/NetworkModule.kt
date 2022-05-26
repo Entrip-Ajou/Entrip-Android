@@ -2,8 +2,10 @@ package ajou.paran.entrip.di
 
 import ajou.paran.entrip.R
 import ajou.paran.entrip.repository.network.api.FcmApi.Companion.FCM_URL
+import ajou.paran.entrip.repository.network.api.MapApi.Companion.Kakao_URL
 import ajou.paran.entrip.repository.network.api.PlanApi
 import ajou.paran.entrip.util.network.fcm.FcmInterceptor
+import ajou.paran.entrip.util.network.kakao.KakaoInterceptor
 import ajou.paran.entrip.util.network.networkinterceptor.NetworkInterceptor
 import android.content.Context
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -34,6 +36,10 @@ object NetworkModule {
     @Retention(AnnotationRetention.BINARY)
     annotation class FCM
 
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class KakaoMap
+
     @Provides
     @Singleton
     @Entrip
@@ -58,6 +64,17 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @KakaoMap
+    fun provideKakaoRetrofit(@KakaoMap client : OkHttpClient) : Retrofit{
+        return Retrofit.Builder().apply{
+            baseUrl(Kakao_URL)
+            addConverterFactory(GsonConverterFactory.create())
+            client(client)
+        }.build()
+    }
+
+    @Provides
+    @Singleton
     @Entrip
     fun provideHttpClient(networkInterceptor: NetworkInterceptor) : OkHttpClient {
         return OkHttpClient.Builder().apply {
@@ -72,12 +89,33 @@ object NetworkModule {
     @Singleton
     @FCM
     fun provideFCMHttpClient(
-        fcmInterceptor : FcmInterceptor
-    ) : OkHttpClient = OkHttpClient.Builder()
-        .run{
+        fcmInterceptor : FcmInterceptor,
+        networkInterceptor: NetworkInterceptor
+    ) : OkHttpClient {
+        return OkHttpClient.Builder().apply{
+            readTimeout(10, TimeUnit.SECONDS)
+            connectTimeout(10, TimeUnit.SECONDS)
+            writeTimeout(10, TimeUnit.SECONDS)
+            addInterceptor(networkInterceptor)
             addInterceptor(fcmInterceptor)
-            build()
-        }
+        }.build()
+    }
+
+    @Provides
+    @Singleton
+    @KakaoMap
+    fun provideKakaoHttpClient(
+        kakaoInterceptor: KakaoInterceptor,
+        networkInterceptor: NetworkInterceptor
+    ) : OkHttpClient{
+        return OkHttpClient.Builder().apply{
+            readTimeout(10, TimeUnit.SECONDS)
+            connectTimeout(10, TimeUnit.SECONDS)
+            writeTimeout(10, TimeUnit.SECONDS)
+            addInterceptor(networkInterceptor)
+            addInterceptor(kakaoInterceptor)
+        }.build()
+    }
 
     @Provides
     fun provideInterceptor(@ApplicationContext context: Context) : NetworkInterceptor{
@@ -87,6 +125,11 @@ object NetworkModule {
     @Provides
     fun provideFcmInterceptor() : FcmInterceptor{
         return FcmInterceptor()
+    }
+
+    @Provides
+    fun provideKakaoInterceptor() : KakaoInterceptor {
+        return KakaoInterceptor()
     }
 
     @Provides

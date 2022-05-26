@@ -12,6 +12,7 @@ import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.ui.RecyclerViewDecoration
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
@@ -36,6 +38,9 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
     companion object{
         const val TAG = "[HomeFragment]"
     }
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     private val viewModel: HomeFragmentViewModel by viewModels()
 
@@ -155,8 +160,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
     }
 
     override fun onPlannerAddClickListener() {
-        // todo : 추후에 userId는 sharedpreference로 관리해서 넣기.
-        viewModel.createPlanner("huihun66@ajou.ac.kr")
+        viewModel.createPlanner(sharedPreferences.getString("user_id", null).toString())
     }
 
 }
