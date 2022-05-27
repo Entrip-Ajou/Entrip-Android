@@ -20,8 +20,7 @@ import javax.inject.Inject
 class MainActivityViewModel
 @Inject
 constructor(
-    private val plannerRepository: PlannerRepositoryImpl,
-    private val userAddRepositoryImpl: UserAddRepositoryImpl
+    private val plannerRepository: PlannerRepositoryImpl
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ApiState>(ApiState.Init)
@@ -36,10 +35,6 @@ constructor(
     }
 
     suspend fun selectAllPlanner() = plannerRepository.selectAllPlanner()
-
-    fun selectAllInvite() = userAddRepositoryImpl.selectInvite()
-
-    fun countInvite() = userAddRepositoryImpl.countInvite()
 
     fun createPlanner(userId : String){
         viewModelScope.launch(Dispatchers.IO){
@@ -71,44 +66,6 @@ constructor(
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
             val res = plannerRepository.findPlanner(plannerId)
-            when(res){
-                is BaseResult.Success -> _state.value = ApiState.Success(res.data)
-                is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
-            }
-            delay(500)
-            hideLoading()
-        }
-    }
-
-    fun acceptInvitation(inviteEntity : InviteEntity, user_id : String, notificationData: PushNotification){
-        viewModelScope.launch(Dispatchers.IO){
-            setLoading()
-            val res1 = userAddRepositoryImpl.addUserToPlanner(inviteEntity.planner_id, user_id)
-            when(res1){
-                is BaseResult.Success -> {
-                    val res2 = plannerRepository.acceptInvitation(inviteEntity.planner_id)
-                    when(res2){
-                        is BaseResult.Success -> {
-                            val res3 = userAddRepositoryImpl.postNotification(notificationData, inviteEntity)
-                            when(res3){
-                                is BaseResult.Success -> _state.value = ApiState.Success(res3.data)
-                                is BaseResult.Error -> _state.value = ApiState.Failure(res3.err.code)
-                            }
-                        }
-                        is BaseResult.Error -> _state.value = ApiState.Failure(res2.err.code)
-                    }
-                }
-                is BaseResult.Error -> _state.value = ApiState.Failure(res1.err.code)
-            }
-            delay(500)
-            hideLoading()
-        }
-    }
-
-    fun rejectInvitation(inviteEntity: InviteEntity, notificationData: PushNotification){
-        viewModelScope.launch(Dispatchers.IO){
-            setLoading()
-            val res = userAddRepositoryImpl.postNotification(notificationData, inviteEntity)
             when(res){
                 is BaseResult.Success -> _state.value = ApiState.Success(res.data)
                 is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)

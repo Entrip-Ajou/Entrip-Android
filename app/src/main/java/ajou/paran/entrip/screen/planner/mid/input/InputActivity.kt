@@ -63,7 +63,7 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             viewModel.update_id = intent.getLongExtra("Id", 0)
             viewModel.todo.value = intent.getStringExtra("Todo")
             viewModel.location.value = intent.getStringExtra("Location")
-            viewModel.rgb.value = intent.getIntExtra("Rgb", 0)
+            viewModel.rgb.value = intent.getIntExtra("Rgb", -1)
             viewModel.date = intent.getStringExtra("date").toString()
             viewModel.planner_id = intent.getLongExtra("plannerId", -1)
             viewModel.selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!

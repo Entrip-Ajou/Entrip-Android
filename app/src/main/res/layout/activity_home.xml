@@ -41,15 +41,30 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
-                android:id="@+id/homeAct_btn_noti"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+            <RelativeLayout
+                android:id="@+id/layout_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
-                android:background="@drawable/icon_notify"
+                android:onClick="click_notification"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/homeAct_btn_menu"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/ic_notification"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_notification" />
+
+                <ImageView
+                    android:id="@+id/ic_inviteFlag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignRight="@id/ic_notification"
+                    android:src="@drawable/ic_baseline_circle_24"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -75,6 +90,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/bottom_main_nav"/>
+
+        <ProgressBar
+            android:id="@+id/pb_loading_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
