@@ -4,7 +4,6 @@ import ajou.paran.entrip.databinding.ActivitySearchBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.dto.Place
 import ajou.paran.entrip.repository.network.dto.ResultSearchKeyword
-import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
 import android.content.Intent
@@ -12,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle

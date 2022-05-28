@@ -4,7 +4,6 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityRegisterBinding
 import ajou.paran.entrip.screen.home.HomeActivity
-import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
 import android.content.Intent

@@ -11,6 +11,7 @@ plugins {
 
     // parcelable 추가를 위한 extensions
     id 'kotlin-android-extensions'
+    id 'com.google.gms.google-services'
 }
 
 android {

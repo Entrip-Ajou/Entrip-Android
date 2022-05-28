@@ -1,10 +1,8 @@
 package ajou.paran.entrip.screen.planner.mid.map
 
-import ajou.paran.entrip.R
 import ajou.paran.entrip.databinding.ActivityMapBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.home.HomeActivity
-import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import android.Manifest
 import android.annotation.SuppressLint

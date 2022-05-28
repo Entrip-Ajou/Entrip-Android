@@ -1,60 +1,53 @@
 package ajou.paran.entrip.screen.planner.main
 
-
+import android.view.View
 import ajou.paran.entrip.R
-import ajou.paran.entrip.databinding.ActivityMainBinding
+import ajou.paran.entrip.base.BaseFragment
+import ajou.paran.entrip.databinding.FragmentMainBinding
 import ajou.paran.entrip.model.PlannerEntity
-import ajou.paran.entrip.screen.home.HomeActivity
-import ajou.paran.entrip.screen.home.HomeFragment
 import ajou.paran.entrip.screen.home.HomePlannerAdapter
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
-import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.util.ApiState
+import ajou.paran.entrip.util.ui.RecyclerViewDecoration
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.invitation_dialog.view.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), HomePlannerAdapter.ItemClickListener{
+class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main),
+    HomePlannerAdapter.ItemClickListener {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    private lateinit var binding: ActivityMainBinding
     private val viewModel: MainActivityViewModel by viewModels()
 
     companion object {
-        private const val TAG = "[MainActivity]"
+        const val TAG = "[MainFragment]"
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
+    override fun init() {
         observeState()
-        setContentView(view)
-        setUpBottomNavigationBar()
         setUpRecyclerView()
     }
 
     private fun setUpRecyclerView() {
-        val mainAdapter = HomePlannerAdapter(this@MainActivity)
+        val mainAdapter = HomePlannerAdapter(this)
         binding.rvPlannerList.adapter = mainAdapter
 
         lifecycle.coroutineScope.launch {
@@ -68,38 +61,6 @@ class MainActivity : AppCompatActivity(), HomePlannerAdapter.ItemClickListener{
                     mainAdapter.submitList(it.toList())
                 }
         }
-    }
-
-    private fun setUpBottomNavigationBar(){
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.homeAct_nav_host_container, HomeFragment()).commit()
-
-        binding.mainActBottomNav.setOnItemSelectedListener {
-            when(it.itemId){
-                R.id.nav_home -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.homeAct_nav_host_container, HomeFragment()).commit()
-                    true
-                }
-                R.id.nav_planner -> {
-                    true
-                }
-                R.id.nav_recommendation -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.homeAct_nav_host_container, RecommendationFragment()).commit()
-                    true
-                }
-                else -> false
-            }
-        }
-
-        binding.mainActBottomNav.setOnItemReselectedListener {
-            when(it.itemId){
-                else -> { }
-            }
-        }
-
-        binding.mainActBottomNav.selectedItemId = intent.getIntExtra("last_pos", R.id.nav_home)
     }
 
     private fun observeState() {
@@ -127,24 +88,16 @@ class MainActivity : AppCompatActivity(), HomePlannerAdapter.ItemClickListener{
 
     private fun handleSuccess(data: Any) {
         if (data is PlannerEntity) {
-            val intent = Intent(this, PlannerActivity::class.java)
+            val intent = Intent(activity, PlannerActivity::class.java)
             intent.putExtra("PlannerEntity", data)
             startActivity(intent)
-            finish()
         }
     }
 
-    /**
-     *    <<< 개발 과정에서 추가적인 Error 발생 시 이쪽에 추가하기 >>>
-     *    0 -> NoInternetException
-     *    -1 -> Exception
-     *    500 -> Internal Server Error
-     *
-     */
     private fun handleError(code: Int) {
         when (code) {
             0 -> {
-                val builder = AlertDialog.Builder(this)
+                val builder = AlertDialog.Builder(activity!!)
                 builder.setMessage("네트워크를 확인해주세요")
                     .setPositiveButton("확인",
                         DialogInterface.OnClickListener { dialog, which -> })
@@ -152,7 +105,7 @@ class MainActivity : AppCompatActivity(), HomePlannerAdapter.ItemClickListener{
             }
 
             500 -> {
-                Toast.makeText(this, "다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
             }
 
             -1 -> {
@@ -176,15 +129,5 @@ class MainActivity : AppCompatActivity(), HomePlannerAdapter.ItemClickListener{
     override fun onPlannerAddClickListener() {
         val user_id = sharedPreferences.getString("user_id", null).toString()
         viewModel.createPlanner(user_id)
-    }
-
-    fun backPressed(v : View){
-        when(v.id){
-            binding.backButton.id -> {
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
     }
 }

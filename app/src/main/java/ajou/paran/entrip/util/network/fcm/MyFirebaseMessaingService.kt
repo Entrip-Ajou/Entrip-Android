@@ -4,7 +4,7 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.model.InviteEntity
 import ajou.paran.entrip.repository.network.UserRemoteSource
 import ajou.paran.entrip.repository.room.plan.dao.UserDao
-import ajou.paran.entrip.screen.planner.main.MainActivity
+import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.util.network.BaseResult
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -66,7 +66,7 @@ class MyFirebaseMessaingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, HomeActivity::class.java)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationID = Random.nextInt()
 

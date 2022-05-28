@@ -3,9 +3,9 @@ package ajou.paran.entrip.screen.home
 import ajou.paran.entrip.databinding.ItemLayoutHomePlannerBinding
 import ajou.paran.entrip.databinding.ItemLayoutHomePlannerHeaderBinding
 import ajou.paran.entrip.model.PlannerEntity
-import ajou.paran.entrip.screen.planner.main.PlannerDiffCallback
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
@@ -85,4 +85,15 @@ constructor
         fun onPlannerClickListener(plannerEntity: PlannerEntity)
         fun onPlannerAddClickListener()
     }
+}
+
+class PlannerDiffCallback : DiffUtil.ItemCallback<PlannerEntity>() {
+    override fun areItemsTheSame(oldItem: PlannerEntity, newItem: PlannerEntity): Boolean {
+        return oldItem.planner_id == newItem.planner_id
+    }
+
+    override fun areContentsTheSame(oldItem: PlannerEntity, newItem: PlannerEntity): Boolean {
+        return oldItem == newItem
+    }
+
 }

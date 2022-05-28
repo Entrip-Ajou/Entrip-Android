@@ -4,12 +4,10 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityHomeBinding
 import ajou.paran.entrip.model.InviteEntity
-import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.dto.NotificationData
 import ajou.paran.entrip.repository.network.dto.PushNotification
 import ajou.paran.entrip.screen.planner.main.InviteAdapter
-import ajou.paran.entrip.screen.planner.main.MainActivity
-import ajou.paran.entrip.screen.planner.top.PlannerActivity
+import ajou.paran.entrip.screen.planner.main.MainFragment
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
@@ -27,7 +25,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.invitation_dialog.view.*
 import kotlinx.coroutines.Dispatchers
@@ -68,7 +65,8 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
                     true
                 }
                 R.id.nav_planner -> {
-                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.homeAct_nav_host_container, MainFragment()).commit()
                     true
                 }
                 R.id.nav_recommendation -> {

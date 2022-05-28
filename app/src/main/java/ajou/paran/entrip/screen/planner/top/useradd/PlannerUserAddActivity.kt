@@ -4,12 +4,11 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityUseraddBinding
 import ajou.paran.entrip.model.PlannerEntity
-import ajou.paran.entrip.model.WaitEntity
 import ajou.paran.entrip.repository.network.dto.NotificationData
 import ajou.paran.entrip.repository.network.dto.PushNotification
 import ajou.paran.entrip.repository.network.dto.SharingFriend
 import ajou.paran.entrip.repository.network.dto.UserInformation
-import ajou.paran.entrip.screen.planner.main.MainActivity
+import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
@@ -202,7 +201,7 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                 builder.setMessage("다른 사용자로 의해 삭제되었습니다.")
                     .setPositiveButton("확인",
                         DialogInterface.OnClickListener { dialog, which ->
-                            val intent = Intent(this, MainActivity::class.java)
+                            val intent = Intent(this, HomeActivity::class.java)
                             startActivity(intent)
                             finish()
                         })
