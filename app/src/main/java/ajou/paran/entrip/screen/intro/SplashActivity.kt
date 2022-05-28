@@ -4,8 +4,10 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivitySplashBinding
 import ajou.paran.entrip.repository.network.UserRemoteSource
+import ajou.paran.entrip.repository.usecase.GetUserPlannersUseCase
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.screen.home.HomeActivity
+import ajou.paran.entrip.util.ApiState
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -27,6 +29,9 @@ class SplashActivity: BaseActivity<ActivitySplashBinding>(R.layout.activity_spla
     @Inject
     lateinit var userRemoteSource: UserRemoteSource
 
+    @Inject
+    lateinit var getUserPlannersUseCase: GetUserPlannersUseCase
+
     override fun init(savedInstanceState: Bundle?) {
         lifecycleScope.launchWhenResumed {
             delay(1500L)
@@ -44,9 +49,20 @@ class SplashActivity: BaseActivity<ActivitySplashBinding>(R.layout.activity_spla
                         }else{
                             Log.e(TAG, "Err code = "+(res as BaseResult.Error).err.code+ " Err message = "+res.err.message)
                         }
-                        withContext(Dispatchers.Main){
-                            startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
+                    }
+                }
+                lifecycleScope.launch(Dispatchers.IO) {
+                    getUserPlannersUseCase
+                        .execute(user_id!!)
+                        .collect {
+                            if (it is BaseResult.Success) {
+                                Log.d(TAG, "사용자 DB update 완료")
+                            } else {
+                                Log.e(TAG, "Err code = "+(it as BaseResult.Error).err.code+ " Err message = "+it.err.message)
+                            }
                         }
+                    withContext(Dispatchers.Main){
+                        startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
                     }
                 }
             }

@@ -105,7 +105,7 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
                     if (it.code == 999){
                         // 이미 존재하는 아이디
                         viewModel.userIdShared(user_id)
-                        startActivity(Intent(context, HomeActivity::class.java))
+                        viewModel.getUserPlanners(user_id)
                     } else {
                         Log.e(
                             TAG,
@@ -120,6 +120,32 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
                         TAG,
                         "예상 못한 에러"
                     )
+                }
+            }
+        }
+        lifecycleScope.launchWhenResumed {
+            viewModel.getUserPlannersResult.collect { res ->
+                when (res) {
+                    is ApiState.Success -> {
+                        Log.d(TAG, "성공")
+                        startActivity(Intent(context, HomeActivity::class.java))
+                    }
+                    is ApiState.Init -> {
+                        Log.d(TAG, "planners observe 시작")
+                    }
+                    is ApiState.Failure -> {
+                        Log.e(
+                            TAG,
+                            "code: ${res.code}"
+                        )
+                        startActivity(Intent(context, HomeActivity::class.java))
+                    }
+                    else -> {
+                        Log.e(
+                            TAG,
+                            "예상 못한 에러"
+                        )
+                    }
                 }
             }
         }
