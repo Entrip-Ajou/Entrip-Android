@@ -51,7 +51,7 @@
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/mainAct_bottom_nav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,6 +59,17 @@
         app:layout_constraintVertical_bias="1.0"
         app:spanCount="3"
         tools:listitem="@layout/item_layout_home_planner" />
+
+    <!-- 바텀 네비 -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/mainAct_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:labelVisibilityMode="unlabeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_main_nav"/>
 
     <ProgressBar
         android:id="@+id/pb_loading_bar"

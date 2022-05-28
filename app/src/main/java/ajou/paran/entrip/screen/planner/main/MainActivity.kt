@@ -1,11 +1,14 @@
 package ajou.paran.entrip.screen.planner.main
 
 
+import ajou.paran.entrip.R
 import ajou.paran.entrip.databinding.ActivityMainBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.home.HomeActivity
+import ajou.paran.entrip.screen.home.HomeFragment
 import ajou.paran.entrip.screen.home.HomePlannerAdapter
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
+import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
 import android.content.Intent
@@ -46,6 +49,7 @@ class MainActivity : AppCompatActivity(), HomePlannerAdapter.ItemClickListener{
         val view = binding.root
         observeState()
         setContentView(view)
+        setUpBottomNavigationBar()
         setUpRecyclerView()
     }
 
@@ -64,6 +68,38 @@ class MainActivity : AppCompatActivity(), HomePlannerAdapter.ItemClickListener{
                     mainAdapter.submitList(it.toList())
                 }
         }
+    }
+
+    private fun setUpBottomNavigationBar(){
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.homeAct_nav_host_container, HomeFragment()).commit()
+
+        binding.mainActBottomNav.setOnItemSelectedListener {
+            when(it.itemId){
+                R.id.nav_home -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.homeAct_nav_host_container, HomeFragment()).commit()
+                    true
+                }
+                R.id.nav_planner -> {
+                    true
+                }
+                R.id.nav_recommendation -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.homeAct_nav_host_container, RecommendationFragment()).commit()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        binding.mainActBottomNav.setOnItemReselectedListener {
+            when(it.itemId){
+                else -> { }
+            }
+        }
+
+        binding.mainActBottomNav.selectedItemId = intent.getIntExtra("last_pos", R.id.nav_home)
     }
 
     private fun observeState() {
