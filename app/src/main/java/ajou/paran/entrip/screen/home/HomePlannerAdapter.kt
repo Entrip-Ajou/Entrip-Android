@@ -49,7 +49,7 @@ constructor
                 homePlannerClick.setOnClickListener {
                     val position = adapterPosition
                     if(position != RecyclerView.NO_POSITION){
-                        listener.onPlannerClickListener(getItem(position-1))
+                        listener.onPlannerClickListener(getItem(position))
                     }
                 }
             }

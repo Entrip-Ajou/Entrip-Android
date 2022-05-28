@@ -128,6 +128,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     Log.d(TAG, "Case: Click planner title button")
                     binding.plannerActEtTitle.inputType = InputType.TYPE_CLASS_TEXT
                 }
+                binding.plannerActClDate.id,
                 binding.plannerActIvDateEdit.id,
                 binding.plannerActTvStartDate.id,
                 binding.plannerActTvEndDate.id -> {
