@@ -1,8 +1,9 @@
 package ajou.paran.entrip.screen.home
 
 import ajou.paran.entrip.databinding.ItemLayoutHomePlannerBinding
-import ajou.paran.entrip.databinding.ItemLayoutHomePlannerHeaderBinding
+import ajou.paran.entrip.databinding.ItemLayoutHomePlannerFooterBinding
 import ajou.paran.entrip.model.PlannerEntity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -15,34 +16,31 @@ constructor
     val listener : ItemClickListener
 ) : ListAdapter<PlannerEntity, RecyclerView.ViewHolder>(PlannerDiffCallback()) {
     companion object{
-        private const val HEADER_VIEW_TYPE = 0
-        private const val ITEM_VIEW_TYPE = 1
+        private const val FOOTER_VIEW_TYPE = 1
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
-    =   if(viewType == HEADER_VIEW_TYPE)
-            HeaderHomePlannerViewHolder(ItemLayoutHomePlannerHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false), listener)
-        else
-            HomePlannerViewHolder(ItemLayoutHomePlannerBinding.inflate(LayoutInflater.from(parent.context), parent, false), listener)
-
+    = when(viewType){
+        FOOTER_VIEW_TYPE -> FooterHomePlannerViewHolder(ItemLayoutHomePlannerFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false), listener)
+        else -> HomePlannerViewHolder(ItemLayoutHomePlannerBinding.inflate(LayoutInflater.from(parent.context), parent, false), listener)
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(holder is HomePlannerViewHolder){
-            holder.bind(getItem(position-1))
-        }else if(holder is HeaderHomePlannerViewHolder){
-            holder.bind()
+        when(holder){
+            is HomePlannerViewHolder -> {
+                holder.bind(getItem(position))
+            }
+            is FooterHomePlannerViewHolder -> holder.bind()
         }
     }
 
     override fun getItemCount(): Int = super.getItemCount()+1
 
     override fun getItemViewType(position : Int) : Int
-    =   if(position == 0) {
-            HEADER_VIEW_TYPE
-        } else {
-            ITEM_VIEW_TYPE
-        }
+    = when(position){
+        itemCount - 1 -> FOOTER_VIEW_TYPE
+        else -> super.getItemViewType(position)
+    }
 
     inner class HomePlannerViewHolder(private val binding: ItemLayoutHomePlannerBinding, listener: ItemClickListener)
         : RecyclerView.ViewHolder(binding.root) {
@@ -63,11 +61,12 @@ constructor
             binding.homeTvPlannerMonth.text = "${plannerEntity.start_date.split("/")[1].toInt().toString()}월"
             binding.homeImgPlannerDelete.setOnClickListener {
                 listener.onDeletePlannerClickListener(plannerEntity)
+                Log.d("앙앙아앙", "${adapterPosition-1}")
             }
         }
     }
 
-    inner class HeaderHomePlannerViewHolder(binding: ItemLayoutHomePlannerHeaderBinding, listener: ItemClickListener)
+    inner class FooterHomePlannerViewHolder(binding: ItemLayoutHomePlannerFooterBinding, listener: ItemClickListener)
         : RecyclerView.ViewHolder(binding.root) {
         init{
             binding.btnPlanAdd.setOnClickListener {
