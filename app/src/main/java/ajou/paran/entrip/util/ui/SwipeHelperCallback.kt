@@ -89,7 +89,7 @@ class SwipeHelperCallback(
         = defaultValue * 10
 
     override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-        setTag(viewHolder, currentDx <= -clamp)
+        setTag(viewHolder, currentDx*2 <= -clamp)
         return 2f
     }
 

@@ -95,6 +95,7 @@ class MidFragment: Fragment(),PlanAdapter.RowClickListener {
         val planAdapter = PlanAdapter(this@MidFragment)
         val swipeHelperCallback = SwipeHelperCallback(planAdapter).apply {
             setClamp(resources.displayMetrics.widthPixels.toFloat()/4)
+//            setClamp(200f)
         }
         ItemTouchHelper(swipeHelperCallback).attachToRecyclerView(binding.rvPlan)
         binding.rvPlan.setOnTouchListener{
