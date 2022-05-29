@@ -25,7 +25,12 @@
         -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_entrip" />
+            android:resource="@drawable/icon_entrip" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id"/>
+
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="2a158d93ac6b1bdfe7fec6373a1744d0" />
