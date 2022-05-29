@@ -3,7 +3,7 @@ package ajou.paran.entrip.screen.intro.register
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityRegisterBinding
-import ajou.paran.entrip.screen.planner.main.MainActivity
+import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
 import android.content.Intent
@@ -109,7 +109,7 @@ class RegisterActivity
                 Log.d(TAG, "유저 저장 성공")
                 viewModel.userIdShared()
                 viewModel.updateUserToken()
-                startActivity(Intent(this@RegisterActivity, MainActivity::class.java))
+                startActivity(Intent(this@RegisterActivity, HomeActivity::class.java))
             } else if (it is ApiState.Failure) {
                 if (it.code == 999) {
                     // 저장 실패

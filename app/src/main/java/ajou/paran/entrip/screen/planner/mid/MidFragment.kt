@@ -3,7 +3,6 @@ package ajou.paran.entrip.screen.planner.mid
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.model.PlannerEntity
-import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.ui.SwipeHelperCallback
@@ -28,7 +27,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class MidFragment: Fragment(),PlanAdapter.RowClickListener {

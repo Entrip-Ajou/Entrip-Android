@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f8f8f8"
+    tools:context=".screen.planner.mid.map.SearchActivity">
+
+    <RelativeLayout
+        android:id="@+id/layout_search_address"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        tools:layout_editor_absoluteX="20dp">
+        <EditText
+            android:id="@+id/et_search_keyword"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/et_round_style"
+            android:hint="주소 검색"
+            android:paddingLeft="52dp"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            android:textColor="#959595"/>
+
+        <ImageView
+            android:id="@+id/img_back_map"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+            android:onClick="onClick"
+            android:src="@drawable/ic_back" />
+
+        <ImageView
+            android:id="@+id/img_address_search"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="12dp"
+            android:clickable="true"
+            android:onClick="onClick"
+            android:src="@drawable/image_search" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_validation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_search_address"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="8dp"
+        android:text="검색란이 비어있습니다"
+        android:textColor="@color/red"
+        android:textSize="15sp"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/tv_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_validation"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:text="검색결과"
+        android:textStyle="normal"
+        android:textSize= "15sp"
+        android:textColor="#afafb0" />
+
+    <TextView
+        android:id="@+id/tv_isNotFound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="검색 결과가 없습니다"
+        android:textColor="#afafb0"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_margin="20dp"
+        android:layout_below="@+id/tv_result"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_searchList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_result"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical"
+        android:scrollbarFadeDuration="0"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/item_layout_location"/>
+
+    <ProgressBar
+        android:id="@+id/pbLoadingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"/>
+
+
+</RelativeLayout>

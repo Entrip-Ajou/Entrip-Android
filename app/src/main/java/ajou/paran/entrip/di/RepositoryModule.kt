@@ -1,12 +1,10 @@
 package ajou.paran.entrip.di
 
 import ajou.paran.entrip.repository.Impl.*
+import ajou.paran.entrip.repository.network.*
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
-import ajou.paran.entrip.repository.network.PlanRemoteSource
-import ajou.paran.entrip.repository.network.PlannerRemoteSource
-import ajou.paran.entrip.repository.network.UserAddRemoteSource
-import ajou.paran.entrip.repository.network.UserRemoteSource
 import ajou.paran.entrip.repository.network.api.FcmApi
+import ajou.paran.entrip.repository.network.api.MapApi
 import ajou.paran.entrip.repository.network.api.PlanApi
 import ajou.paran.entrip.repository.network.api.UserApi
 import ajou.paran.entrip.repository.room.AppDatabase
@@ -42,6 +40,12 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideKakaoRemoteApi(@NetworkModule.KakaoMap retrofit: Retrofit) : MapApi {
+        return retrofit.create(MapApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun providePlanRemoteSource(planApi: PlanApi) : PlanRemoteSource{
         return PlanRemoteSource(planApi)
     }
@@ -56,6 +60,12 @@ object RepositoryModule {
     @Singleton
     fun provideUserRemoteSource(userApi: UserApi) : UserRemoteSource {
         return UserRemoteSource(userApi)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMapRemoteSource(mapApi : MapApi) : MapRemoteSource{
+        return MapRemoteSource(mapApi)
     }
 
     @Provides

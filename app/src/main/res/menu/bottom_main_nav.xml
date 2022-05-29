@@ -9,12 +9,12 @@
 
     <item
         android:id="@+id/nav_planner"
-        android:icon="@drawable/ic_baseline_edit_24"
+        android:icon="@drawable/icon_planner"
         android:title="플래너"/>
 
     <item
         android:id="@+id/nav_recommendation"
-        android:icon="@drawable/ic_baseline_message_24"
+        android:icon="@drawable/icon_recommendation"
         android:title="여행지 추천"/>
 
     <item
@@ -24,7 +24,7 @@
 
     <item
         android:id="@+id/nav_mypage"
-        android:icon="@drawable/ic_baseline_delete_24"
+        android:icon="@drawable/icon_mypage"
         android:title="마이페이지"/>
 
 </menu>

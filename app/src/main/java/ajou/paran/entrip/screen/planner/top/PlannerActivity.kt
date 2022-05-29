@@ -5,7 +5,6 @@ import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityPlannerBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.home.HomeActivity
-import ajou.paran.entrip.screen.planner.main.MainActivity
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
 import ajou.paran.entrip.util.ui.hideKeyboard
@@ -13,7 +12,6 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -26,9 +24,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -124,7 +120,9 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             when(it.id){
                 binding.plannerActIvClose.id -> {
                     Log.d(TAG, "Case: Close")
-                    val intent = Intent(this, MainActivity::class.java)
+                    val intent = Intent(this, HomeActivity::class.java)
+                    intent.putExtra("isFromPlanner",true)
+                    intent.putExtra("last_pos", R.id.nav_planner)
                     startActivity(intent)
                     finish()
                 }
@@ -132,6 +130,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     Log.d(TAG, "Case: Click planner title button")
                     binding.plannerActEtTitle.inputType = InputType.TYPE_CLASS_TEXT
                 }
+                binding.plannerActClDate.id,
                 binding.plannerActIvDateEdit.id,
                 binding.plannerActTvStartDate.id,
                 binding.plannerActTvEndDate.id -> {
@@ -343,7 +342,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 builder.setMessage("다른 사용자로 의해 삭제되었습니다.")
                     .setPositiveButton("확인",
                         DialogInterface.OnClickListener{ dialog, which ->
-                            val intent = Intent(this, MainActivity::class.java)
+                            val intent = Intent(this, HomeActivity::class.java)
                             startActivity(intent)
                             finish()
                         })

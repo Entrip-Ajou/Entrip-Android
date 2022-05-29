@@ -9,17 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import javax.inject.Inject
 
-class SharingAdapter(private val users: MutableList<SharingFriend>, private val user_id : String) : RecyclerView.Adapter<SharingAdapter.ViewHolder>(){
+class SharingAdapter(private val users: MutableList<SharingFriend>) :
+    RecyclerView.Adapter<SharingAdapter.ViewHolder>() {
 
-    inner class ViewHolder(private val itemBinding : ItemLayoutSharingBinding) : RecyclerView.ViewHolder(itemBinding.root){
-        fun bind(t : SharingFriend){
-            if(t.user_id != user_id){
-                Glide.with(itemView)
-                    .load(t.photoUrl)
-                    .into(itemBinding.imgItemProfile)
+    inner class ViewHolder(private val itemBinding: ItemLayoutSharingBinding) :
+        RecyclerView.ViewHolder(itemBinding.root) {
+        fun bind(t: SharingFriend) {
+            Glide.with(itemView)
+                .load(t.photoUrl)
+                .into(itemBinding.imgItemProfile)
 
-                itemBinding.tvItemNickname.text = t.nickname
-            }
+            itemBinding.tvItemNickname.text = t.nickname
         }
     }
 
@@ -32,7 +32,7 @@ class SharingAdapter(private val users: MutableList<SharingFriend>, private val 
 
     override fun getItemCount(): Int = users.size
 
-    fun update(list:List<SharingFriend>){
+    fun update(list: List<SharingFriend>) {
         users.clear()
         users.addAll(list)
         notifyDataSetChanged()

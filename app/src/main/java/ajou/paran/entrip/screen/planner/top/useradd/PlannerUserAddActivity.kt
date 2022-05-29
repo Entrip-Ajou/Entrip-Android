@@ -4,12 +4,11 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityUseraddBinding
 import ajou.paran.entrip.model.PlannerEntity
-import ajou.paran.entrip.model.WaitEntity
 import ajou.paran.entrip.repository.network.dto.NotificationData
 import ajou.paran.entrip.repository.network.dto.PushNotification
 import ajou.paran.entrip.repository.network.dto.SharingFriend
 import ajou.paran.entrip.repository.network.dto.UserInformation
-import ajou.paran.entrip.screen.planner.main.MainActivity
+import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
@@ -52,7 +51,7 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
     private lateinit var planner_title: String
     private lateinit var selectedPlanner: PlannerEntity
     private lateinit var userInformation: UserInformation
-    private val sharingList = mutableListOf<String>()
+    private val sharingList = mutableListOf<SharingFriend>()
 
     override fun init(savedInstanceState: Bundle?) {
         binding.plannerActivityViewModel = viewModel
@@ -66,8 +65,8 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
     }
 
     private fun setUpSharingRecyclerView() {
-        binding.rvSharingPlanner.apply{
-            adapter = SharingAdapter(mutableListOf(), sharedPreferences.getString("user_id", null).toString())
+        binding.rvSharingPlanner.apply {
+            adapter = SharingAdapter(mutableListOf())
         }
         viewModel.findAllUserWithPlannerId(planner_id)
     }
@@ -76,13 +75,13 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
         val waitAdapter = WaitingAdapter()
         binding.rvWaitingPlanner.adapter = waitAdapter
 
-        lifecycle.coroutineScope.launch{
+        lifecycle.coroutineScope.launch {
             viewModel.selectWait(planner_id)
-                .onStart{ viewModel.setLoading() }
-                .catch{e ->
+                .onStart { viewModel.setLoading() }
+                .catch { e ->
                     viewModel.hideLoading()
                 }
-                .collect{
+                .collect {
                     viewModel.hideLoading()
                     waitAdapter.submitList(it.toList())
                 }
@@ -122,12 +121,12 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
         when (data) {
             is List<*> -> {
                 binding.rvSharingPlanner.adapter?.let { a ->
-                    if (a is SharingAdapter){
-                        a.update(data as List<SharingFriend>)
-                        data?.forEach{ t ->
-                            sharingList.add(t.user_id)
-                        }
+                    (data as List<SharingFriend>)?.forEach { t ->
+                        if (t.user_id != sharedPreferences.getString("user_id", null)
+                                .toString()
+                        ) sharingList.add(t)
                     }
+                    (a as SharingAdapter).update(sharingList)
                 }
             }
 
@@ -147,12 +146,16 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                 binding.layoutSearchSuccess.visibility = View.VISIBLE
                 binding.tvSearchFailure.visibility = View.INVISIBLE
 
-                lifecycle.coroutineScope.launch(Dispatchers.IO){
+                lifecycle.coroutineScope.launch(Dispatchers.IO) {
                     val isExist = viewModel.isExistNickname(data.user_id, planner_id)
-                    withContext(Dispatchers.Main){
-                        if(isExist || sharedPreferences.getString("user_id", null) == data.user_id || isExistInSharing(data.user_id)){
+                    withContext(Dispatchers.Main) {
+                        if (isExist || sharedPreferences.getString(
+                                "user_id",
+                                null
+                            ) == data.user_id || isExistInSharing(data.user_id)
+                        ) {
                             binding.tvInvite.visibility = View.INVISIBLE
-                        }else{
+                        } else {
                             binding.tvInvite.visibility = View.VISIBLE
                             binding.tvInvite.isClickable = true
                             binding.tvInvite.setTextColor(Color.parseColor("#0d82eb"))
@@ -164,11 +167,11 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
         }
     }
 
-    private fun isExistInSharing(user_id : String) : Boolean{
+    private fun isExistInSharing(user_id: String): Boolean {
         var res = false
         run {
-            sharingList.forEach{ i ->
-                if(i == user_id){
+            sharingList.forEach { i ->
+                if (i.user_id == user_id) {
                     res = true
                     return@run
                 }
@@ -198,7 +201,7 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                 builder.setMessage("다른 사용자로 의해 삭제되었습니다.")
                     .setPositiveButton("확인",
                         DialogInterface.OnClickListener { dialog, which ->
-                            val intent = Intent(this, MainActivity::class.java)
+                            val intent = Intent(this, HomeActivity::class.java)
                             startActivity(intent)
                             finish()
                         })

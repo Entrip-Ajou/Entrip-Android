@@ -29,27 +29,27 @@ class InputViewModel @Inject constructor(
     }
 
     var isUpdate : Boolean = false
-    var update_id : Long = 0L
+    var update_id : Long = -1L
 
     lateinit var date : String
     var planner_id : Long = -1L
 
     lateinit var selectedPlanner : PlannerEntity
 
-    val todo : MutableLiveData<String> by lazy{
-        MutableLiveData<String>()
+    val todo : MutableLiveData<String?> by lazy{
+        MutableLiveData<String?>()
     }
 
     val rgb : MutableLiveData<Int> by lazy{
-        MutableLiveData<Int>(Color.WHITE)
+        MutableLiveData<Int>(Color.parseColor("#cfc1c1"))
     }
 
-    val time : MutableLiveData<String> by lazy{
-        MutableLiveData<String>()
+    val time : MutableLiveData<String?> by lazy{
+        MutableLiveData<String?>()
     }
 
-    val location : MutableLiveData<String> by lazy{
-        MutableLiveData<String>()
+    val location : MutableLiveData<String?> by lazy{
+        MutableLiveData<String?>()
     }
 
     private var _inputState = MutableStateFlow<InputState>(InputState.Init)
@@ -73,9 +73,6 @@ class InputViewModel @Inject constructor(
                 val timeArray = time.value!!.split(":")
                 val timeToString = timeArray[0].plus(timeArray[1])
                 val timeToInt = Integer.parseInt(timeToString)
-
-                // 아무것도 선택을 안할 시, -1이 rgb에 할당되므로 이를 렌더링 할 수가 없다.
-                if(rgb.value!! == -1) rgb.value = R.color.white
 
                 if(!isUpdate){
                     viewModelScope.launch(Dispatchers.IO) {

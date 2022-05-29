@@ -3,7 +3,7 @@
     <style name="Theme.Entrip" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="windowNoTitle">true</item>
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimary">#0D82EB</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
