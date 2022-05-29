@@ -22,8 +22,8 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:spanCount="3"
-            tools:listitem="@layout/item_layout_home_planner" />
+            app:spanCount="2"
+            tools:listitem="@layout/item_layout_planner" />
 
         <ProgressBar
             android:id="@+id/pb_loading_bar"

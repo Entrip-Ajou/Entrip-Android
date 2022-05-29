@@ -1,18 +1,17 @@
-package ajou.paran.entrip.screen.home
+package ajou.paran.entrip.screen.planner.main
 
-import ajou.paran.entrip.databinding.ItemLayoutHomePlannerBinding
-import ajou.paran.entrip.databinding.ItemLayoutHomePlannerFooterBinding
+import ajou.paran.entrip.databinding.ItemLayoutPlannerBinding
+import ajou.paran.entrip.databinding.ItemLayoutPlannerFooterBinding
 import ajou.paran.entrip.model.PlannerEntity
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-class HomePlannerAdapter
+class MainPlannerAdapter
 constructor
-(
+    (
     val listener : ItemClickListener
 ) : ListAdapter<PlannerEntity, RecyclerView.ViewHolder>(PlannerDiffCallback()) {
     companion object{
@@ -20,9 +19,11 @@ constructor
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
-    = when(viewType){
-        FOOTER_VIEW_TYPE -> FooterHomePlannerViewHolder(ItemLayoutHomePlannerFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false), listener)
-        else -> HomePlannerViewHolder(ItemLayoutHomePlannerBinding.inflate(LayoutInflater.from(parent.context), parent, false), listener)
+            = when(viewType){
+        FOOTER_VIEW_TYPE -> FooterHomePlannerViewHolder(
+            ItemLayoutPlannerFooterBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false), listener)
+        else -> HomePlannerViewHolder(ItemLayoutPlannerBinding.inflate(LayoutInflater.from(parent.context), parent, false), listener)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -37,12 +38,12 @@ constructor
     override fun getItemCount(): Int = super.getItemCount()+1
 
     override fun getItemViewType(position : Int) : Int
-    = when(position){
+            = when(position){
         itemCount - 1 -> FOOTER_VIEW_TYPE
         else -> super.getItemViewType(position)
     }
 
-    inner class HomePlannerViewHolder(private val binding: ItemLayoutHomePlannerBinding, listener: ItemClickListener)
+    inner class HomePlannerViewHolder(private val binding: ItemLayoutPlannerBinding, listener: ItemClickListener)
         : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.apply {
@@ -66,7 +67,7 @@ constructor
         }
     }
 
-    inner class FooterHomePlannerViewHolder(binding: ItemLayoutHomePlannerFooterBinding, listener: ItemClickListener)
+    inner class FooterHomePlannerViewHolder(binding: ItemLayoutPlannerFooterBinding, listener: ItemClickListener)
         : RecyclerView.ViewHolder(binding.root) {
         init{
             binding.btnPlanAdd.setOnClickListener {

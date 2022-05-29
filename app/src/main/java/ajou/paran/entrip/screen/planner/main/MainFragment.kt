@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main),
-    HomePlannerAdapter.ItemClickListener {
+    MainPlannerAdapter.ItemClickListener {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
@@ -47,7 +47,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main),
     }
 
     private fun setUpRecyclerView() {
-        val mainAdapter = HomePlannerAdapter(this)
+        val mainAdapter = MainPlannerAdapter(this)
         binding.rvPlannerList.adapter = mainAdapter
 
         lifecycle.coroutineScope.launch {

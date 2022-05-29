@@ -35,7 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/homeFrag_text1"
             app:spanCount="3"
-            tools:listitem="@layout/item_layout_home_planner" />
+            tools:listitem="@layout/item_layout_planner" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/homeFrag_btn_recommendation"

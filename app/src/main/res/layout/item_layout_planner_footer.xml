@@ -8,7 +8,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/btn_plan_add"
-        android:layout_width="100dp"
+        android:layout_width="170dp"
         android:layout_height="72dp"
         android:elevation="4dp"
         android:layout_marginStart="4dp"
