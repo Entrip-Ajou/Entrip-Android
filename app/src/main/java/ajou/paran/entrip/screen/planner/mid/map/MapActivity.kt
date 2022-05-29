@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -43,13 +44,14 @@ class MapActivity : AppCompatActivity() {
      */
     private var isUpdate : Boolean = false
     private var update_id : Long = -1L
-    private lateinit var todo : String
-    private lateinit var location : String
+    private var todo : String? = null
+    private var location : String? = null
     private var rgb : Int = -1
     private lateinit var date : String
     private var planner_id : Long = -1L
     private lateinit var selectedPlanner : PlannerEntity
     private var time : Int = -1
+    private var last_select_pallete : Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,6 +112,7 @@ class MapActivity : AppCompatActivity() {
                         this.putExtra("date", date)
                         this.putExtra("plannerId", planner_id)
                         this.putExtra("PlannerEntity", selectedPlanner)
+                        this.putExtra("last_select_pallete",last_select_pallete)
                     }
                     startActivity(intent)
                     finish()
@@ -154,6 +157,7 @@ class MapActivity : AppCompatActivity() {
                         this.putExtra("date", date)
                         this.putExtra("plannerId", planner_id)
                         this.putExtra("PlannerEntity", selectedPlanner)
+                        this.putExtra("last_select_pallete",last_select_pallete)
                     }
                     startActivity(intent)
                     finish()
@@ -199,13 +203,14 @@ class MapActivity : AppCompatActivity() {
      **/
     fun getIntentData(){
         isUpdate = intent.getBooleanExtra("isUpdate", true)
-        update_id = intent.getLongExtra("Id", 0)
-        todo = intent.getStringExtra("Todo").toString()
-        location = intent.getStringExtra("Location").toString()
-        rgb = intent.getIntExtra("Rgb", 0)
+        update_id = intent.getLongExtra("Id", -1)
+        todo = intent.getStringExtra("Todo")
+        location = intent.getStringExtra("Location")
+        rgb = intent.getIntExtra("Rgb", Color.parseColor("#cfc1c1"))
         date = intent.getStringExtra("date").toString()
         planner_id = intent.getLongExtra("plannerId", -1)
         selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
-        time = intent.getIntExtra("Time", 0)
+        time = intent.getIntExtra("Time", -1)
+        last_select_pallete = intent.getIntExtra("last_select_pallete",0)
     }
 }

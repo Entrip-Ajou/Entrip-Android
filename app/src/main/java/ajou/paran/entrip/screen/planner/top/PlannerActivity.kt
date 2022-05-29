@@ -121,6 +121,8 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 binding.plannerActIvClose.id -> {
                     Log.d(TAG, "Case: Close")
                     val intent = Intent(this, HomeActivity::class.java)
+                    intent.putExtra("isFromPlanner",true)
+                    intent.putExtra("last_pos", R.id.nav_planner)
                     startActivity(intent)
                     finish()
                 }

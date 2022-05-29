@@ -49,6 +49,10 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
 
     override fun init(savedInstanceState: Bundle?) {
         setUpBottomNavigationBar()
+        if(intent.getBooleanExtra("isFromPlanner", false)){
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.homeAct_nav_host_container, MainFragment()).commit()
+        }
         observeState()
         setUpInviteFlag()
     }

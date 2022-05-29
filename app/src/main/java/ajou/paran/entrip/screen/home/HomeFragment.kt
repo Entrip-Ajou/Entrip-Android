@@ -79,6 +79,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
                 .collect {
                     viewModel.hideLoading()
                     plannerAdapter.submitList(it.toList())
+                    binding.homeFragRvPlanner.scrollToPosition(0)
                 }
         }
     }

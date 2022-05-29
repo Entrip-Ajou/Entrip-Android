@@ -49,7 +49,7 @@ constructor
                 homePlannerClick.setOnClickListener {
                     val position = adapterPosition
                     if(position != RecyclerView.NO_POSITION){
-                        listener.onPlannerClickListener(getItem(position-1))
+                        listener.onPlannerClickListener(getItem(position))
                     }
                 }
             }
@@ -61,7 +61,6 @@ constructor
             binding.homeTvPlannerMonth.text = "${plannerEntity.start_date.split("/")[1].toInt().toString()}월"
             binding.homeImgPlannerDelete.setOnClickListener {
                 listener.onDeletePlannerClickListener(plannerEntity)
-                Log.d("앙앙아앙", "${adapterPosition-1}")
             }
         }
     }
