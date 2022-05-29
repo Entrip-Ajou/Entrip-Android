@@ -94,8 +94,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(userRemoteSource: UserRemoteSource) : UserRepository{
-        return UserRepositoryImpl(userRemoteSource)
+    fun provideUserRepository(userRemoteSource: UserRemoteSource, planDao: PlanDao) : UserRepository{
+        return UserRepositoryImpl(userRemoteSource, planDao)
     }
 
     @Provides

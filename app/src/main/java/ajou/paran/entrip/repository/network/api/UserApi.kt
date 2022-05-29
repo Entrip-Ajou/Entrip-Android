@@ -40,4 +40,9 @@ interface UserApi {
         @Path("planner_id") planner_id : Long,
         @Path("user_id") user_id : String
     ) : BaseResponse<Int>
+
+    @GET("api/v1/users/{user_id}/all")
+    suspend fun findAllPlanners(
+        @Path("user_id") user_id: String
+    ) : BaseResponse<List<PlannerResponse>>
 }
