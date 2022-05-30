@@ -40,7 +40,7 @@ class SearchActivity : AppCompatActivity() {
     private var planner_id : Long = -1L
     private lateinit var selectedPlanner : PlannerEntity
     private var time : Int = -1
-    private var last_select_pallete : Int = 0
+    private var last_select_palette : Int = 0
 
     companion object {
         private const val TAG = "[SearchActivity]"
@@ -140,7 +140,7 @@ class SearchActivity : AppCompatActivity() {
                         this.putExtra("date", date)
                         this.putExtra("plannerId", planner_id)
                         this.putExtra("PlannerEntity", selectedPlanner)
-                        this.putExtra("last_select_pallete",last_select_pallete)
+                        this.putExtra("last_select_palette",last_select_palette)
                     }
                     startActivity(intent)
                     finish()
@@ -173,7 +173,7 @@ class SearchActivity : AppCompatActivity() {
                     this.putExtra("date", date)
                     this.putExtra("plannerId", planner_id)
                     this.putExtra("PlannerEntity", selectedPlanner)
-                    this.putExtra("last_select_pallete",last_select_pallete)
+                    this.putExtra("last_select_palette",last_select_palette)
                 }
                 startActivity(intent)
                 finish()
@@ -196,6 +196,6 @@ class SearchActivity : AppCompatActivity() {
         planner_id = intent.getLongExtra("plannerId", -1)
         selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
         time = intent.getIntExtra("Time", -1)
-        last_select_pallete = intent.getIntExtra("last_select_pallete",0)
+        last_select_palette = intent.getIntExtra("last_select_palette",0)
     }
 }

@@ -74,7 +74,7 @@ class InputViewModel @Inject constructor(
                 val timeToString = timeArray[0].plus(timeArray[1])
                 val timeToInt = Integer.parseInt(timeToString)
 
-                if(!isUpdate){
+                if(update_id == -1L || !isUpdate){
                     viewModelScope.launch(Dispatchers.IO) {
                         val planRequest = PlanRequest(
                             date = date,
