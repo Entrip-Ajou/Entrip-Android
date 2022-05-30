@@ -3,6 +3,7 @@ package ajou.paran.entrip.screen.planner.top
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
 import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
+import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -77,7 +78,10 @@ constructor(
                     )
                 })
                 when(res){
-                    is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
+                    is BaseResult.Success -> {
+                        _state.value = PlannerState.Success(Unit)
+                        getFlowPlanner(planner.planner_id)
+                    }
                     is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
                 }
             }else{
@@ -101,7 +105,10 @@ constructor(
                     )
                 })
                 when(res){
-                    is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
+                    is BaseResult.Success -> {
+                        _state.value = PlannerState.Success(Unit)
+                        getFlowPlanner(planner.planner_id)
+                    }
                     is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
                 }
             }else{

@@ -90,6 +90,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 binding.plannerActEtTitle.isCursorVisible = false
                 hideKeyboard()
                 viewModel.plannerChange(binding.plannerActEtTitle.text.toString(), selectedPlanner)
+                selectedPlanner
                 true
             } else {
                 false
@@ -171,6 +172,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     private fun subscribeObservers() {
         lifecycle.coroutineScope.launch {
             viewModel.getFlowPlanner(selectedPlanner.planner_id).collect {
+                selectedPlanner = it
                 val list = getDates(it.start_date, it.end_date)
                 binding.plannerActEtTitle.setText(it.title)
                 if(it.start_date != it.end_date){

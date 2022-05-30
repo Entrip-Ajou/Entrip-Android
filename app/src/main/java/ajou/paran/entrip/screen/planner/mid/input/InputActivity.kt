@@ -354,19 +354,19 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
     }
 
     private fun initPaletteStroke(){
-        var index = 0
-        color_list.forEach {
+        color_list.forEachIndexed { index, it ->
             if(it == viewModel.rgb.value){
-                (palette_list[index].drawable as GradientDrawable).setStroke(5, Color.parseColor("#0d82eb"))
-            }else{
-                (palette_list[index].drawable as GradientDrawable).setStroke(2, Color.parseColor("#000000"))
+                if(it == viewModel.rgb.value){
+                    (palette_list[index].drawable as GradientDrawable).setStroke(5, Color.parseColor("#0d82eb"))
+                }else{
+                    (palette_list[index].drawable as GradientDrawable).setStroke(2, Color.parseColor("#000000"))
+                }
             }
-            index++
         }
     }
 
     private fun lockPaletteStroke(index : Int){
-        palette_list.forEach{
+        palette_list.forEach {
             (it.drawable as GradientDrawable).setStroke(2, Color.parseColor("#000000"))
         }
         (palette_list[index].drawable as GradientDrawable).setStroke(5, Color.parseColor("#0d82eb"))
