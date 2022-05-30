@@ -170,7 +170,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     }
 
     private fun subscribeObservers() {
-        lifecycle.coroutineScope.launch {
+        lifecycleScope.launchWhenResumed {
             viewModel.getFlowPlanner(selectedPlanner.planner_id).collect {
                 selectedPlanner = it
                 val list = getDates(it.start_date, it.end_date)
