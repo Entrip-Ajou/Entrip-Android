@@ -48,7 +48,7 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
         Color.parseColor("#d5d3ef")
     )
     private var palette_list = mutableListOf<ImageView>()
-    private var last_select_palette : Int = 0
+    private var last_select_palette: Int = 0
 
     override fun init(savedInstanceState: Bundle?) {
         binding.inputViewModel = viewModel
@@ -80,9 +80,9 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             viewModel.selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
             val time = intent.getIntExtra("Time", -1)
 
-            if(time == -1){
+            if (time == -1) {
                 viewModel.time.value = null
-            }else{
+            } else {
                 val timeString = time.toString()
                 var hour = ""
                 var minute = ""
@@ -249,8 +249,8 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             }
 
             binding.tvLocation.id -> {
-                var timeToInt : Int = -1
-                if(!viewModel.time.value.isNullOrEmpty()){
+                var timeToInt: Int = -1
+                if (!viewModel.time.value.isNullOrEmpty()) {
                     val timeArray = viewModel.time.value!!.split(":")
                     val timeToString = timeArray[0].plus(timeArray[1])
                     timeToInt = Integer.parseInt(timeToString)
@@ -260,14 +260,14 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
                 intent.apply {
                     this.putExtra("isUpdate", true)
                     this.putExtra("Id", viewModel.update_id)
-                    this.putExtra("Todo",viewModel.todo.value)
-                    this.putExtra("Rgb",viewModel.rgb.value)
-                    this.putExtra("Time",timeToInt)
-                    this.putExtra("Location",viewModel.location.value)
+                    this.putExtra("Todo", viewModel.todo.value)
+                    this.putExtra("Rgb", viewModel.rgb.value)
+                    this.putExtra("Time", timeToInt)
+                    this.putExtra("Location", viewModel.location.value)
                     this.putExtra("date", viewModel.date)
                     this.putExtra("plannerId", viewModel.selectedPlanner.planner_id)
                     this.putExtra("PlannerEntity", viewModel.selectedPlanner)
-                    this.putExtra("last_select_palette",last_select_palette)
+                    this.putExtra("last_select_palette", last_select_palette)
                 }
                 startActivity(intent)
                 finish()
@@ -353,19 +353,17 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
         }
     }
 
-    private fun initPaletteStroke(){
+    private fun initPaletteStroke() {
         color_list.forEachIndexed { index, it ->
-            if(it == viewModel.rgb.value){
-                if(it == viewModel.rgb.value){
-                    (palette_list[index].drawable as GradientDrawable).setStroke(5, Color.parseColor("#0d82eb"))
-                }else{
-                    (palette_list[index].drawable as GradientDrawable).setStroke(2, Color.parseColor("#000000"))
-                }
+            if (it == viewModel.rgb.value) {
+                (palette_list[index].drawable as GradientDrawable).setStroke(5, Color.parseColor("#0d82eb"))
+            } else {
+                (palette_list[index].drawable as GradientDrawable).setStroke(2, Color.parseColor("#000000"))
             }
         }
     }
 
-    private fun lockPaletteStroke(index : Int){
+    private fun lockPaletteStroke(index: Int) {
         palette_list.forEach {
             (it.drawable as GradientDrawable).setStroke(2, Color.parseColor("#000000"))
         }
