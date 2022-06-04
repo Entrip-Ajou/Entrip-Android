@@ -4,6 +4,7 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityPlannerBinding
 import ajou.paran.entrip.model.PlannerEntity
+import ajou.paran.entrip.screen.community.CommunityFragment
 import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.planner.mid.MidFragment
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
@@ -200,6 +201,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     intent.putExtra("last_pos", R.id.nav_home)
                     startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.nav_planner -> {
@@ -213,6 +215,16 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     intent.putExtra("last_pos", R.id.nav_recommendation)
                     startActivity(intent)
+                    finish()
+                    true
+                }
+                R.id.nav_board -> {
+                    val intent = Intent(applicationContext, HomeActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.putExtra("last_pos", R.id.nav_board)
+                    startActivity(intent)
+                    finish()
                     true
                 }
                 else -> false
