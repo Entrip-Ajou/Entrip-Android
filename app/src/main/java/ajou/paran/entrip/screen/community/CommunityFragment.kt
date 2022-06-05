@@ -18,8 +18,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class CommunityFragment : BaseFragment<FragmentCommunityBinding>(R.layout.fragment_community){
     companion object{
         const val TAG = "[CommunityFragment]"
-//        const val LOAD_URL = "http://2ntrip.com/traveltest.html?user_id="
-        const val LOAD_URL = "file:///android_asset/index_free.html"
+        const val LOAD_URL = "http://2ntrip.com/index_free.html"
+//        const val LOAD_URL = "file:///android_asset/index_free.html"
     }
 
     private val viewModel: CommunityFragmentViewModel by viewModels()

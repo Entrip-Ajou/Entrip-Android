@@ -65,6 +65,8 @@
         <activity
             android:name=".screen.planner.top.useradd.PlannerUserAddActivity"
             android:exported="false" />
+        <activity android:name=".screen.trip.TripTestActivity"
+            android:exported="false"/>
 
         <service
             android:name=".util.network.fcm.MyFirebaseMessaingService"

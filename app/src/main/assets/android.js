@@ -5,5 +5,4 @@ function showAndroid(getUserId) {
 
 document.addEventListener('DOMContentLoaded', () => {
     showAndroid('Hello Android!')
-
 });
