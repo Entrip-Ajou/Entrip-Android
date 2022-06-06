@@ -157,13 +157,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/registerAct_text_gender">
 
-            <RadioButton
+            <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/registerAct_radio_man"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/shape_register"
                 android:gravity="center"
+                android:button="@android:color/transparent"
                 android:text="남성"
                 android:textColor="#616161"
                 android:textSize="14sp"
@@ -176,6 +177,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/shape_register"
+                android:button="@android:color/transparent"
                 android:gravity="center"
                 android:text="여성"
                 android:textColor="#616161"
