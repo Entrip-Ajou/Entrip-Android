@@ -35,17 +35,17 @@ class RegisterActivity
         view?.let { view ->
             when(view.id){
                 binding.registerActCheckBtn.id -> {
-                    viewModel.nickNameResult(binding.registerActNickname.text.toString())
+                    viewModel.nickNameResult(binding.registerActEtNickname.text.toString())
                     observeNickname()
                 }
                 binding.registerActEndBtn.id -> {
                     if (endCondition){
                         if(binding.radioGroup.checkedRadioButtonId == binding.registerActRadioMan.id) {
-                            viewModel.saveUserResult(0, binding.registerActNickname.text.toString())
+                            viewModel.saveUserResult(0, binding.registerActTvNickname.text.toString())
                             observeSave()
                         }
                         else if (binding.radioGroup.checkedRadioButtonId == binding.registerActRadioWoman.id){
-                            viewModel.saveUserResult(1, binding.registerActNickname.text.toString())
+                            viewModel.saveUserResult(1, binding.registerActTvNickname.text.toString())
                             observeSave()
                         }
                         else {
@@ -73,6 +73,12 @@ class RegisterActivity
                     .setPositiveButton("확인",
                         DialogInterface.OnClickListener{ dialog, which -> })
                 builder.show()
+                val nickname = binding.registerActEtNickname.text.toString()
+                binding.registerActEtNickname.visibility = View.GONE
+                binding.registerActCheckBtn.visibility = View.GONE
+                binding.registerActTvNickname.visibility = View.VISIBLE
+                binding.registerActTvNickname.text = nickname
+                binding.registerActCheckBtnSuccess.visibility = View.VISIBLE
             } else if (it is ApiState.Failure) {
                 if (it.code == 999){
                     // 이미 존재하는 아이디
