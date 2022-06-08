@@ -2,11 +2,8 @@ package ajou.paran.entrip.di
 
 import ajou.paran.entrip.repository.Impl.*
 import ajou.paran.entrip.repository.network.*
+import ajou.paran.entrip.repository.network.api.*
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
-import ajou.paran.entrip.repository.network.api.FcmApi
-import ajou.paran.entrip.repository.network.api.MapApi
-import ajou.paran.entrip.repository.network.api.PlanApi
-import ajou.paran.entrip.repository.network.api.UserApi
 import ajou.paran.entrip.repository.room.AppDatabase
 import ajou.paran.entrip.repository.room.plan.dao.UserDao
 import dagger.Module
@@ -46,6 +43,12 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideCommentRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : CommentApi {
+        return retrofit.create(CommentApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun providePlanRemoteSource(planApi: PlanApi) : PlanRemoteSource{
         return PlanRemoteSource(planApi)
     }
@@ -66,6 +69,12 @@ object RepositoryModule {
     @Singleton
     fun provideMapRemoteSource(mapApi : MapApi) : MapRemoteSource{
         return MapRemoteSource(mapApi)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCommentRemoteSource(commentApi: CommentApi) : CommentRemoteSource{
+        return CommentRemoteSource(commentApi)
     }
 
     @Provides

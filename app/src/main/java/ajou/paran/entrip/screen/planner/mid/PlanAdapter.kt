@@ -139,6 +139,10 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
                 listener.onDeletePlanClickListener(planEntity)
             }
 
+            binding.imgItemComment.setOnClickListener {
+                listener.onCommentItemClickListener(planEntity)
+            }
+
             binding.executePendingBindings()
         }
     }
@@ -146,6 +150,7 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
     interface RowClickListener{
         fun onDeletePlanClickListener(planEntity: PlanEntity)
         fun onItemClickListener(planEntity: PlanEntity)
+        fun onCommentItemClickListener(planEntity : PlanEntity)
     }
 }
 
