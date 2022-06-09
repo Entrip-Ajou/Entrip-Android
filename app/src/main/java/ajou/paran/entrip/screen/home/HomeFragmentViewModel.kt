@@ -1,8 +1,9 @@
 package ajou.paran.entrip.screen.home
 
-import ajou.paran.entrip.model.test.RecommendationItem
+import ajou.paran.entrip.model.test.nullRecommenItem
 import ajou.paran.entrip.repository.Impl.PlannerRepository
-import ajou.paran.entrip.repository.Impl.RecommendRepository
+import ajou.paran.entrip.repository.network.dto.TripResponse
+import ajou.paran.entrip.repository.usecase.GetUserUseCase
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
 import androidx.lifecycle.LiveData
@@ -15,7 +16,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +23,7 @@ class HomeFragmentViewModel
 @Inject
 constructor(
     private val plannerRepository: PlannerRepository,
-    private val recommendRepository: RecommendRepository
+    private val getUserUseCase: GetUserUseCase
 )
 : ViewModel() {
     companion object{
@@ -33,8 +33,8 @@ constructor(
     private val _state = MutableStateFlow<ApiState>(ApiState.Init)
     val state : StateFlow<ApiState> get() = _state
 
-    private val _recommendItemList: MutableLiveData<List<RecommendationItem>> = MutableLiveData()
-    val recommendItemList: LiveData<List<RecommendationItem>>
+    private val _recommendItemList: MutableLiveData<List<TripResponse>> = MutableLiveData()
+    val recommendItemList: LiveData<List<TripResponse>>
         get() = _recommendItemList
 
     fun setLoading() {
@@ -86,10 +86,16 @@ constructor(
         }
     }
 
-    fun getFakeTestItem() = viewModelScope.launch {
-        withContext(Dispatchers.IO){
-            _recommendItemList.postValue(recommendRepository.getRecommendItem())
-        }
+    fun findByUserId(user_id: String) = viewModelScope.launch {
+        getUserUseCase
+            .execute(user_id)
+            .collect{
+                if (it is BaseResult.Success){
+                    _recommendItemList.postValue(it.data)
+                } else {
+                    _recommendItemList.postValue(nullRecommenItem)
+                }
+            }
     }
 
 }

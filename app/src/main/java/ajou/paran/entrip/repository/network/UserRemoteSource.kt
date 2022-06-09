@@ -36,6 +36,14 @@ constructor(
     suspend fun getUserPlanners(user_id: String): BaseResponse<List<PlannerResponse>>
         = userApi.findAllPlanners(user_id)
 
+
     suspend fun findById(user_id : String) : BaseResponse<UserResponse>
         = userApi.findById(user_id)
+
+    suspend fun findByUserId(user_id: String): BaseResponse<UserResponse>
+        = userApi.findByUserId(user_id)
+
+    suspend fun getListTrip(travelFavorite: String?): BaseResponse<List<TripResponse>>
+        = userApi.findTrip(travelFavorite)
+
 }

@@ -1,7 +1,7 @@
 package ajou.paran.entrip.screen.home
 
 import ajou.paran.entrip.databinding.ItemLayoutHomeRecommendationBinding
-import ajou.paran.entrip.model.test.RecommendationItem
+import ajou.paran.entrip.repository.network.dto.TripResponse
 import ajou.paran.entrip.util.ui.RecommendDiffCallback
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
 class HomeRecommendAdapter
-    : ListAdapter<RecommendationItem, RecyclerView.ViewHolder>(RecommendDiffCallback()) {
+    : ListAdapter<TripResponse, RecyclerView.ViewHolder>(RecommendDiffCallback()) {
     companion object{
         const val TAG = "[HomeRecommendAdapter]"
     }
@@ -21,12 +21,12 @@ class HomeRecommendAdapter
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int)
         = (holder as HomeRecommendViewHolder).bind(getItem(position))
 
-    fun setList(list: List<RecommendationItem>) {
+    fun setList(list: List<TripResponse>) {
         submitList(list)
     }
 
     inner class HomeRecommendViewHolder constructor(private val binding: ItemLayoutHomeRecommendationBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: RecommendationItem) {
+        fun bind(item: TripResponse) {
             Glide.with(binding.root)
                 .load(item.photoUrl)
                 .override(300,300)

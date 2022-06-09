@@ -1,6 +1,7 @@
 package ajou.paran.entrip.repository.Impl
 
 import ajou.paran.entrip.repository.network.dto.PlannerResponse
+import ajou.paran.entrip.repository.network.dto.TripResponse
 import ajou.paran.entrip.repository.network.dto.UserRequest
 import ajou.paran.entrip.repository.network.dto.UserResponse
 import ajou.paran.entrip.util.network.BaseResult
@@ -13,4 +14,5 @@ interface UserRepository {
     fun isExistNickname(nickName: String) : Flow<BaseResult<Boolean, Failure>>
     fun saveUser(user_id: String, gender: Int, nickName: String) : Flow<BaseResult<UserRequest, Failure>>
     fun findById(user_id : String):Flow<BaseResult<UserResponse, Failure>>
+    fun getTrip(user_id: String): Flow<BaseResult<List<TripResponse>, Failure>>
 }
