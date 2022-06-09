@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 
 private const val FOOTER_VIEW_TYPE = 1
@@ -135,8 +136,16 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
             drawable.setColor(planEntity.rgb)
             binding.ivRgb.setImageDrawable(drawable)
 
+            if(planEntity.isExistComments){
+                binding.imgItemComment.setImageResource(R.drawable.comment_event)
+            }
+
             binding.imgItemDelete.setOnClickListener{
                 listener.onDeletePlanClickListener(planEntity)
+            }
+
+            binding.imgItemComment.setOnClickListener {
+                listener.onCommentItemClickListener(planEntity)
             }
 
             binding.executePendingBindings()
@@ -146,6 +155,7 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
     interface RowClickListener{
         fun onDeletePlanClickListener(planEntity: PlanEntity)
         fun onItemClickListener(planEntity: PlanEntity)
+        fun onCommentItemClickListener(planEntity : PlanEntity)
     }
 }
 

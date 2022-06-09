@@ -3,6 +3,7 @@ package ajou.paran.entrip.screen.planner.mid
 import ajou.paran.entrip.databinding.FragmentMidBinding
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.model.PlannerEntity
+import ajou.paran.entrip.screen.planner.mid.comment.CommentActivity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.ui.SwipeHelperCallback
@@ -85,6 +86,15 @@ class MidFragment: Fragment(),PlanAdapter.RowClickListener {
             this.putExtra("Time",planEntity.time)
             this.putExtra("Location",planEntity.location)
             this.putExtra("date", planEntity.date)
+            this.putExtra("PlannerEntity", selectedPlanner)
+        }
+        startActivity(intent)
+    }
+
+    override fun onCommentItemClickListener(planEntity: PlanEntity) {
+        val intent = Intent(context, CommentActivity::class.java)
+        intent.apply{
+            this.putExtra("planEntity", planEntity)
             this.putExtra("PlannerEntity", selectedPlanner)
         }
         startActivity(intent)
