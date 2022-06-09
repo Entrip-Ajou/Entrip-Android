@@ -45,4 +45,9 @@ interface UserApi {
     suspend fun findAllPlanners(
         @Path("user_id") user_id: String
     ) : BaseResponse<List<PlannerResponse>>
+
+    @GET("api/v1/users/{user_id}")
+    suspend fun findById(
+        @Path("user_id") user_id : String
+    ) : BaseResponse<UserResponse>
 }

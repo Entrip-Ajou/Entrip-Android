@@ -3,9 +3,13 @@ package ajou.paran.entrip.screen.intro
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseFragment
 import ajou.paran.entrip.databinding.FragmentIntroFourBinding
+import ajou.paran.entrip.repository.network.dto.PlannerResponse
+import ajou.paran.entrip.repository.network.dto.UserResponse
 import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.intro.register.RegisterActivity
 import ajou.paran.entrip.util.ApiState
+import ajou.paran.entrip.util.network.BaseResult
+import ajou.paran.entrip.util.network.Failure
 import android.content.DialogInterface
 import android.content.Intent
 import android.util.Log
@@ -104,7 +108,7 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
                 } else if (it is ApiState.Failure) {
                     if (it.code == 999){
                         // 이미 존재하는 아이디
-                        viewModel.userIdShared(user_id)
+                        viewModel.findById(user_id)
                         viewModel.getUserPlanners(user_id)
                     } else {
                         Log.e(
@@ -146,6 +150,41 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
                             "예상 못한 에러"
                         )
                     }
+                }
+            }
+        }
+        lifecycleScope.launchWhenResumed {
+            viewModel.findByIdResult.collect{ res ->
+                when(res){
+                    is ApiState.Success ->{
+                        when(res.data){
+                            is BaseResult.Success<*> ->{
+                                val user_id = (res.data.data as UserResponse).userId
+                                val photo_url = res.data.data.photoUrl
+                                val nickname = res.data.data.nickname
+                                viewModel.commitShared(
+                                    user_id = user_id,
+                                    photo_url = photo_url,
+                                    nickname = nickname
+                                )
+                                Log.d(TAG, "기존 회원 sharedPreference 복구 완료")
+                            }
+                            is BaseResult.Error<*> -> {
+                                Log.e(TAG, res.data.err.toString())
+                            }
+                            else -> {}
+                        }
+
+
+
+                    }
+                    is ApiState.Failure -> {
+                        Log.e(
+                            TAG,
+                            "code: ${res.code}"
+                        )
+                    }
+                    else ->{ }
                 }
             }
         }

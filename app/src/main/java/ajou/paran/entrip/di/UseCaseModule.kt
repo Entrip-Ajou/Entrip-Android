@@ -1,9 +1,7 @@
 package ajou.paran.entrip.di
 
 import ajou.paran.entrip.repository.Impl.UserRepository
-import ajou.paran.entrip.repository.usecase.GetUserPlannersUseCase
-import ajou.paran.entrip.repository.usecase.IsExistNicknameUseCase
-import ajou.paran.entrip.repository.usecase.IsExistUserUseCase
+import ajou.paran.entrip.repository.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,5 +28,11 @@ object UseCaseModule {
     @Singleton
     fun provideGetUserPlannersUseCase(userRepository: UserRepository): GetUserPlannersUseCase{
         return GetUserPlannersUseCase(userRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFindByIdUseCase(userRepository: UserRepository) : FindByIdUseCase {
+        return FindByIdUseCase(userRepository)
     }
 }

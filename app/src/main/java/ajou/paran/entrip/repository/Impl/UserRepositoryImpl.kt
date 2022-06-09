@@ -6,11 +6,13 @@ import ajou.paran.entrip.repository.network.PlannerRemoteSource
 import ajou.paran.entrip.repository.network.UserRemoteSource
 import ajou.paran.entrip.repository.network.dto.PlannerResponse
 import ajou.paran.entrip.repository.network.dto.UserRequest
+import ajou.paran.entrip.repository.network.dto.UserResponse
 import ajou.paran.entrip.repository.network.dto.UserTemp
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -114,6 +116,22 @@ constructor(
             if (response.status == 200) {
                 val dto = response.data
                 emit(BaseResult.Success(dto))
+            } else {
+                emit(BaseResult.Error(Failure(response.status, response.message)))
+            }
+        } catch (e: NoInternetException) {
+            emit(BaseResult.Error(Failure(0, e.message)))
+        } catch (e: Exception) {
+            emit(BaseResult.Error(Failure(-1, e.message.toString())))
+        }
+    }
+
+    override fun findById(user_id: String): Flow<BaseResult<UserResponse, Failure>>
+    = flow{
+        try{
+            val response = userRemoteSource.findById(user_id)
+            if (response.status == 200) {
+                emit(BaseResult.Success(response.data))
             } else {
                 emit(BaseResult.Error(Failure(response.status, response.message)))
             }

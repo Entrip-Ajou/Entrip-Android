@@ -4,21 +4,16 @@ import ajou.paran.entrip.databinding.ActivityCommentBinding
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.dto.CommentResponse
-import ajou.paran.entrip.repository.network.dto.ResultSearchKeyword
-import ajou.paran.entrip.screen.planner.main.MainPlannerAdapter
-import ajou.paran.entrip.screen.planner.mid.map.SearchActivity
-import ajou.paran.entrip.screen.planner.mid.map.SearchAdapter
-import ajou.paran.entrip.screen.planner.mid.map.SearchAdapterDecoration
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import android.view.KeyEvent.KEYCODE_DEL
 import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.View
 import androidx.activity.viewModels
@@ -103,7 +98,7 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
             viewModel.selectComment(selectedPlan.id)
         }
 
-        binding.etComment.setOnKeyListener { v, keyCode, event ->
+        binding.etComment.setOnKeyListener { _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KEYCODE_ENTER) {
                 if (!binding.etComment.text.isNullOrEmpty()) {
                     val user_id = sharedPreferences.getString("user_id", null)!!
@@ -112,8 +107,10 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
                     viewModel.insertComment(user_id, content, plan_id)
                     binding.etComment.setText("")
                 }
+                true
+            }else{
+                false
             }
-            true
         }
     }
 
