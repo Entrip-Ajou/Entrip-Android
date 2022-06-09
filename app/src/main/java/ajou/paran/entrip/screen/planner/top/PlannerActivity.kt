@@ -215,15 +215,15 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     startActivity(intent)
                     true
                 }
-                R.id.nav_board -> {
-                    val intent = Intent(applicationContext, HomeActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.putExtra("last_pos", R.id.nav_board)
-                    startActivity(intent)
-                    finish()
-                    true
-                }
+//                R.id.nav_board -> {
+//                    val intent = Intent(applicationContext, HomeActivity::class.java)
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                    intent.putExtra("last_pos", R.id.nav_board)
+//                    startActivity(intent)
+//                    finish()
+//                    true
+//                }
                 else -> false
             }
         }

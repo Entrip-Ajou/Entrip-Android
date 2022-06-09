@@ -54,7 +54,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         }
         binding.homeFRagBtnTest.setOnClickListener{
             Log.d(TAG, "성향 테스트 버튼 눌림")
-            startActivity(Intent(context, TripTestActivity::class.java))
+//            startActivity(Intent(context, TripTestActivity::class.java))
         }
 
         observeState()
