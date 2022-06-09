@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,7 +27,6 @@ class RecommendationFragment: BaseFragment<FragmentRecommendationBinding>(R.layo
 
     override fun init() {
         recommendItemAdapter = RecommendItemAdapter()
-
         binding.recommFragRV.apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = recommendItemAdapter

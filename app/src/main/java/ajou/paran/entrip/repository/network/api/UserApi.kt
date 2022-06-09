@@ -51,7 +51,7 @@ interface UserApi {
         @Path("user_id") user_id: String
     ) : BaseResponse<UserResponse>
 
-    @GET("api/v1/users/{travelFavorite}")
+    @GET("api/v1/travelSpots/{travelFavorite}/getTravelSpotsWithTravelFavorite")
     suspend fun findTrip(
         @Path("travelFavorite") travelFavorite: String?
     ) : BaseResponse<List<TripResponse>>
