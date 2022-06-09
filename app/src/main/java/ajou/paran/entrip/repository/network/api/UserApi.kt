@@ -51,6 +51,7 @@ interface UserApi {
         @Path("user_id") user_id : String
     ) : BaseResponse<UserResponse>
 
+    @GET("api/v1/users/{user_id}")
     suspend fun findByUserId(
         @Path("user_id") user_id: String
     ) : BaseResponse<UserResponse>
