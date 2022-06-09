@@ -2,21 +2,19 @@ package ajou.paran.entrip.screen.recommendation
 
 import ajou.paran.entrip.R
 import ajou.paran.entrip.model.test.RecommendationItem
+import ajou.paran.entrip.screen.trip.TripTestActivity
 import ajou.paran.entrip.util.ui.RecommendDiffCallback
-import android.os.Build
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.RoundedCorner
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.request.RequestOptions
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
@@ -29,10 +27,10 @@ class RecommendItemAdapter
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
-        =   if (viewType != TYPE_HEADER)
-                RecommendItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_layout_recommedation, parent, false))
-            else
-                RecommendHeaderItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_layout_recommend_header, parent, false))
+            =   if (viewType != TYPE_HEADER)
+        RecommendItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_layout_recommedation, parent, false))
+    else
+        RecommendHeaderItemViewHolder(parent.context, LayoutInflater.from(parent.context).inflate(R.layout.item_layout_recommend_header, parent, false))
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int){
         if (holder is RecommendItemViewHolder)
@@ -69,10 +67,11 @@ class RecommendItemAdapter
         }
     }
 
-    inner class RecommendHeaderItemViewHolder constructor(itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class RecommendHeaderItemViewHolder constructor(private val context : Context, itemView: View): RecyclerView.ViewHolder(itemView){
         fun bind(){
             itemView.findViewById<Button>(R.id.recomAct_testBtn).setOnClickListener {
                 Log.d("[RecommendHeaderItem]", "설문조사 하러 가기 눌림")
+                context.startActivity(Intent(context, TripTestActivity::class.java))
             }
         }
     }

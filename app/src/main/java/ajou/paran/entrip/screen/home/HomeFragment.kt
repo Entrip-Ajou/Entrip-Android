@@ -8,6 +8,7 @@ import ajou.paran.entrip.model.test.fakeRecommenItem
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.screen.recommendation.RecommendItemAdapter
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
+import ajou.paran.entrip.screen.trip.TripTestActivity
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.ui.RecyclerViewDecoration
 import android.content.DialogInterface
@@ -53,6 +54,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         }
         binding.homeFRagBtnTest.setOnClickListener{
             Log.d(TAG, "성향 테스트 버튼 눌림")
+            startActivity(Intent(context, TripTestActivity::class.java))
         }
 
         observeState()
