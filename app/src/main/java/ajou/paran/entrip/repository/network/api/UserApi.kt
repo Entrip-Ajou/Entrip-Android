@@ -45,4 +45,14 @@ interface UserApi {
     suspend fun findAllPlanners(
         @Path("user_id") user_id: String
     ) : BaseResponse<List<PlannerResponse>>
+
+    @GET("api/v1/users/{user_id}")
+    suspend fun findByUserId(
+        @Path("user_id") user_id: String
+    ) : BaseResponse<UserResponse>
+
+    @GET("api/v1/travelSpots/{travelFavorite}/getTravelSpotsWithTravelFavorite")
+    suspend fun findTrip(
+        @Path("travelFavorite") travelFavorite: String?
+    ) : BaseResponse<List<TripResponse>>
 }

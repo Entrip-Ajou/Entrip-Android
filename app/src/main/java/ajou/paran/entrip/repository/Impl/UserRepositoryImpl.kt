@@ -4,9 +4,7 @@ import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.PlannerRemoteSource
 import ajou.paran.entrip.repository.network.UserRemoteSource
-import ajou.paran.entrip.repository.network.dto.PlannerResponse
-import ajou.paran.entrip.repository.network.dto.UserRequest
-import ajou.paran.entrip.repository.network.dto.UserTemp
+import ajou.paran.entrip.repository.network.dto.*
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
@@ -122,6 +120,27 @@ constructor(
         } catch (e: Exception) {
             emit(BaseResult.Error(Failure(-1, e.message.toString())))
         }
+    }
+
+    override fun getTrip(user_id: String): Flow<BaseResult<List<TripResponse>, Failure>>
+     = flow{
+         try{
+             val response = userRemoteSource.findByUserId(user_id)
+             if(response.status == 200){
+                 val response2 = userRemoteSource.getListTrip(response.data.travelFavorite)
+                 if(response2.status == 200){
+                     emit(BaseResult.Success(response2.data))
+                 } else {
+                     emit(BaseResult.Error(Failure(response2.status, response2.message)))
+                 }
+             } else {
+                 emit(BaseResult.Error(Failure(response.status, response.message)))
+             }
+         } catch (e: NoInternetException) {
+             emit(BaseResult.Error(Failure(0, e.message)))
+         } catch (e: Exception) {
+             emit(BaseResult.Error(Failure(-1, e.message.toString())))
+         }
     }
 
     private fun savePlanToLocal(plans: List<PlanEntity>, planner_idFK: Long) {
