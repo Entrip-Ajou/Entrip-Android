@@ -25,7 +25,8 @@ data class PlanEntity(
     val rgb : Int,
     val time : Int,
     val location : String?,
-    val date : String
+    val date : String,
+    val isExistComments : Boolean
 ) : Parcelable
 
 

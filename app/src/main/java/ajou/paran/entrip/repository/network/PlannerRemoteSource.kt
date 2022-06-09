@@ -158,7 +158,7 @@ class PlannerRemoteSource
                 val plans = mutableListOf<PlanEntity>()
                 response.data?.forEach { t ->
                     plans.add(
-                        PlanEntity(t.id, t.planner_idFK, t.todo, t.rgb, t.time, t.location, t.date)
+                        PlanEntity(t.id, t.planner_idFK, t.todo, t.rgb, t.time, t.location, t.date, t.isExistComments)
                     )
                 }
                 BaseResult.Success(plans)
