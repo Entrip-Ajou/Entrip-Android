@@ -1,6 +1,8 @@
 package ajou.paran.entrip.repository.Impl
 
+import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.model.PlannerEntity
+import ajou.paran.entrip.repository.network.PlannerRemoteSource
 import ajou.paran.entrip.repository.network.UserRemoteSource
 import ajou.paran.entrip.repository.network.dto.PlannerResponse
 import ajou.paran.entrip.repository.network.dto.UserRequest
@@ -17,6 +19,7 @@ class UserRepositoryImpl
 @Inject
 constructor(
     private val userRemoteSource: UserRemoteSource,
+    private val plannerRemoteSource: PlannerRemoteSource,
     private val planDao: PlanDao
 ): UserRepository{
 
@@ -25,17 +28,39 @@ constructor(
         try{
             val response = userRemoteSource.getUserPlanners(user_id)
             if (response.status == 200) {
-                for(data in response.data)
-                    planDao.insertPlanner(
-                        PlannerEntity(
-                            planner_id = data.planner_id,
-                            title = data.title,
-                            start_date = data.start_date,
-                            end_date = data.end_date,
-                            time_stamp = data.timeStamp,
-                            comment_timeStamp = data.comment_timeStamp
-                        )
+                for(data in response.data){
+                    val plannerEntity = PlannerEntity(
+                        planner_id = data.planner_id,
+                        title = data.title,
+                        start_date = data.start_date,
+                        end_date = data.end_date,
+                        time_stamp = data.timeStamp,
+                        comment_timeStamp = data.comment_timeStamp
                     )
+                    val localPlanner = planDao.findPlanner(plannerEntity.planner_id)
+                    val localTimestamp: String? = localPlanner?.time_stamp
+
+                        if(localTimestamp != null){
+                            if (plannerEntity.time_stamp != localTimestamp) {
+                                // 최신 상태 x -> remoteDB fetch
+                                planDao.updatePlanner(plannerEntity)
+                                val remoteDB_plan = plannerRemoteSource.fetchPlans(plannerEntity.planner_id)
+                                if (remoteDB_plan is BaseResult.Success) {
+                                    savePlanToLocal(remoteDB_plan.data, plannerEntity.planner_id)
+                                }else{
+                                    emit(BaseResult.Error(Failure((remoteDB_plan as BaseResult.Error).err.code, remoteDB_plan.err.message)))
+                                }
+                            }
+                        } else {
+                            planDao.insertPlanner(plannerEntity)
+                            val remoteDB_plan = plannerRemoteSource.fetchPlans(plannerEntity.planner_id)
+                            if (remoteDB_plan is BaseResult.Success) {
+                                savePlanToLocal(remoteDB_plan.data, plannerEntity.planner_id)
+                            }else{
+                                emit(BaseResult.Error(Failure((remoteDB_plan as BaseResult.Error).err.code, remoteDB_plan.err.message)))
+                            }
+                        }
+                }
                 emit(BaseResult.Success(response.data))
             } else {
                 emit(BaseResult.Error(Failure(response.status, response.message)))
@@ -98,4 +123,10 @@ constructor(
             emit(BaseResult.Error(Failure(-1, e.message.toString())))
         }
     }
+
+    private fun savePlanToLocal(plans: List<PlanEntity>, planner_idFK: Long) {
+        planDao.deleteAllPlan(planner_idFK)
+        planDao.insertAllPlan(plans)
+    }
+
 }

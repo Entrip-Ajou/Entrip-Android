@@ -7,6 +7,7 @@ import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.util.ApiState
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RegisterActivity
-: BaseActivity<ActivityRegisterBinding>(R.layout.activity_register), View.OnClickListener{
+    : BaseActivity<ActivityRegisterBinding>(R.layout.activity_register), View.OnClickListener{
     companion object{
         const val TAG = "[RegisterActivity]"
     }
@@ -29,30 +30,57 @@ class RegisterActivity
     override fun init(savedInstanceState: Bundle?) {
         viewModel.user_id = intent.getStringExtra("user_id")!!
         binding.registerActUserId.text = viewModel.user_id
+        binding.radioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
+            when(checkedId){
+                binding.registerActRadioMan.id -> {
+                    binding.registerActRadioMan.setBackgroundResource(R.drawable.shape_btn_round_recommend)
+                    binding.registerActRadioMan.setTextColor(Color.parseColor("#1a83e6"))
+                    binding.registerActRadioWoman.setBackgroundResource(R.drawable.shape_register)
+                    binding.registerActRadioWoman.setTextColor(Color.parseColor("#616161"))
+                }
+                binding.registerActRadioWoman.id -> {
+                    binding.registerActRadioMan.setBackgroundResource(R.drawable.shape_register)
+                    binding.registerActRadioMan.setTextColor(Color.parseColor("#616161"))
+                    binding.registerActRadioWoman.setBackgroundResource(R.drawable.shape_btn_round_recommend)
+                    binding.registerActRadioWoman.setTextColor(Color.parseColor("#1a83e6"))
+                }
+                else -> {
+                    binding.registerActRadioMan.setBackgroundResource(R.drawable.shape_register)
+                    binding.registerActRadioMan.setTextColor(Color.parseColor("#616161"))
+                    binding.registerActRadioWoman.setBackgroundResource(R.drawable.shape_register)
+                    binding.registerActRadioWoman.setTextColor(Color.parseColor("#616161"))
+                }
+            }
+        }
     }
 
     override fun onClick(view: View?) {
         view?.let { view ->
             when(view.id){
                 binding.registerActCheckBtn.id -> {
-                    viewModel.nickNameResult(binding.registerActNickname.text.toString())
+                    viewModel.nickNameResult(binding.registerActEtNickname.text.toString())
                     observeNickname()
                 }
                 binding.registerActEndBtn.id -> {
                     if (endCondition){
                         if(binding.radioGroup.checkedRadioButtonId == binding.registerActRadioMan.id) {
-                            viewModel.saveUserResult(0, binding.registerActNickname.text.toString())
+                            viewModel.saveUserResult(0, binding.registerActTvNickname.text.toString())
                             observeSave()
                         }
                         else if (binding.radioGroup.checkedRadioButtonId == binding.registerActRadioWoman.id){
-                            viewModel.saveUserResult(1, binding.registerActNickname.text.toString())
+                            viewModel.saveUserResult(1, binding.registerActTvNickname.text.toString())
                             observeSave()
+                        }
+                        else if (binding.radioGroup.checkedRadioButtonId == -1){
+                            binding.registerActRadioMan.setBackgroundResource(R.drawable.shape_register_error)
+                            binding.registerActRadioWoman.setBackgroundResource(R.drawable.shape_register_error)
                         }
                         else {
                             Log.d(TAG, "성별이 더 들어갈 경우 들어옴")
                         }
                     } else {
                         Log.d(TAG, "중복체크 실패")
+                        binding.registerActEtNickname.setBackgroundResource(R.drawable.shape_register_error)
                     }
                 }
                 else -> {
@@ -73,6 +101,12 @@ class RegisterActivity
                     .setPositiveButton("확인",
                         DialogInterface.OnClickListener{ dialog, which -> })
                 builder.show()
+                val nickname = binding.registerActEtNickname.text.toString()
+                binding.registerActEtNickname.visibility = View.GONE
+                binding.registerActCheckBtn.visibility = View.GONE
+                binding.registerActTvNickname.visibility = View.VISIBLE
+                binding.registerActTvNickname.text = nickname
+                binding.registerActCheckBtnSuccess.visibility = View.VISIBLE
             } else if (it is ApiState.Failure) {
                 if (it.code == 999){
                     // 이미 존재하는 아이디
