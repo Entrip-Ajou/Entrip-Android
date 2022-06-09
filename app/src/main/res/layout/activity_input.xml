@@ -79,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/et_round_style"
-                android:ems="10"
+                android:maxLength="15"
                 android:hint="할 일"
                 android:inputType="text"
                 android:paddingLeft="48dp"

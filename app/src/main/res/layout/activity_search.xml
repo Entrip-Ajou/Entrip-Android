@@ -21,10 +21,13 @@
             android:layout_height="match_parent"
             android:background="@drawable/et_round_style"
             android:hint="주소 검색"
+            android:inputType="text"
             android:paddingLeft="52dp"
             android:textSize="18sp"
             android:textStyle="normal"
-            android:textColor="#959595"/>
+            android:textColor="#959595">
+            <requestFocus/>
+        </EditText>
 
         <ImageView
             android:id="@+id/img_back_map"

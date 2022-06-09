@@ -147,11 +147,12 @@
         <EditText
             android:id="@+id/et_comment"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
+            android:layout_height="50dp"
             android:layout_marginStart="80dp"
             android:layout_marginEnd="60dp"
             android:background="@drawable/et_round_style"
             android:textSize="18sp"
+            android:maxLines="3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

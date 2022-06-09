@@ -5,12 +5,15 @@ import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.dto.Place
 import ajou.paran.entrip.repository.network.dto.ResultSearchKeyword
 import ajou.paran.entrip.util.ApiState
+import ajou.paran.entrip.util.ui.hideKeyboard
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -54,6 +57,20 @@ class SearchActivity : AppCompatActivity() {
         setContentView(view)
         setUpRecyclerView()
         getIntentData()
+        binding.etSearchKeyword.setOnKeyListener { _, keyCode, event ->
+            if(event.action == KeyEvent.ACTION_DOWN && keyCode == KEYCODE_ENTER){
+                Log.d(TAG, "Enter Click")
+                if(!binding.etSearchKeyword.text.isNullOrEmpty()){
+                    val keyword = binding.etSearchKeyword.text.toString()
+                    binding.tvValidation.visibility = View.INVISIBLE
+                    hideKeyboard()
+                    viewModel.searchKeyword(keyword)
+                }
+                true
+            }else{
+                false
+            }
+        }
     }
 
     private fun observeState() {
@@ -121,6 +138,7 @@ class SearchActivity : AppCompatActivity() {
                     val keyword = binding.etSearchKeyword.text.toString()
                     if(!keyword.isNullOrBlank()){
                         binding.tvValidation.visibility = View.INVISIBLE
+                        hideKeyboard()
                         viewModel.searchKeyword(keyword)
                     }else{
                         binding.tvValidation.visibility = View.VISIBLE

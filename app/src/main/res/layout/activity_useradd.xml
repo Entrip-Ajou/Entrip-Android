@@ -101,8 +101,12 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/et_round_style"
                 android:hint="아이디 혹은 닉네임 검색"
+                android:inputType="text"
                 android:paddingLeft="10dp"
-                android:textSize="18sp" />
+                android:textSize="18sp">
+
+                <requestFocus />
+            </EditText>
 
             <ImageView
                 android:id="@+id/img_user_search"

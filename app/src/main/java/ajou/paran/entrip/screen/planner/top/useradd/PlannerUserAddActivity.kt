@@ -9,14 +9,17 @@ import ajou.paran.entrip.repository.network.dto.PushNotification
 import ajou.paran.entrip.repository.network.dto.SharingFriend
 import ajou.paran.entrip.repository.network.dto.UserInformation
 import ajou.paran.entrip.screen.home.HomeActivity
+import ajou.paran.entrip.screen.planner.mid.map.SearchActivity
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.util.ApiState
+import ajou.paran.entrip.util.ui.hideKeyboard
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -62,6 +65,19 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
         observeState()
         setUpSharingRecyclerView()
         setUpWaitingRecyclerView()
+
+        binding.etUserSearch.setOnKeyListener { _, keyCode, event ->
+            if(event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                if(!binding.etUserSearch.text.isNullOrEmpty()){
+                    val user = binding.etUserSearch.text.toString()
+                    hideKeyboard()
+                    viewModel.searchUser(user)
+                }
+                true
+            }else{
+                false
+            }
+        }
     }
 
     private fun setUpSharingRecyclerView() {
@@ -230,7 +246,10 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
 
                 binding.imgUserSearch.id -> {
                     val user = binding.etUserSearch.text.toString()
-                    if (user.isNotBlank()) viewModel.searchUser(user)
+                    if (user.isNotBlank()){
+                        viewModel.searchUser(user)
+                        hideKeyboard()
+                    }
                 }
 
                 binding.tvInvite.id -> {
