@@ -1,10 +1,7 @@
 package ajou.paran.entrip.repository.network
 
 import ajou.paran.entrip.repository.network.api.UserApi
-import ajou.paran.entrip.repository.network.dto.BaseResponse
-import ajou.paran.entrip.repository.network.dto.PlannerResponse
-import ajou.paran.entrip.repository.network.dto.UserRequest
-import ajou.paran.entrip.repository.network.dto.UserTemp
+import ajou.paran.entrip.repository.network.dto.*
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
@@ -38,5 +35,11 @@ constructor(
 
     suspend fun getUserPlanners(user_id: String): BaseResponse<List<PlannerResponse>>
         = userApi.findAllPlanners(user_id)
+
+    suspend fun findByUserId(user_id: String): BaseResponse<UserResponse>
+        = userApi.findByUserId(user_id)
+
+    suspend fun getListTrip(travelFavorite: String?): BaseResponse<List<TripResponse>>
+        = userApi.findTrip(travelFavorite)
 
 }

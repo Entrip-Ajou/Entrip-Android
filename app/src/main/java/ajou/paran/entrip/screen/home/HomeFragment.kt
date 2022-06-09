@@ -4,9 +4,8 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseFragment
 import ajou.paran.entrip.databinding.FragmentHomeBinding
 import ajou.paran.entrip.model.PlannerEntity
-import ajou.paran.entrip.model.test.fakeRecommenItem
+import ajou.paran.entrip.model.test.nullRecommenItem
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
-import ajou.paran.entrip.screen.recommendation.RecommendItemAdapter
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.screen.trip.TripTestActivity
 import ajou.paran.entrip.util.ApiState
@@ -48,13 +47,12 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
     private lateinit var recommendItemAdapter: HomeRecommendAdapter
 
     override fun init() {
-        viewModel.getFakeTestItem()
         binding.homeFragBtnRecommendation.setOnClickListener{
             (activity as HomeActivity).changeFrag(RecommendationFragment())
         }
         binding.homeFRagBtnTest.setOnClickListener{
             Log.d(TAG, "성향 테스트 버튼 눌림")
-//            startActivity(Intent(context, TripTestActivity::class.java))
+            startActivity(Intent(context, TripTestActivity::class.java))
         }
 
         observeState()
@@ -90,10 +88,12 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         viewModel.state.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .onEach{ handleState(it) }
             .launchIn(lifecycleScope)
+
+        viewModel.findByUserId(sharedPreferences.getString("user_id", null).toString())
         viewModel.recommendItemList.observe(
             this, Observer {
                 recommendItemAdapter.apply {
-                    setList(fakeRecommenItem)
+                    setList(it)
                 }
             })
     }

@@ -1,7 +1,7 @@
 package ajou.paran.entrip.screen.recommendation
 
 import ajou.paran.entrip.R
-import ajou.paran.entrip.model.test.RecommendationItem
+import ajou.paran.entrip.repository.network.dto.TripResponse
 import ajou.paran.entrip.screen.trip.TripTestActivity
 import ajou.paran.entrip.util.ui.RecommendDiffCallback
 import android.content.Context
@@ -20,7 +20,7 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 
 class RecommendItemAdapter
-    : ListAdapter<RecommendationItem, RecyclerView.ViewHolder>(RecommendDiffCallback()) {
+    : ListAdapter<TripResponse, RecyclerView.ViewHolder>(RecommendDiffCallback()) {
     companion object{
         private const val TYPE_HEADER = 0;
         private const val TYPE_ITEM = 1;
@@ -47,12 +47,12 @@ class RecommendItemAdapter
         }
     }
 
-    fun setList(list: List<RecommendationItem>) {
+    fun setList(list: List<TripResponse>) {
         submitList(list)
     }
 
     inner class RecommendItemViewHolder constructor(itemView: View): RecyclerView.ViewHolder(itemView){
-        fun bind(item: RecommendationItem){
+        fun bind(item: TripResponse){
             itemView.findViewById<TextView>(R.id.recomItem_name).text = item.name
             Glide.with(itemView.context)
                 .load(item.photoUrl)

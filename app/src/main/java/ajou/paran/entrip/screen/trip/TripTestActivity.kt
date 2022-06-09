@@ -3,7 +3,6 @@ package ajou.paran.entrip.screen.trip
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityTriptestBinding
-import ajou.paran.entrip.screen.community.CommunityFragment
 import android.os.Bundle
 import android.view.KeyEvent
 import android.webkit.WebView
@@ -26,6 +25,10 @@ class TripTestActivity: BaseActivity<ActivityTriptestBinding>(R.layout.activity_
         webView.settings.javaScriptEnabled = true
         webView.webViewClient = WebViewClient()
         webView.loadUrl("$LOAD_URL${viewModel.getUserId()!!}")
+        webView.settings.setSupportZoom(true)
+        webView.settings.builtInZoomControls = true
+        webView.settings.displayZoomControls = true
+
         webView.setOnKeyListener { view, keyCode, event ->
             if(event.action == KeyEvent.ACTION_DOWN){
                 if(keyCode == KeyEvent.KEYCODE_BACK){
