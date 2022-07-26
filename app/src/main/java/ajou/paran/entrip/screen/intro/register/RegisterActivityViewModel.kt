@@ -67,6 +67,7 @@ constructor(
             .collect {
                 if (it is BaseResult.Success){
                     if (it.data.userId.isNotBlank()){
+                        Log.e(TAG, "User ID Response = " + it.data.userId)
                         sharedPreferences.edit().putString("nickname", nickname).commit()
                         sharedPreferences.edit().putString("gender", gender.toString()).commit()
                         sharedPreferences.edit().putString("photo_url","https://user-images.githubusercontent.com/77181865/169517449-f000a59d-5659-4957-9cb4-c6e5d3f4b197.png").commit()

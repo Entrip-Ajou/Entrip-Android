@@ -10,6 +10,7 @@ import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class UserAddRemoteSource
@@ -19,7 +20,7 @@ constructor(
     private val userApi: UserApi
 ) {
     companion object {
-        const val TAG = "[UserAddRemoteSource]"
+        const val TAG = "[UserAddRemote]"
     }
 
     suspend fun findAllUsersWithPlannerId(planner_id: Long): BaseResult<List<SharingFriend>, Failure> {
@@ -38,11 +39,17 @@ constructor(
                 }
                 BaseResult.Success(users)
             } else {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message()))
         } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }
@@ -61,12 +68,18 @@ constructor(
                 }
                 BaseResult.Success(user!!)
             } else {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message()))
         } catch (e: Exception) {
-            return BaseResult.Error(Failure(404, e.message.toString()))
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }
 
@@ -76,12 +89,17 @@ constructor(
             return if (response.isSuccessful) {
                 BaseResult.Success(Unit)
             } else {
-                Log.e(TAG, response.raw().toString())
+                Log.e(TAG, "Err code = " + response.code() + " Err message = " + response.errorBody().toString())
                 BaseResult.Error(Failure(response.code(), response.errorBody().toString()))
             }
         } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message()))
         } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }
@@ -89,14 +107,20 @@ constructor(
     suspend fun addUserToPlanner(planner_id: Long, user_id: String): BaseResult<Unit, Failure> {
         try {
             val response = userApi.addPlanners(planner_id, user_id)
-            return if(response.status == 200){
+            return if (response.status == 200) {
                 BaseResult.Success(Unit)
-            }else{
+            } else {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message()))
         } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }

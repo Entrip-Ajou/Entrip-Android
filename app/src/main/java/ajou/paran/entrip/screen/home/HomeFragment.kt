@@ -154,10 +154,6 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         }
     }
 
-    override fun onDeletePlannerClickListener(plannerEntity: PlannerEntity) {
-        viewModel.deletePlanner(plannerEntity.planner_id)
-    }
-
     override fun onPlannerClickListener(plannerEntity: PlannerEntity) {
         viewModel.selectPlanner(plannerEntity.planner_id)
     }

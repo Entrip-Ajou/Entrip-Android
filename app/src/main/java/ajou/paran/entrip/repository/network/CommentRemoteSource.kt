@@ -6,6 +6,8 @@ import ajou.paran.entrip.repository.network.dto.CommentResponse
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+import android.util.Log
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class CommentRemoteSource
@@ -13,16 +15,16 @@ class CommentRemoteSource
 constructor(
     private val commentApi: CommentApi
 ) {
-    companion object{
+    companion object {
         const val TAG = "[CommentRemote]"
     }
 
-    suspend fun insertComment(commentRequest : CommentRequest) : BaseResult<List<CommentResponse>, Failure>{
-        try{
+    suspend fun insertComment(commentRequest: CommentRequest): BaseResult<List<CommentResponse>, Failure> {
+        try {
             val response = commentApi.insertComment(commentRequest)
-            return if(response.status == 200){
+            return if (response.status == 200) {
                 val comments = mutableListOf<CommentResponse>()
-                response.data?.forEach{ t ->
+                response.data?.forEach { t ->
                     comments.add(
                         CommentResponse(
                             comment_id = t.comment_id,
@@ -34,22 +36,28 @@ constructor(
                     )
                 }
                 BaseResult.Success(comments)
-            }else{
+            } else {
+                Log.e(TAG, "Err code = "+response.status+ " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
-        }catch(e : NoInternetException){
+        } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = "+e.localizedMessage)
             return BaseResult.Error(Failure(0, e.message))
-        }catch(e : Exception){
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = "+e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message.toString()))
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = "+e.localizedMessage)
             return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }
 
-    suspend fun deleteComment(comment_id : Long) : BaseResult<List<CommentResponse>, Failure>{
-        try{
+    suspend fun deleteComment(comment_id: Long): BaseResult<List<CommentResponse>, Failure> {
+        try {
             val response = commentApi.deleteComment(comment_id)
-            return if(response.status == 200){
+            return if (response.status == 200) {
                 val comments = mutableListOf<CommentResponse>()
-                response.data?.forEach{ t ->
+                response.data?.forEach { t ->
                     comments.add(
                         CommentResponse(
                             comment_id = t.comment_id,
@@ -61,22 +69,28 @@ constructor(
                     )
                 }
                 BaseResult.Success(comments)
-            }else{
+            } else {
+                Log.e(TAG, "Err code = "+response.status+ " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
-        }catch(e : NoInternetException){
+        } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = "+e.localizedMessage)
             return BaseResult.Error(Failure(0, e.message))
-        }catch(e : Exception){
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = "+e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message.toString()))
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = "+e.localizedMessage)
             return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }
 
-    suspend fun selectComment(plan_id : Long) : BaseResult<List<CommentResponse>, Failure>{
-        try{
+    suspend fun selectComment(plan_id: Long): BaseResult<List<CommentResponse>, Failure> {
+        try {
             val response = commentApi.selectComment(plan_id)
-            return if(response.status == 200){
+            return if (response.status == 200) {
                 val comments = mutableListOf<CommentResponse>()
-                response.data?.forEach{ t ->
+                response.data?.forEach { t ->
                     comments.add(
                         CommentResponse(
                             comment_id = t.comment_id,
@@ -88,12 +102,18 @@ constructor(
                     )
                 }
                 BaseResult.Success(comments)
-            }else{
+            } else {
+                Log.e(TAG, "Err code = "+response.status+ " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
-        }catch(e : NoInternetException){
+        } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = "+e.localizedMessage)
             return BaseResult.Error(Failure(0, e.message))
-        }catch(e : Exception){
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = "+e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message.toString()))
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = "+e.localizedMessage)
             return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }
