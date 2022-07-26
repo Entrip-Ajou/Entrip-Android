@@ -5,6 +5,7 @@ import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import kotlinx.coroutines.flow.Flow
+import org.json.JSONObject
 
 interface PlannerRepository {
 

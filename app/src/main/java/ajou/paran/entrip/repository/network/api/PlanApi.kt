@@ -2,6 +2,7 @@ package ajou.paran.entrip.repository.network.api
 
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.dto.*
+import org.json.JSONObject
 import retrofit2.http.*
 
 
@@ -11,8 +12,8 @@ interface PlanApi {
     }
 
     // Planner 추가를 눌렀을 때
-    @POST("api/v1/planners")
-    suspend fun createPlanner(@Body user_id : String) : BaseResponse<PlannerResponse>
+    @POST("api/v1/planners/{user_id}")
+    suspend fun createPlanner(@Path ("user_id") user_id : String) : BaseResponse<PlannerResponse>
 
     @DELETE("api/v1/planners/{planner_id}")
     suspend fun deletePlanner(@Path("planner_id") planner_id : Long) : BaseResponse<Long>

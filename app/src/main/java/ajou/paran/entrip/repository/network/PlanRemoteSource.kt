@@ -8,12 +8,18 @@ import ajou.paran.entrip.repository.network.dto.PlanUpdateRequest
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+import android.util.Log
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class PlanRemoteSource
 @Inject constructor(
     private val planApi: PlanApi
 ) {
+    companion object{
+        const val TAG = "[PlanRemote]"
+    }
+
     suspend fun fetchPlanner(planner_id: Long): BaseResult<PlannerEntity, Failure> {
         try {
             val response = planApi.fetchPlanner(planner_id)
@@ -30,11 +36,17 @@ class PlanRemoteSource
                 }
                 BaseResult.Success(planner!!)
             } else {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message()))
         } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }
@@ -48,11 +60,17 @@ class PlanRemoteSource
                 }
                 BaseResult.Success(plan!!)
             } else {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message()))
         } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }
@@ -63,11 +81,17 @@ class PlanRemoteSource
             return if (response.status == 200) {
                 BaseResult.Success(response.data!!)
             } else {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message()))
         } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }
@@ -84,11 +108,17 @@ class PlanRemoteSource
                 }
                 BaseResult.Success(plan!!)
             } else {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message()))
         } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
             return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }

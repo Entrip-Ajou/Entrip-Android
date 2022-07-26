@@ -59,10 +59,6 @@ constructor
             binding.homeTvPlannerName.text = plannerEntity.title
             binding.homeTvPlannerDate.text = "${plannerEntity.start_date.split("/")[1]}/${plannerEntity.start_date.split("/")[2]}~${plannerEntity.end_date.split("/")[1]}/${plannerEntity.end_date.split("/")[2]}"
             binding.homeTvPlannerMonth.text = "${plannerEntity.start_date.split("/")[1].toInt().toString()}월"
-            binding.homePlannerClick.setOnLongClickListener{
-                listener.onDeletePlannerClickListener(plannerEntity)
-                true
-            }
         }
     }
 
@@ -80,7 +76,6 @@ constructor
     }
 
     interface ItemClickListener{
-        fun onDeletePlannerClickListener(plannerEntity : PlannerEntity)
         fun onPlannerClickListener(plannerEntity: PlannerEntity)
         fun onPlannerAddClickListener()
     }
