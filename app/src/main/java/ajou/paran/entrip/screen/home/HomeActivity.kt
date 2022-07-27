@@ -36,6 +36,13 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import android.content.pm.PackageManager
+
+import android.content.pm.PackageInfo
+import android.util.Base64
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+
 
 @AndroidEntryPoint
 class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), InviteAdapter.TextViewClickListner {
@@ -56,7 +63,28 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
         }
         observeState()
         setUpInviteFlag()
+        //getDebugHashKey()
     }
+
+    /*
+    private fun getDebugHashKey() {
+        var packageInfo: PackageInfo? = null
+        try {
+            packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+            if (packageInfo == null) Log.e("KeyHash", "KeyHash:null") else {
+                for (signature in packageInfo.signatures) {
+                    val md: MessageDigest = MessageDigest.getInstance("SHA")
+                    md.update(signature.toByteArray())
+                    Log.d("KeyHash", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+                }
+            }
+        } catch (e: NoSuchAlgorithmException) {
+            e.printStackTrace()
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+    }
+    */
 
     private fun setUpBottomNavigationBar(){
         supportFragmentManager.beginTransaction()

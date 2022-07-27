@@ -185,16 +185,9 @@ class MapActivity : AppCompatActivity() {
             val uNowPosition = MapPoint.mapPointWithGeoCoord(uLatitude!!, uLongitude!!)
             binding.kakaoMap.setMapCenterPoint(uNowPosition, true)
         }catch(e: NullPointerException){
-            Log.e("LOCATION_ERROR", e.toString())
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                ActivityCompat.finishAffinity(this)
-            }else{
-                ActivityCompat.finishAffinity(this)
-            }
-
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-            System.exit(0)
+            Log.w("[MAP]", "getLastKnownLocation => null Error => 초기 위치(서울 시청)으로 설정")
+            // 초기 위치 -> 서울 시청
+            binding.kakaoMap.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.5666805, 126.9784147), true)
         }
     }
 
