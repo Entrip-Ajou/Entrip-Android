@@ -20,15 +20,16 @@ class IntroActivity: BaseActivity<ActivityIntroBinding>(R.layout.activity_intro)
     override fun init(savedInstanceState: Bundle?) {
         val pagerAdapter = ScreenSlidePagerAdapter(this)
         binding.introActVp2.adapter = pagerAdapter
-
-
     }
 
     override fun onBackPressed() {
-        if (binding.introActVp2.currentItem == 0){
-            super.onBackPressed()
-        }else {
-            binding.introActVp2.currentItem -= 1
+        when(binding.introActVp2.currentItem) {
+            0 -> {
+                super.onBackPressed()
+            }
+            else -> {
+                binding.introActVp2.currentItem -= 1
+            }
         }
     }
 

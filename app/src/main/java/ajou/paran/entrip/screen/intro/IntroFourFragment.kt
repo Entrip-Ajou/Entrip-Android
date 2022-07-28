@@ -25,6 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.common.api.Api
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,17 +49,18 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
     private lateinit var user_id: String
 
     override fun init() {
-
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == AppCompatActivity.RESULT_OK){
-                val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-                handleSignInResult(task)
-            }else{
-                val builder = AlertDialog.Builder(activity!!)
-                builder.setMessage("네트워크를 확인해주세요")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which -> })
-                builder.show()
+            when(it.resultCode) {
+                AppCompatActivity.RESULT_OK -> {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+                    handleSignInResult(task)
+                }
+                else -> {
+                    val builder = AlertDialog.Builder(activity!!)
+                    builder.setMessage("네트워크를 확인해주세요")
+                        .setPositiveButton("확인") { dialog, which -> dialog.dismiss() }
+                    builder.show()
+                }
             }
         }
 
@@ -100,30 +102,25 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
         viewModel.result(user_id)
         lifecycleScope.launchWhenStarted {
             viewModel.isExistUserResult.collect {
-                if (it is ApiState.Success){
-                    // 존재하지 않는 아이디
-                    val intent = Intent(context, RegisterActivity::class.java)
-                    intent.putExtra("user_id", user_id)
-                    startActivity(intent)
-                } else if (it is ApiState.Failure) {
-                    if (it.code == 999){
-                        // 이미 존재하는 아이디
-                        viewModel.findById(user_id)
-                        viewModel.getUserPlanners(user_id)
-                    } else {
-                        Log.e(
-                            TAG,
-                            "code: ${it.code}"
-                        )
+                when(it) {
+                    is ApiState.Success -> {
+                        // 존재하지 않는 아이디
+                        val intent = Intent(context, RegisterActivity::class.java)
+                        intent.putExtra("user_id", user_id)
+                        startActivity(intent)
                     }
-                } else if (it is ApiState.Init) {
-                    Log.d(TAG, "observe 시작")
-                }
-                else {
-                    Log.e(
-                        TAG,
-                        "예상 못한 에러"
-                    )
+                    is ApiState.Failure -> {
+                        when(it.code) {
+                            999 -> {
+                                // 이미 존재하는 아이디
+                                viewModel.findById(user_id)
+                                viewModel.getUserPlanners(user_id)
+                            }
+                            else -> { Log.e(TAG, "code: ${it.code}") }
+                        }
+                    }
+                    is ApiState.Init -> { Log.d(TAG, "observe 시작") }
+                    else -> { Log.e(TAG, "예상 못한 에러") }
                 }
             }
         }
@@ -169,22 +166,12 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
                                 )
                                 Log.d(TAG, "기존 회원 sharedPreference 복구 완료")
                             }
-                            is BaseResult.Error<*> -> {
-                                Log.e(TAG, res.data.err.toString())
-                            }
-                            else -> {}
+                            is BaseResult.Error<*> -> { Log.e(TAG, res.data.err.toString()) }
+                            else -> {  }
                         }
-
-
-
                     }
-                    is ApiState.Failure -> {
-                        Log.e(
-                            TAG,
-                            "code: ${res.code}"
-                        )
-                    }
-                    else ->{ }
+                    is ApiState.Failure -> { Log.e(TAG, "code: ${res.code}") }
+                    else -> { }
                 }
             }
         }

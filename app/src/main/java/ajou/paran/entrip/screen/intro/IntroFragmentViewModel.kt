@@ -53,14 +53,17 @@ constructor(
         isExistUserUseCase
             .execute(user_id)
             .collect {
-                if (it is BaseResult.Success){
-                    if (it.data){
-                        _isExistUserResult.value = ApiState.Failure(999)
-                    } else {
-                        _isExistUserResult.value = ApiState.Success(it)
+                when(it) {
+                    is BaseResult.Success -> {
+                        if (it.data){
+                            _isExistUserResult.value = ApiState.Failure(999)
+                        } else {
+                            _isExistUserResult.value = ApiState.Success(it)
+                        }
                     }
-                } else {
-                    _isExistUserResult.value = ApiState.Failure((it as BaseResult.Error).err.code)
+                    is BaseResult.Error -> {
+                        _isExistUserResult.value = ApiState.Failure(it.err.code)
+                    }
                 }
             }
     }
@@ -69,12 +72,15 @@ constructor(
         getUserPlannersUseCase
             .execute(user_id)
             .collect {
-                if (it is BaseResult.Success) {
-                    Log.d(SplashActivity.TAG, "사용자 DB update 완료")
-                    _getUserPlannersResult.value = ApiState.Success(it)
-                } else {
-                    Log.e(SplashActivity.TAG, "Err code = "+(it as BaseResult.Error).err.code+ " Err message = "+it.err.message)
-                    _getUserPlannersResult.value = ApiState.Failure(it.err.code)
+                when(it) {
+                    is BaseResult.Success -> {
+                        Log.d(SplashActivity.TAG, "사용자 DB update 완료")
+                        _getUserPlannersResult.value = ApiState.Success(it)
+                    }
+                    is BaseResult.Error -> {
+                        Log.e(SplashActivity.TAG, "Err code = ${it.err.code}, Err message = ${it.err.message}")
+                        _getUserPlannersResult.value = ApiState.Failure(it.err.code)
+                    }
                 }
             }
     }
@@ -94,20 +100,18 @@ constructor(
     }
 
     fun commitShared(user_id : String, photo_url : String, nickname : String){
-        Log.d(TAG, "[sharedPreference] user_id : " + user_id)
-        Log.d(TAG, "[sharedPreference] photo_url : " + photo_url)
-        Log.d(TAG, "[sharedPreference] nickname : " + nickname)
+        Log.d(TAG, "[sharedPreference] user_id : $user_id")
+        Log.d(TAG, "[sharedPreference] photo_url : $photo_url")
+        Log.d(TAG, "[sharedPreference] nickname : $nickname")
 
         sharedPreferences.edit().putString("user_id", user_id).commit()
         sharedPreferences.edit().putString("photo_url", photo_url).commit()
         sharedPreferences.edit().putString("nickname", nickname).commit()
 
         viewModelScope.launch(Dispatchers.IO){
-            val res = userRemoteSource.updateUserToken(user_id, sharedPreferences.getString("token", null)!!)
-            if(res is BaseResult.Success){
-                Log.d(TAG, "기존 사용자가 앱을 지운 후 다시 깔았을 경우 Token update 완료")
-            }else{
-                Log.e(RegisterActivityViewModel.TAG, "Err code = "+(res as BaseResult.Error).err.code+ " Err message = "+res.err.message)
+            when(val res = userRemoteSource.updateUserToken(user_id, sharedPreferences.getString("token", null)!!)) {
+                is BaseResult.Success -> { Log.d(TAG, "기존 사용자가 앱을 지운 후 다시 깔았을 경우 Token update 완료") }
+                is BaseResult.Error -> { Log.e(RegisterActivityViewModel.TAG, "Err code = ${res.err.code}, Err message = ${res.err.message}") }
             }
         }
     }
