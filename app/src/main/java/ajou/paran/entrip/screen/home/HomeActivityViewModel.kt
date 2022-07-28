@@ -46,22 +46,19 @@ constructor(
     fun acceptInvitation(inviteEntity : InviteEntity, user_id : String, notificationData: PushNotification){
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
-            val res1 = userAddRepositoryImpl.addUserToPlanner(inviteEntity.planner_id, user_id)
-            when(res1){
+            when(val res1 = userAddRepositoryImpl.addUserToPlanner(inviteEntity.planner_id, user_id)){
                 is BaseResult.Success -> {
-                    val res2 = plannerRepository.acceptInvitation(inviteEntity.planner_id)
-                    when(res2){
+                    when(val res2 = plannerRepository.acceptInvitation(inviteEntity.planner_id)){
                         is BaseResult.Success -> {
-                            val res3 = userAddRepositoryImpl.postNotification(notificationData, inviteEntity)
-                            when(res3){
-                                is BaseResult.Success -> _state.value = ApiState.Success(res3.data)
-                                is BaseResult.Error -> _state.value = ApiState.Failure(res3.err.code)
+                            when(val res3 = userAddRepositoryImpl.postNotification(notificationData, inviteEntity)){
+                                is BaseResult.Success -> { _state.value = ApiState.Success(res3.data) }
+                                is BaseResult.Error -> { _state.value = ApiState.Failure(res3.err.code) }
                             }
                         }
-                        is BaseResult.Error -> _state.value = ApiState.Failure(res2.err.code)
+                        is BaseResult.Error -> { _state.value = ApiState.Failure(res2.err.code) }
                     }
                 }
-                is BaseResult.Error -> _state.value = ApiState.Failure(res1.err.code)
+                is BaseResult.Error -> { _state.value = ApiState.Failure(res1.err.code) }
             }
             delay(500)
             hideLoading()
@@ -71,10 +68,9 @@ constructor(
     fun rejectInvitation(inviteEntity: InviteEntity, notificationData: PushNotification){
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
-            val res = userAddRepositoryImpl.postNotification(notificationData, inviteEntity)
-            when(res){
-                is BaseResult.Success -> _state.value = ApiState.Success(res.data)
-                is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
+            when(val res = userAddRepositoryImpl.postNotification(notificationData, inviteEntity)){
+                is BaseResult.Success -> { _state.value = ApiState.Success(res.data) }
+                is BaseResult.Error -> { _state.value = ApiState.Failure(res.err.code) }
             }
             delay(500)
             hideLoading()

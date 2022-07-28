@@ -52,7 +52,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         }
         binding.homeFRagBtnTest.setOnClickListener{
             Log.d(TAG, "성향 테스트 버튼 눌림")
-            startActivity(Intent(context, TripTestActivity::class.java))
+//            startActivity(Intent(context, TripTestActivity::class.java))
         }
 
         observeState()
@@ -73,9 +73,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         lifecycle.coroutineScope.launch{
             viewModel.selectAllPlanner()
                 .onStart { viewModel.setLoading() }
-                .catch { e ->
-                    viewModel.hideLoading()
-                }
+                .catch { viewModel.hideLoading() }
                 .collect {
                     viewModel.hideLoading()
                     plannerAdapter.submitList(it.toList())
@@ -90,12 +88,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
             .launchIn(lifecycleScope)
 
         viewModel.findByUserId(sharedPreferences.getString("user_id", null).toString())
-        viewModel.recommendItemList.observe(
-            this, Observer {
-                recommendItemAdapter.apply {
-                    setList(it)
-                }
-            })
+        viewModel.recommendItemList.observe(this) { recommendItemAdapter.apply { setList(it) } }
     }
 
     private fun handleState(state : ApiState){
@@ -116,10 +109,13 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
     }
 
     private fun handleSuccess(data : Any){
-        if(data is PlannerEntity){
-            val intent = Intent(context, PlannerActivity::class.java)
-            intent.putExtra("PlannerEntity", data)
-            startActivity(intent)
+        when(data) {
+            is PlannerEntity -> {
+                val intent = Intent(context, PlannerActivity::class.java)
+                intent.putExtra("PlannerEntity", data)
+                startActivity(intent)
+            }
+            else -> {  }
         }
     }
 
@@ -135,8 +131,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
             0 -> {
                 val builder = AlertDialog.Builder(context!!)
                 builder.setMessage("네트워크를 확인해주세요")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which -> })
+                    .setPositiveButton("확인") { dialog, which -> dialog.dismiss() }
                 builder.show()
             }
 
@@ -149,7 +144,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
             }
 
             else -> {
-                Log.e(TAG, "${code} Error handleError()에 추가 및 trouble shooting하기")
+                Log.e(TAG, "$code Error handleError()에 추가 및 trouble shooting하기")
             }
         }
     }
