@@ -21,7 +21,7 @@ interface PlannerRepository {
     suspend fun createPlanner(user: String) : BaseResult<PlannerEntity, Failure>
 
     // step 3. Planner 삭제 버튼을 눌렀을 때
-    suspend fun deletePlanner(plannerId: Long) : BaseResult<Unit, Failure>
+    suspend fun deletePlanner(user_id : String, plannerId: Long) : BaseResult<Unit, Failure>
 
     // step 4. Home 화면에서 planner를 선택했을 때
     suspend fun findPlanner(plannerId : Long) : BaseResult<PlannerEntity, Failure>

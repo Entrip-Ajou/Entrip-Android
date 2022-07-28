@@ -97,8 +97,10 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             }
         }
         observeState()
+        /*
         viewModel.syncRemoteDB(selectedPlanner.planner_id)
         viewModel.observeTimeStamp(selectedPlanner.planner_id)
+         */
         initDateRecyclerView(date)
         subscribeObservers()
     }
@@ -138,11 +140,23 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     Log.d(TAG, "Case: Edit planner Date")
                     startDateRangePicker()
                 }
-                binding.plannerActIvPlannerAdd.id -> {
-                    Log.d(TAG, "Case: Add planner")
-                    val user_id = sharedPreferences.getString("user_id", null)?.toString()
-                    viewModel.createPlanner(user_id!!)
+
+                binding.plannerActIvPlannerExit.id -> {
+                    // dialog
+                    val builder = AlertDialog.Builder(this)
+                    builder.setMessage("플래너를 삭제하시겠습니까?")
+                        .setPositiveButton("확인",
+                            DialogInterface.OnClickListener { dialog, which ->
+                                val user_id = sharedPreferences.getString("user_id", null)?.toString()
+                                viewModel.deletePlanner(user_id!!, selectedPlanner.planner_id)
+                            })
+                        .setNegativeButton("취소",
+                            DialogInterface.OnClickListener { dialog, which ->
+
+                            })
+                    builder.show()
                 }
+
                 binding.plannerActPersonAdd.id -> {
                     Log.d(TAG, "Case: Add user")
                     val intent = Intent(this, PlannerUserAddActivity::class.java)
@@ -326,13 +340,17 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     }
 
     private fun handleUpdate(isUpdate : Boolean){
-        if(isUpdate) viewModel.syncRemoteDB(selectedPlanner.planner_id)
+        //if(isUpdate) viewModel.syncRemoteDB(selectedPlanner.planner_id)
     }
 
     private fun handleSuccess(data : Any){
         if(data is PlannerEntity){
             val intent = Intent(baseContext, PlannerActivity::class.java)
             intent.putExtra("PlannerEntity", data)
+            startActivity(intent)
+            finish()
+        }else if(data is Unit){
+            val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
             finish()
         }

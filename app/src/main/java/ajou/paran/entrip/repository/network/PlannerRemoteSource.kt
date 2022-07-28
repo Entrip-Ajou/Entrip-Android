@@ -157,28 +157,13 @@ class PlannerRemoteSource
      * @PathVariable : Long planner_id
      * @Limit OrphanRemoval = true 때문에 Planners와 Join되어있는 모든 Plans 역시 삭제
      * **/
-    suspend fun deletePlanner(planner_id: Long): BaseResult<Long, Failure> = try {
-        val response1 = planApi.isExist(planner_id)
-        var isExist: Boolean
-        if (response1.status == 200) {
-            isExist = response1.data
-            if (isExist) {
-                val response2 = planApi.deletePlanner(planner_id)
-                if (response2.status == 200) BaseResult.Success(response2.data)
-                else {
-                    Log.e(
-                        TAG,
-                        "Err code = " + response2.status + " Err message = " + response2.message
-                    )
-                    BaseResult.Error(Failure(response2.status, response2.message))
-                }
-            } else {
-                // 존재하지 않는 경우(다른 사용자가 이미 삭제함)
-                BaseResult.Success(planner_id)
-            }
-        } else {
-            Log.e(TAG, "Err code = " + response1.status + " Err message = " + response1.message)
-            BaseResult.Error(Failure(response1.status, response1.message))
+    suspend fun deletePlanner(user_id : String, planner_id: Long): BaseResult<Unit, Failure> = try {
+        val response = planApi.deletePlanner(user_id, planner_id)
+        if(response.status == 200){
+            BaseResult.Success(Unit)
+        }else {
+            Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+            BaseResult.Error(Failure(response.status, response.message))
         }
     } catch (e: NoInternetException) {
         Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)

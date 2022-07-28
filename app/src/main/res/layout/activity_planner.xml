@@ -54,13 +54,13 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/plannerAct_iv_plannerAdd"
+                android:id="@+id/plannerAct_iv_plannerExit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="24dp"
                 android:onClick="onClick"
-                android:src="@drawable/planner_add_vector"
+                android:src="@drawable/ic_baseline_exit_to_chat_24"
                 app:layout_constraintEnd_toStartOf="@+id/plannerAct_person_add"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -120,7 +120,6 @@
                     android:onClick="onClick"
                     android:text="end_date"
                     android:textColor="#9e9e9e"
-
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/view"
@@ -135,7 +134,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="20dp"
                 android:onClick="onClick"
-                android:src="@drawable/planner_user_add_vector"
+                android:src="@drawable/ic_baseline_person_add"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

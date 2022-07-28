@@ -118,12 +118,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main),
         }
     }
 
-    override fun onDeletePlannerClickListener(plannerEntity: PlannerEntity) {
-        viewModel.deletePlanner(plannerEntity.planner_id)
-    }
-
     override fun onPlannerClickListener(plannerEntity: PlannerEntity) {
-        viewModel.selectPlanner(plannerEntity.planner_id)
+        val intent = Intent(activity, PlannerActivity::class.java)
+        intent.putExtra("PlannerEntity", plannerEntity)
+        startActivity(intent)
     }
 
     override fun onPlannerAddClickListener() {

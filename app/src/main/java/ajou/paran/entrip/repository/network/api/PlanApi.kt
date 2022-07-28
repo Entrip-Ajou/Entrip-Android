@@ -15,8 +15,9 @@ interface PlanApi {
     @POST("api/v1/planners/{user_id}")
     suspend fun createPlanner(@Path ("user_id") user_id : String) : BaseResponse<PlannerResponse>
 
-    @DELETE("api/v1/planners/{planner_id}")
-    suspend fun deletePlanner(@Path("planner_id") planner_id : Long) : BaseResponse<Long>
+    // 이거 url 나오면 수정 하기 -> user_id 랑 planner_id
+    @DELETE("api/v1/planners/{planner_id}/{user_id}/exit")
+    suspend fun deletePlanner(@Path("user_id") user_id : String, @Path("planner_id") planner_id : Long) : BaseResponse<Boolean>
 
     // Home화면 Planner 선택란에서 기존에 저장된 Planner를 눌렀을 때
     @GET("api/v1/planners/{planner_id}")

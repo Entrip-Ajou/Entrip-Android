@@ -120,6 +120,23 @@ constructor(
         }
     }
 
+    fun deletePlanner(user_id : String, planner_id : Long){
+        viewModelScope.launch(Dispatchers.IO){
+            setLoading()
+            val res = plannerRepository.deletePlanner(user_id, planner_id)
+            when(res){
+                is BaseResult.Success -> _state.value = PlannerState.Success(Unit)
+                is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
+            }
+            delay(500)
+            hideLoading()
+        }
+    }
+
+    /**
+     * syncRemoteDB & observeTimeStamp => Polling 방식을 Websocket으로 대체할 예정
+
+
     fun syncRemoteDB(planner_id: Long) {
         job = viewModelScope.launch(Dispatchers.IO) {
             plannerRepository.syncRemoteDB(planner_id)
@@ -146,7 +163,7 @@ constructor(
         viewModelScope.launch{
             plannerRepository.latestTimeStamp(planner_id).collectLatest{
                 when {
-                    it == "NotExist" -> _state.value = PlannerState.Failure(500)
+                    //it == "NotExist" -> _state.value = PlannerState.Failure(500)
                     it == "NoInternet" -> _state.value = PlannerState.Failure(0)
                     lastTimeStamp != it -> setUpdate()
                     else -> setNotUpdate()
@@ -154,7 +171,7 @@ constructor(
             }
         }
     }
-
+    */
 }
 
 sealed class PlannerState {

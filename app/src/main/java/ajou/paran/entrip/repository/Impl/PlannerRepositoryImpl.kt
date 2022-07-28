@@ -5,6 +5,7 @@ import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.PlannerRemoteSource
 import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
+import ajou.paran.entrip.repository.room.plan.dao.UserDao
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import android.util.Log
@@ -19,7 +20,8 @@ class PlannerRepositoryImpl
 @Inject
 constructor(
     private val plannerRemoteSource: PlannerRemoteSource,
-    private val planDao: PlanDao
+    private val planDao: PlanDao,
+    private val userDao: UserDao
 ) : PlannerRepository {
 
     override suspend fun updatePlanner(
@@ -52,10 +54,11 @@ constructor(
         }
     }
 
-    override suspend fun deletePlanner(plannerId: Long): BaseResult<Unit, Failure> {
-        val deletePlanner = plannerRemoteSource.deletePlanner(plannerId)
+    override suspend fun deletePlanner(user_id : String, plannerId: Long): BaseResult<Unit, Failure> {
+        val deletePlanner = plannerRemoteSource.deletePlanner(user_id, plannerId)
         return if (deletePlanner is BaseResult.Success) {
             planDao.deletePlanner(plannerId)
+            userDao.deleteWaitWithPlannerId(plannerId)
             return BaseResult.Success(Unit)
         } else {
             return BaseResult.Error(Failure((deletePlanner as BaseResult.Error).err.code, deletePlanner.err.message))

@@ -155,7 +155,9 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
     }
 
     override fun onPlannerClickListener(plannerEntity: PlannerEntity) {
-        viewModel.selectPlanner(plannerEntity.planner_id)
+        val intent = Intent(context, PlannerActivity::class.java)
+        intent.putExtra("PlannerEntity", plannerEntity)
+        startActivity(intent)
     }
 
     override fun onPlannerAddClickListener() {
