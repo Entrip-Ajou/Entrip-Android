@@ -42,9 +42,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         const val TAG = "[PlannerActivity]"
     }
 
-    @Inject
-    lateinit var sharedPreferences : SharedPreferences
-
     private lateinit var dateRecyclerViewAdapter: DateRecyclerViewAdapter
     private lateinit var midFragment: MidFragment
 
@@ -122,8 +119,10 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 binding.plannerActIvClose.id -> {
                     Log.d(TAG, "Case: Close")
                     val intent = Intent(this, HomeActivity::class.java)
-                    intent.putExtra("isFromPlanner",true)
-                    intent.putExtra("last_pos", R.id.nav_planner)
+                    intent.run {
+                        putExtra("isFromPlanner",true)
+                        putExtra("last_pos", R.id.nav_planner)
+                    }
                     startActivity(intent)
                     finish()
                 }
@@ -140,13 +139,14 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 }
                 binding.plannerActIvPlannerAdd.id -> {
                     Log.d(TAG, "Case: Add planner")
-                    val user_id = sharedPreferences.getString("user_id", null)?.toString()
-                    viewModel.createPlanner(user_id!!)
+                    viewModel.createPlanner()
                 }
                 binding.plannerActPersonAdd.id -> {
                     Log.d(TAG, "Case: Add user")
                     val intent = Intent(this, PlannerUserAddActivity::class.java)
-                    intent.putExtra("PlannerEntity", selectedPlanner)
+                    intent.run {
+                        putExtra("PlannerEntity", selectedPlanner)
+                    }
                     startActivity(intent)
                     finish()
                 }
@@ -169,36 +169,37 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         adapter = dateRecyclerViewAdapter
     }
 
-    private fun subscribeObservers() {
-        lifecycleScope.launchWhenResumed {
-            viewModel.getFlowPlanner(selectedPlanner.planner_id).collect {
-                selectedPlanner = it
-                val list = getDates(it.start_date, it.end_date)
-                binding.plannerActEtTitle.setText(it.title)
-                if(it.start_date != it.end_date){
-                    if (binding.plannerActRv1.visibility == View.GONE)
-                        binding.plannerActRv1.visibility = View.VISIBLE
-                    binding.plannerActTvStartDate.text = it.start_date
-                    binding.plannerActTvEndDate.text = it.end_date
-                }
-                else{
-                    binding.plannerActTvStartDate.text = it.start_date
-                    binding.plannerActTvEndDate.text = it.end_date
+    private fun subscribeObservers()
+    = lifecycleScope.launchWhenResumed {
+        viewModel.getFlowPlanner(selectedPlanner.planner_id).collect {
+            selectedPlanner = it
+            val list = getDates(it.start_date, it.end_date)
+            binding.plannerActEtTitle.setText(it.title)
+            when(it.start_date) {
+                it.end_date -> {
                     binding.plannerActRv1.visibility = View.GONE
                 }
-                dateRecyclerViewAdapter.submitList(list)
+                else -> {
+                    binding.plannerActRv1.visibility = View.VISIBLE
+                }
             }
+            binding.plannerActTvStartDate.text = it.start_date
+            binding.plannerActTvEndDate.text = it.end_date
+            dateRecyclerViewAdapter.submitList(list)
         }
     }
+
 
     private fun setUpBottomNavigationBar(){
         binding.plannerActBottomNav.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.nav_home -> {
                     val intent = Intent(applicationContext, HomeActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.putExtra("last_pos", R.id.nav_home)
+                    intent.run {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        putExtra("last_pos", R.id.nav_home)
+                    }
                     startActivity(intent)
                     true
                 }
@@ -209,9 +210,11 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 }
                 R.id.nav_recommendation -> {
                     val intent = Intent(applicationContext, HomeActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.putExtra("last_pos", R.id.nav_recommendation)
+                    intent.run {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        putExtra("last_pos", R.id.nav_recommendation)
+                    }
                     startActivity(intent)
                     true
                 }

@@ -3,15 +3,14 @@ package ajou.paran.entrip.screen.planner.top
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
 import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
-import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import org.json.JSONObject
 import javax.inject.Inject
 
 /**
@@ -23,11 +22,15 @@ import javax.inject.Inject
 class PlannerActivityViewModel
 @Inject
 constructor(
+    private val sharedPreferences : SharedPreferences,
     private val plannerRepository: PlannerRepositoryImpl
 ) : ViewModel() {
     companion object{
         private const val TAG = "[PlannerActViewModel]"
     }
+
+    val userId: String
+    get() = sharedPreferences.getString("user_id", null) ?: ""
 
     private val _state = MutableStateFlow<PlannerState>(PlannerState.Init)
     val state : StateFlow<PlannerState> get() = _state
@@ -54,18 +57,16 @@ constructor(
 
     fun getFlowPlanner(plannerId : Long): Flow<PlannerEntity> = plannerRepository.getFlowPlanner(plannerId)
 
-    fun createPlanner(userId : String){
-        viewModelScope.launch(Dispatchers.IO){
-            setLoading()
-            val res = plannerRepository.createPlanner(userId)
-            when(res){
-                is BaseResult.Success -> _state.value = PlannerState.Success(res.data)
-                is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
-            }
-            delay(500)
-            hideLoading()
+    fun createPlanner() = viewModelScope.launch(Dispatchers.IO) {
+        setLoading()
+        when(val res = plannerRepository.createPlanner(userId)){
+            is BaseResult.Success -> _state.value = PlannerState.Success(res.data)
+            is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
         }
+        delay(500)
+        hideLoading()
     }
+
     fun plannerChange(list: List<PlannerDate>, planner : PlannerEntity){
         viewModelScope.launch(Dispatchers.IO) {
             setLoading()

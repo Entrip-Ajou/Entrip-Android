@@ -4,21 +4,18 @@ import ajou.paran.entrip.repository.network.UserRemoteSource
 import ajou.paran.entrip.repository.usecase.FindByIdUseCase
 import ajou.paran.entrip.repository.usecase.GetUserPlannersUseCase
 import ajou.paran.entrip.repository.usecase.IsExistUserUseCase
-import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.intro.register.RegisterActivityViewModel
+import ajou.paran.entrip.screen.splash.SplashActivity
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
-import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel

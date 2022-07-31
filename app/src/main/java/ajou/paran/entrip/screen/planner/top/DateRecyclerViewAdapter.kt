@@ -23,13 +23,14 @@ constructor(
     private val _date : String
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-//    private var checkedItemView: View? = null
     private var selectedItemPos = -1
     private var lastItemSelectedPos = 0
     private var dateItemList: List<PlannerDate>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
-            = DateItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_layout_date, parent, false))
+    = DateItemViewHolder(
+        LayoutInflater.from(parent.context).inflate(R.layout.item_layout_date, parent, false)
+    )
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val selectedDate = PlannerDate(_date)
@@ -46,7 +47,7 @@ constructor(
             (holder as DateItemViewHolder).defaultSelected()
         }
 
-        dateItemList?.let { (holder as DateItemViewHolder).bind(it[position]) }
+        dateItemList?.let { holder.bind(it[position]) }
     }
 
     override fun getItemCount(): Int = dateItemList?.size ?: 0
@@ -61,11 +62,7 @@ constructor(
 
         fun bind(plannerDate: PlannerDate){
             val (year, month, day) = plannerDate.date.split("/")
-//            if (plannerDate.date == midFragment.getDate()){
-//                itemView.findViewById<TextView>(R.id.itemLayout_tv_month).setTextColor(Color.CYAN)
-//                itemView.findViewById<TextView>(R.id.itemLayout_tv_day).setTextColor(Color.CYAN)
-//                checkedItemView = itemView
-//            }
+
             itemView.findViewById<TextView>(R.id.itemLayout_tv_month).text = "${month.toInt()}월"
             itemView.findViewById<TextView>(R.id.itemLayout_tv_day).text = day
             itemView.setOnClickListener {
@@ -73,18 +70,17 @@ constructor(
                 // 해당 부분에서 플래너 날짜별 세부 내용과 연동 필요
                 selectedItemPos = adapterPosition
 
-                lastItemSelectedPos = if (lastItemSelectedPos == -1)
-                    selectedItemPos
-                else{
-                    notifyItemChanged(lastItemSelectedPos)
-                    selectedItemPos
+                lastItemSelectedPos = when(lastItemSelectedPos) {
+                    -1 -> {
+                        selectedItemPos
+                    }
+                    else -> {
+                        notifyItemChanged(lastItemSelectedPos)
+                        selectedItemPos
+                    }
                 }
 
                 notifyItemChanged(selectedItemPos)
-//                checkSelected(itemView)
-//                itemView.findViewById<TextView>(R.id.itemLayout_tv_month).setTextColor(Color.CYAN)
-//                itemView.findViewById<TextView>(R.id.itemLayout_tv_day).setTextColor(Color.CYAN)
-//                checkedItemView = itemView
                 midFragment.setAdapter(date = plannerDate.date)
             }
         }
@@ -94,17 +90,10 @@ constructor(
             itemView.findViewById<TextView>(R.id.itemLayout_tv_day).setTextColor(Color.parseColor("#7a7a7a"))
         }
 
-        fun selected(){
+        fun selected() {
             itemView.findViewById<TextView>(R.id.itemLayout_tv_month).setTextColor(Color.parseColor("#2d95eb"))
             itemView.findViewById<TextView>(R.id.itemLayout_tv_day).setTextColor(Color.parseColor("#2d95eb"))
         }
-
-//        private fun checkSelected(itemView: View) = checkedItemView?.let {
-//            if(checkedItemView!!.id == itemView.id){
-//                checkedItemView!!.findViewById<TextView>(R.id.itemLayout_tv_month).setTextColor(Color.BLACK)
-//                checkedItemView!!.findViewById<TextView>(R.id.itemLayout_tv_day).setTextColor(Color.BLACK)
-//            }
-//        }
 
     }
 }

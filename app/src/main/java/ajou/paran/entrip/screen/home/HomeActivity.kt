@@ -71,11 +71,11 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
                         .replace(R.id.homeAct_nav_host_container, MainFragment()).commit()
                     true
                 }
-//                R.id.nav_recommendation -> {
-//                    supportFragmentManager.beginTransaction()
-//                        .replace(R.id.homeAct_nav_host_container, RecommendationFragment()).commit()
-//                    true
-//                }
+                R.id.nav_recommendation -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.homeAct_nav_host_container, RecommendationFragment()).commit()
+                    true
+                }
 //                R.id.nav_board -> {
 //                    supportFragmentManager.beginTransaction()
 //                        .replace(R.id.homeAct_nav_host_container, CommunityFragment()).commit()
