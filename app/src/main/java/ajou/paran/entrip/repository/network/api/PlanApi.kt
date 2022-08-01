@@ -15,7 +15,6 @@ interface PlanApi {
     @POST("api/v1/planners/{user_id}")
     suspend fun createPlanner(@Path ("user_id") user_id : String) : BaseResponse<PlannerResponse>
 
-    // 이거 url 나오면 수정 하기 -> user_id 랑 planner_id
     @DELETE("api/v1/planners/{planner_id}/{user_id}/exit")
     suspend fun deletePlanner(@Path("user_id") user_id : String, @Path("planner_id") planner_id : Long) : BaseResponse<Boolean>
 
@@ -26,6 +25,7 @@ interface PlanApi {
     @GET("api/v1/planners/{planner_id}/all")
     suspend fun fetchPlans(@Path("planner_id") planner_idFK : Long) : BaseResponse<List<PlanResponse>>
 
+    // todo : 실패시 202
     @GET("api/v1/planners/{planner_id}/exist")
     suspend fun isExist(@Path("planner_id") planner_id: Long) : BaseResponse<Boolean>
 

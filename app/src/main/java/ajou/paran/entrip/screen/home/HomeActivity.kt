@@ -7,7 +7,6 @@ import ajou.paran.entrip.model.InviteEntity
 import ajou.paran.entrip.repository.network.dto.NotificationData
 import ajou.paran.entrip.repository.network.dto.PushNotification
 import ajou.paran.entrip.screen.community.CommunityFragment
-import ajou.paran.entrip.screen.planner.main.InviteAdapter
 import ajou.paran.entrip.screen.planner.main.MainFragment
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.util.ApiState
@@ -64,6 +63,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
         observeState()
         setUpInviteFlag()
         //getDebugHashKey()
+        viewModel.test(1, "sangjin@gmail.com")
     }
 
     /*
@@ -158,7 +158,11 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
             }
 
             500 -> {
-                Toast.makeText(this, "다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("삭제된 플래너입니다.")
+                    .setPositiveButton("확인",
+                        DialogInterface.OnClickListener { dialog, which -> })
+                builder.show()
             }
 
             -1 -> {

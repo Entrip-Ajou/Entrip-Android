@@ -78,4 +78,10 @@ class UserAddRepositoryImpl @Inject constructor(
 
     fun isExistNickname(planner_id : Long,user_id:String) = userDao.isExistNickname(user_id, planner_id)
 
+    suspend fun userIsExistWithPlanner(planner_id : Long, user_id : String) : BaseResult<Unit, Failure>{
+        val res = userAddRemoteSource.userIsExistWithPlanner(planner_id, user_id)
+        if(res is BaseResult.Success)
+            return BaseResult.Success(Unit)
+        else return BaseResult.Error(Failure((res as BaseResult.Error).err.code, res.err.message))
+    }
 }

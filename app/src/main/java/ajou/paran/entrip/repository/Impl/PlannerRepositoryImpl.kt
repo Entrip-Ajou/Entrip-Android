@@ -180,4 +180,10 @@ constructor(
             return BaseResult.Error(Failure((planner as BaseResult.Error).err.code, planner.err.message))
         }
     }
+
+    override suspend fun isExist(planner_id : Long) : BaseResult<Boolean, Failure>{
+        val res = plannerRemoteSource.isExist(planner_id)
+        if(res is BaseResult.Success) return BaseResult.Success(res.data)
+        else return BaseResult.Error(Failure((res as BaseResult.Error).err.code, res.err.message))
+    }
 }
