@@ -15,4 +15,6 @@ interface UserAddRepository {
     suspend fun postNotification(notification : PushNotification, inviteEntity: InviteEntity) : BaseResult<Unit, Failure>
     suspend fun findAllUsersWithPlannerId(planner_id : Long) : BaseResult<List<SharingFriend>, Failure>
     suspend fun addUserToPlanner(planner_id : Long, user_id : String) : BaseResult<Unit, Failure>
+    suspend fun userIsExistWithPlanner(planner_id : Long, user_id : String) : BaseResult<Unit, Failure>
+    suspend fun userNickNameIsExistWithPlanner(planner_id : Long, nickname : String) : BaseResult<Unit, Failure>
 }

@@ -157,10 +157,10 @@ class PlannerRemoteSource
      * @PathVariable : Long planner_id
      * @Limit OrphanRemoval = true 때문에 Planners와 Join되어있는 모든 Plans 역시 삭제
      * **/
-    suspend fun deletePlanner(user_id : String, planner_id: Long): BaseResult<Unit, Failure> = try {
+    suspend fun deletePlanner(user_id : String, planner_id: Long): BaseResult<Boolean, Failure> = try {
         val response = planApi.deletePlanner(user_id, planner_id)
         if(response.status == 200){
-            BaseResult.Success(Unit)
+            BaseResult.Success(response.data)
         }else {
             Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
             BaseResult.Error(Failure(response.status, response.message))

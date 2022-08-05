@@ -54,12 +54,12 @@ constructor(
         }
     }
 
-    override suspend fun deletePlanner(user_id : String, plannerId: Long): BaseResult<Unit, Failure> {
+    override suspend fun deletePlanner(user_id : String, plannerId: Long): BaseResult<Boolean, Failure> {
         val deletePlanner = plannerRemoteSource.deletePlanner(user_id, plannerId)
         return if (deletePlanner is BaseResult.Success) {
             planDao.deletePlanner(plannerId)
             userDao.deleteWaitWithPlannerId(plannerId)
-            return BaseResult.Success(Unit)
+            return BaseResult.Success(deletePlanner.data)
         } else {
             return BaseResult.Error(Failure((deletePlanner as BaseResult.Error).err.code, deletePlanner.err.message))
         }
@@ -108,7 +108,7 @@ constructor(
      *       4) 위의 3) 결과가 같을 때 -> local planner + plan fetch
      *       5) 위의 3) 결과가 다를 때 -> 1)에서 가져온 planner로 내부 DB update & Remote DB에서 plan 가져오기
      *       5-1) transcation
-     */
+
     override suspend fun syncRemoteDB(
         planner_id: Long
     ): Flow<BaseResult<Any, Failure>> {
@@ -164,6 +164,22 @@ constructor(
             }
         }.flowOn(Dispatchers.IO)
     }
+     *
+     *
+    **/
+
+    override suspend fun fetchPlanner(
+        planner_id : Long
+    ) : BaseResult<Unit, Failure> {
+        val remotePlanner = plannerRemoteSource.fetchPlanner(planner_id)
+        if (remotePlanner is BaseResult.Success) {
+            planDao.updatePlanner(remotePlanner.data)
+            return BaseResult.Success(Unit)
+        }else{
+            return BaseResult.Error(Failure((remotePlanner as BaseResult.Error).err.code, remotePlanner.err.message))
+        }
+    }
+
 
     suspend fun acceptInvitation(planner_id : Long) : BaseResult<Unit, Failure>{
         val planner = plannerRemoteSource.fetchPlanner(planner_id)

@@ -63,7 +63,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
         observeState()
         setUpInviteFlag()
         //getDebugHashKey()
-        viewModel.test(1, "sangjin@gmail.com")
+
     }
 
     /*
@@ -157,9 +157,11 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
                 builder.show()
             }
 
-            500 -> {
+            204 -> {
+                /** No content -> 서버 내 플래너가 이미 삭제된 경우 **/
+
                 val builder = AlertDialog.Builder(this)
-                builder.setMessage("삭제된 플래너입니다.")
+                builder.setMessage("이미 삭제된 플래너입니다.")
                     .setPositiveButton("확인",
                         DialogInterface.OnClickListener { dialog, which -> })
                 builder.show()

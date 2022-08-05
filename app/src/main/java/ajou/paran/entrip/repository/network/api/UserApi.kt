@@ -32,7 +32,7 @@ interface UserApi {
     @GET("api/v1/users/findUserWithNicknameOrUserId/{user_id_or_nickname}")
     suspend fun searchUser(
         @Path("user_id_or_nickname") user_id_or_nickname : String
-    ) : BaseResponse<UserInformation?>
+    ) : BaseResponse<UserInformation>
 
     @GET("api/v1/planners/{planner_id}/getAllUser")
     suspend fun findAllUsersWithPlannerId(
@@ -70,5 +70,12 @@ interface UserApi {
     suspend fun userIsExistWithPlanner(
         @Path ("planner_id") planner_id : Long,
         @Path ("user_id") user_id : String
+    ) : BaseResponse<Boolean>
+
+    // todo : 실패시 202
+    @GET("api/v1/planners/{planner_id}/{nickname}/exist")
+    suspend fun userNickNameIsExistWithPlanner(
+        @Path ("planner_id") planner_id : Long,
+        @Path ("nickname") nickname : String
     ) : BaseResponse<Boolean>
 }

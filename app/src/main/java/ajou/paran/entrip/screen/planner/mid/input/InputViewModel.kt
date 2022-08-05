@@ -8,6 +8,7 @@ import ajou.paran.entrip.repository.network.dto.PlanUpdateRequest
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
 import android.graphics.Color
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,11 +19,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import ua.naiksoftware.stomp.StompClient
 import javax.inject.Inject
 
 @HiltViewModel
 class InputViewModel @Inject constructor(
-    private val planRepository: PlanRepositoryImpl
+    private val planRepository: PlanRepositoryImpl,
+    private val stompClient: StompClient
     ): ViewModel() {
     companion object{
         private const val TAG = "[InputViewModel]"
@@ -117,6 +121,17 @@ class InputViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun sendPlanChangeMessage(sender : String, content : Int, planner_id : Long){
+        val data = JSONObject()
+        data.put("type", "CHAT")
+        data.put("content", content)
+        data.put("sender", sender)
+        data.put("planner_id", planner_id)
+        data.put("date", null)
+        stompClient.send("/app/chat.sendMessage", data.toString()).subscribe()
+        Log.e("[WebSocket]", "update가 일어나서 Message 전송 + Planner_id : "+planner_id)
     }
 }
 

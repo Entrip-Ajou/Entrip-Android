@@ -206,7 +206,8 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                 builder.show()
             }
 
-            404 -> {
+            202 -> {
+                Log.e(TAG, "Err code = 202 -> 검색 결과가 없다고 처리")
                 Toast.makeText(this, "검색 결과가 없습니다", Toast.LENGTH_LONG).show()
                 binding.layoutSearchSuccess.visibility = View.INVISIBLE
                 binding.tvSearchFailure.visibility = View.VISIBLE

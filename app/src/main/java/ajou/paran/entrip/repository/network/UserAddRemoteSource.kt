@@ -148,4 +148,25 @@ constructor(
             return BaseResult.Error(Failure(-1, e.message.toString()))
         }
     }
+
+    suspend fun userNickNameIsExistWithPlanner(planner_id : Long, nickname : String) : BaseResult<Boolean, Failure>{
+        try{
+            val response = userApi.userNickNameIsExistWithPlanner(planner_id, nickname)
+            return if(response.status == 200){
+                BaseResult.Success(response.data)
+            } else{
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message()))
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(-1, e.message.toString()))
+        }
+    }
 }

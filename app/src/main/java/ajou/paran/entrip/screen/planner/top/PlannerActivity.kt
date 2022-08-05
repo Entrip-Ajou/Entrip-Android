@@ -39,7 +39,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     R.layout.activity_planner
 ), View.OnClickListener {
     companion object{
-        const val TAG = "[PlannerActivity]"
+        const val TAG = "[PlannerAct]"
     }
 
     @Inject
@@ -97,12 +97,9 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             }
         }
         observeState()
-        /*
-        viewModel.syncRemoteDB(selectedPlanner.planner_id)
-        viewModel.observeTimeStamp(selectedPlanner.planner_id)
-         */
         initDateRecyclerView(date)
         subscribeObservers()
+        viewModel.runStomp(selectedPlanner.planner_id)
     }
 
     /**
@@ -344,15 +341,18 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     }
 
     private fun handleSuccess(data : Any){
-        if(data is PlannerEntity){
-            val intent = Intent(baseContext, PlannerActivity::class.java)
-            intent.putExtra("PlannerEntity", data)
-            startActivity(intent)
-            finish()
-        }else if(data is Unit){
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-            finish()
+        when (data) {
+            is PlannerEntity -> {
+                val intent = Intent(baseContext, PlannerActivity::class.java)
+                intent.putExtra("PlannerEntity", data)
+                startActivity(intent)
+                finish()
+            }
+            is Boolean -> {
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }
     }
 
@@ -386,5 +386,11 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 Log.e(TAG, "${code} Error handleError()에 추가 및 trouble shooting하기")
             }
         }
+    }
+
+    override fun onDestroy()
+    {
+        viewModel.stompClient.disconnect()
+        super.onDestroy()
     }
 }
