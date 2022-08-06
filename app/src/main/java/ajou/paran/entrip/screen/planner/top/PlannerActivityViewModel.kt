@@ -49,14 +49,6 @@ constructor(
         _state.value = PlannerState.IsLoading(false)
     }
 
-    private fun setUpdate(){
-        _state.value = PlannerState.IsUpdate(true)
-    }
-
-    private fun setNotUpdate(){
-        _state.value = PlannerState.IsUpdate(false)
-    }
-
     fun getFlowPlanner(plannerId : Long): Flow<PlannerEntity> = plannerRepository.getFlowPlanner(plannerId)
 
     fun plannerChange(list: List<PlannerDate>, planner : PlannerEntity){
@@ -259,7 +251,6 @@ constructor(
 sealed class PlannerState {
     object Init : PlannerState()
     data class IsLoading(val isLoading: Boolean) : PlannerState()
-    data class IsUpdate(val isUpdate: Boolean) : PlannerState()
     data class Success(val data : Any) : PlannerState()
     data class Failure(val code : Int) : PlannerState()
 }

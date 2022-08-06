@@ -65,6 +65,7 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             this.putExtra("PlannerEntity", viewModel.selectedPlanner)
         }
         startActivity(intent)
+        finish()
     }
 
     private fun setUpView() {

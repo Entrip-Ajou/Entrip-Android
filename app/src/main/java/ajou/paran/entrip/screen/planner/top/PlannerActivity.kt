@@ -34,6 +34,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
+
+/**
+ * 해당 ?? 생명주기일때 function 호출
+ * @OnLifecycleEvent(Lifecycle.EVENT.???)
+ * fun method() { }
+ */
+
 @AndroidEntryPoint
 class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     R.layout.activity_planner
@@ -56,6 +63,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     private val viewModel: PlannerActivityViewModel by viewModels()
 
     override fun init(savedInstanceState: Bundle?) {
+        Log.w(TAG, "onCreate 호출")
         selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
         init_start_date = selectedPlanner.start_date
         init_end_date = selectedPlanner.end_date
@@ -123,7 +131,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     val intent = Intent(this, HomeActivity::class.java)
                     intent.putExtra("isFromPlanner",true)
                     intent.putExtra("last_pos", R.id.nav_planner)
-                    startActivity(intent)
                     finish()
                 }
                 binding.plannerActEtTitle.id -> {
@@ -211,6 +218,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     intent.putExtra("last_pos", R.id.nav_home)
                     startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.nav_planner -> {
@@ -224,6 +232,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     intent.putExtra("last_pos", R.id.nav_recommendation)
                     startActivity(intent)
+                    finish()
                     true
                 }
 //                R.id.nav_board -> {
@@ -322,7 +331,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         when(state){
             is PlannerState.Init -> Unit
             is PlannerState.IsLoading -> handleLoading(state.isLoading)
-            is PlannerState.IsUpdate -> handleUpdate(state.isUpdate)
             is PlannerState.Success -> handleSuccess(state.data)
             is PlannerState.Failure -> handleError(state.code)
         }
@@ -336,22 +344,15 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         }
     }
 
-    private fun handleUpdate(isUpdate : Boolean){
-        //if(isUpdate) viewModel.syncRemoteDB(selectedPlanner.planner_id)
-    }
-
     private fun handleSuccess(data : Any){
         when (data) {
-            is PlannerEntity -> {
-                val intent = Intent(baseContext, PlannerActivity::class.java)
-                intent.putExtra("PlannerEntity", data)
-                startActivity(intent)
-                finish()
-            }
             is Boolean -> {
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
                 finish()
+            }
+            else -> {
+                Log.e(TAG, "State = Success<"+data.javaClass.toString()+ ">Type의 처리 필요")
             }
         }
     }
@@ -388,8 +389,38 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         }
     }
 
+    /**
+     *   lifecycle test
+     */
+
+    override fun onStart(){
+        Log.w(TAG, "onStart 호출")
+        super.onStart()
+    }
+
+    override fun onResume(){
+        Log.w(TAG,"onResume 호출")
+        super.onResume()
+    }
+
+    override fun onPause(){
+        Log.w(TAG, "onPause 호출")
+        super.onPause()
+    }
+
+    override fun onStop(){
+        Log.w(TAG, "onStop 호출")
+        super.onStop()
+    }
+
+    override fun onRestart(){
+        Log.w(TAG, "onRestart 호출")
+        super.onRestart()
+    }
+
     override fun onDestroy()
     {
+        Log.w(TAG, "onDestroy 호출")
         viewModel.stompClient.disconnect()
         super.onDestroy()
     }
