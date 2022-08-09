@@ -142,6 +142,7 @@ constructor(
             return BaseResult.Error(Failure(0, e.message))
         } catch (e: HttpException) {
             Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            Log.e(TAG, "HTTP 500일 경우=> 처리 완료 / 단, 다른 번호일 경우 처리해야 함")
             return BaseResult.Error(Failure(e.code(), e.message()))
         } catch (e: Exception) {
             Log.e(TAG, "Exception Message = " + e.localizedMessage)

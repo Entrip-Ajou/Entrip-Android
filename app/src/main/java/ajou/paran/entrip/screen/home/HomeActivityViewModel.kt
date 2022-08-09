@@ -97,7 +97,10 @@ constructor(
                 }
                 is BaseResult.Error -> {
                     when(res1.err.code){
-                        202 -> _state.value = ApiState.Failure(204) // 이미 삭제된 플래너
+                        202 -> {
+                            plannerRepository.deleteInvitation(inviteEntity)
+                            _state.value = ApiState.Failure(204)
+                        }
                         else -> _state.value = ApiState.Failure(res1.err.code)
                     }
                 }
@@ -121,7 +124,11 @@ constructor(
                 }
                 is BaseResult.Error -> {
                     when(res1.err.code){
-                        500 -> _state.value = ApiState.Success(Unit) // 플래너가 이미 삭제되었거나, 사용자가 없는 경우 -> 성공으로 설정한 뒤 종료
+                        500, 202 -> {
+                            // 플래너가 이미 삭제되었거나, 사용자가 없는 경우 -> 성공으로 설정한 뒤 종료
+                            plannerRepository.deleteInvitation(inviteEntity)
+                            _state.value = ApiState.Success(Unit)
+                        }
                         else -> _state.value = ApiState.Failure(res1.err.code)
                     }
                 }

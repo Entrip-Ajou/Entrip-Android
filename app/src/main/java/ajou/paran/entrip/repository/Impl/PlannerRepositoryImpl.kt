@@ -1,5 +1,6 @@
 package ajou.paran.entrip.repository.Impl
 
+import ajou.paran.entrip.model.InviteEntity
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.PlannerRemoteSource
@@ -41,6 +42,7 @@ constructor(
     override fun getFlowPlanner(plannerId: Long): Flow<PlannerEntity> =
         planDao.findFlowPlanner(planner_Id = plannerId)
 
+    fun deleteInvitation(inviteEntity: InviteEntity) = userDao.deleteInvite(inviteEntity)
 
     override suspend fun selectAllPlanner(): Flow<List<PlannerEntity>> = planDao.selectAllPlanner()
 
