@@ -4,6 +4,7 @@ import ajou.paran.entrip.databinding.ActivitySearchBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.dto.Place
 import ajou.paran.entrip.repository.network.dto.ResultSearchKeyword
+import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.ui.hideKeyboard
 import android.content.DialogInterface
@@ -50,6 +51,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.w(TAG, "onCreate 호출")
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         val view = binding.root
@@ -71,6 +73,25 @@ class SearchActivity : AppCompatActivity() {
                 false
             }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, MapActivity::class.java)
+        intent.apply{
+            this.putExtra("isUpdate", isUpdate)
+            this.putExtra("Id", update_id)
+            this.putExtra("Todo",todo)
+            this.putExtra("Rgb",rgb)
+            this.putExtra("Time",time)
+            this.putExtra("Location",location)
+            this.putExtra("date", date)
+            this.putExtra("plannerId", planner_id)
+            this.putExtra("PlannerEntity", selectedPlanner)
+            this.putExtra("last_select_palette",last_select_palette)
+        }
+        startActivity(intent)
+        finish()
     }
 
     private fun observeState() {
@@ -147,21 +168,7 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 binding.imgBackMap.id -> {
-                    val intent = Intent(this, MapActivity::class.java)
-                    intent.apply{
-                        this.putExtra("isUpdate", isUpdate)
-                        this.putExtra("Id", update_id)
-                        this.putExtra("Todo",todo)
-                        this.putExtra("Rgb",rgb)
-                        this.putExtra("Time",time)
-                        this.putExtra("Location",location)
-                        this.putExtra("date", date)
-                        this.putExtra("plannerId", planner_id)
-                        this.putExtra("PlannerEntity", selectedPlanner)
-                        this.putExtra("last_select_palette",last_select_palette)
-                    }
-                    startActivity(intent)
-                    finish()
+                    onBackPressed()
                 }
 
                 else -> {}
@@ -215,5 +222,40 @@ class SearchActivity : AppCompatActivity() {
         selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
         time = intent.getIntExtra("Time", -1)
         last_select_palette = intent.getIntExtra("last_select_palette",0)
+    }
+
+    /**
+     *   lifecycle test
+     */
+
+    override fun onStart(){
+        Log.w(TAG, "onStart 호출")
+        super.onStart()
+    }
+
+    override fun onResume(){
+        Log.w(TAG,"onResume 호출")
+        super.onResume()
+    }
+
+    override fun onPause(){
+        Log.w(TAG, "onPause 호출")
+        super.onPause()
+    }
+
+    override fun onStop(){
+        Log.w(TAG, "onStop 호출")
+        super.onStop()
+    }
+
+    override fun onRestart(){
+        Log.w(TAG, "onRestart 호출")
+        super.onRestart()
+    }
+
+    override fun onDestroy()
+    {
+        Log.w(TAG, "onDestroy 호출")
+        super.onDestroy()
     }
 }

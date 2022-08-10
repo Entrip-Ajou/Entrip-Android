@@ -127,11 +127,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         view?.let {
             when(it.id){
                 binding.plannerActIvClose.id -> {
-                    Log.d(TAG, "Case: Close")
-                    val intent = Intent(this, HomeActivity::class.java)
-                    intent.putExtra("isFromPlanner",true)
-                    intent.putExtra("last_pos", R.id.nav_planner)
-                    finish()
+                    onBackPressed()
                 }
                 binding.plannerActEtTitle.id -> {
                     Log.d(TAG, "Case: Click planner title button")
@@ -166,7 +162,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     val intent = Intent(this, PlannerUserAddActivity::class.java)
                     intent.putExtra("PlannerEntity", selectedPlanner)
                     startActivity(intent)
-                    finish()
                 }
                 else -> {
                     return
@@ -367,18 +362,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 builder.show()
             }
 
-            500 -> {
-                val builder = AlertDialog.Builder(this)
-                builder.setMessage("다른 사용자로 의해 삭제되었습니다.")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which ->
-                            val intent = Intent(this, HomeActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        })
-                builder.show()
-            }
-
             -1 -> {
                 Log.e(TAG, "최상위 Exception class에서 예외 발생 -> 코드 로직 오류")
             }
@@ -387,6 +370,16 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 Log.e(TAG, "${code} Error handleError()에 추가 및 trouble shooting하기")
             }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Log.d(TAG, "Case: Close")
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.putExtra("isFromPlanner",true)
+        intent.putExtra("last_pos", R.id.nav_planner)
+        startActivity(intent)
+        finish()
     }
 
     /**

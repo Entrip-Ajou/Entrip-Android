@@ -213,18 +213,6 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                 binding.tvSearchFailure.visibility = View.VISIBLE
             }
 
-            500 -> {
-                val builder = AlertDialog.Builder(this)
-                builder.setMessage("다른 사용자로 의해 삭제되었습니다.")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener { dialog, which ->
-                            val intent = Intent(this, HomeActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        })
-                builder.show()
-            }
-
             -1 -> {
                 Log.e(TAG, "최상위 Exception class에서 예외 발생 -> 코드 로직 오류")
             }
@@ -239,10 +227,7 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
         view?.let {
             when (it.id) {
                 binding.btnBackToPlanner.id -> {
-                    val intent = Intent(this, PlannerActivity::class.java)
-                    intent.putExtra("PlannerEntity", selectedPlanner)
-                    startActivity(intent)
-                    finish()
+                    onBackPressed()
                 }
 
                 binding.imgUserSearch.id -> {
@@ -273,10 +258,16 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                     binding.tvInvite.isClickable = false
                     binding.tvInvite.setTextColor(Color.parseColor("#9e9e9e"))
                 }
-
-
             }
-
         }
+    }
+
+    override fun onBackPressed() {
+        Log.i(TAG, "onBackPressed() 호출")
+        super.onBackPressed()
+        val intent = Intent(this, PlannerActivity::class.java)
+        intent.putExtra("PlannerEntity", selectedPlanner)
+        startActivity(intent)
+        finish()
     }
 }

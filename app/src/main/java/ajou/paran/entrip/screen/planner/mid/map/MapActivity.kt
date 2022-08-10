@@ -4,6 +4,7 @@ import ajou.paran.entrip.databinding.ActivityMapBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
+import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -28,6 +29,10 @@ import net.daum.mf.map.api.MapPoint
 
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
+
+    companion object{
+        const val TAG = "[MapAct]"
+    }
 
     private lateinit var binding : ActivityMapBinding
 
@@ -55,6 +60,7 @@ class MapActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.w(TAG, "onCreate 호출")
         super.onCreate(savedInstanceState)
         binding = ActivityMapBinding.inflate(layoutInflater)
         val view = binding.root
@@ -97,6 +103,25 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, InputActivity::class.java)
+        intent.apply {
+            this.putExtra("isUpdate", isUpdate)
+            this.putExtra("Id", update_id)
+            this.putExtra("Todo",todo)
+            this.putExtra("Rgb",rgb)
+            this.putExtra("Time",time)
+            this.putExtra("Location",location)
+            this.putExtra("date", date)
+            this.putExtra("plannerId", planner_id)
+            this.putExtra("PlannerEntity", selectedPlanner)
+            this.putExtra("last_select_palette",last_select_palette)
+        }
+        startActivity(intent)
+        finish()
+    }
+
     fun onClick(v : View?){
         v?.let{
             when(it.id){
@@ -115,7 +140,6 @@ class MapActivity : AppCompatActivity() {
                         this.putExtra("last_select_palette",last_select_palette)
                     }
                     startActivity(intent)
-                    finish()
                 }
 
                 binding.viewInformation.id -> {
@@ -147,21 +171,7 @@ class MapActivity : AppCompatActivity() {
                 }
 
                 binding.imgBackInput.id -> {
-                    val intent = Intent(this, InputActivity::class.java)
-                    intent.apply {
-                        this.putExtra("isUpdate", isUpdate)
-                        this.putExtra("Id", update_id)
-                        this.putExtra("Todo",todo)
-                        this.putExtra("Rgb",rgb)
-                        this.putExtra("Time",time)
-                        this.putExtra("Location",location)
-                        this.putExtra("date", date)
-                        this.putExtra("plannerId", planner_id)
-                        this.putExtra("PlannerEntity", selectedPlanner)
-                        this.putExtra("last_select_palette",last_select_palette)
-                    }
-                    startActivity(intent)
-                    finish()
+                    onBackPressed()
                 }
 
                 else -> {}
@@ -206,5 +216,40 @@ class MapActivity : AppCompatActivity() {
         selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
         time = intent.getIntExtra("Time", -1)
         last_select_palette = intent.getIntExtra("last_select_palette",0)
+    }
+
+    /**
+     *   lifecycle test
+     */
+
+    override fun onStart(){
+        Log.w(TAG, "onStart 호출")
+        super.onStart()
+    }
+
+    override fun onResume(){
+        Log.w(TAG,"onResume 호출")
+        super.onResume()
+    }
+
+    override fun onPause(){
+        Log.w(TAG, "onPause 호출")
+        super.onPause()
+    }
+
+    override fun onStop(){
+        Log.w(TAG, "onStop 호출")
+        super.onStop()
+    }
+
+    override fun onRestart(){
+        Log.w(TAG, "onRestart 호출")
+        super.onRestart()
+    }
+
+    override fun onDestroy()
+    {
+        Log.w(TAG, "onDestroy 호출")
+        super.onDestroy()
     }
 }
