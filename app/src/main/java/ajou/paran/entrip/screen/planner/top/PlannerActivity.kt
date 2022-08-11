@@ -63,7 +63,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     private val viewModel: PlannerActivityViewModel by viewModels()
 
     override fun init(savedInstanceState: Bundle?) {
-        Log.w(TAG, "onCreate 호출")
         selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
         init_start_date = selectedPlanner.start_date
         init_end_date = selectedPlanner.end_date
@@ -382,38 +381,8 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         finish()
     }
 
-    /**
-     *   lifecycle test
-     */
-
-    override fun onStart(){
-        Log.w(TAG, "onStart 호출")
-        super.onStart()
-    }
-
-    override fun onResume(){
-        Log.w(TAG,"onResume 호출")
-        super.onResume()
-    }
-
-    override fun onPause(){
-        Log.w(TAG, "onPause 호출")
-        super.onPause()
-    }
-
-    override fun onStop(){
-        Log.w(TAG, "onStop 호출")
-        super.onStop()
-    }
-
-    override fun onRestart(){
-        Log.w(TAG, "onRestart 호출")
-        super.onRestart()
-    }
-
     override fun onDestroy()
     {
-        Log.w(TAG, "onDestroy 호출")
         viewModel.stompClient.disconnect()
         super.onDestroy()
     }

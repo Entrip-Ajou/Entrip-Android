@@ -52,7 +52,6 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.w(TAG, "onCreate 호출")
         binding = ActivityCommentBinding.inflate(layoutInflater)
         val view = binding.root
         observeState()

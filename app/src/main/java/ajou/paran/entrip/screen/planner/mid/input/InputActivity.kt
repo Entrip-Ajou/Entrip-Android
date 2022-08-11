@@ -51,7 +51,6 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
     private var last_select_palette: Int = 0
 
     override fun init(savedInstanceState: Bundle?) {
-        Log.w(TAG, "onCreate 호출")
         binding.inputViewModel = viewModel
         setUpView()
         observeState()
@@ -370,41 +369,5 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             (it.drawable as GradientDrawable).setStroke(2, Color.parseColor("#000000"))
         }
         (palette_list[index].drawable as GradientDrawable).setStroke(5, Color.parseColor("#0d82eb"))
-    }
-
-
-    /**
-     *   lifecycle test
-     */
-
-    override fun onStart(){
-        Log.w(TAG, "onStart 호출")
-        super.onStart()
-    }
-
-    override fun onResume(){
-        Log.w(TAG,"onResume 호출")
-        super.onResume()
-    }
-
-    override fun onPause(){
-        Log.w(TAG, "onPause 호출")
-        super.onPause()
-    }
-
-    override fun onStop(){
-        Log.w(TAG, "onStop 호출")
-        super.onStop()
-    }
-
-    override fun onRestart(){
-        Log.w(TAG, "onRestart 호출")
-        super.onRestart()
-    }
-
-    override fun onDestroy()
-    {
-        Log.w(TAG, "onDestroy 호출")
-        super.onDestroy()
     }
 }
