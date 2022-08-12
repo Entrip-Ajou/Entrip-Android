@@ -40,4 +40,10 @@ interface PlanApi {
 
     @PUT("api/v1/planners/{planner_id}")
     suspend fun updatePlanner(@Path("planner_id") planner_id : Long, @Body planner : PlannerUpdateRequest) : BaseResponse<PlannerEntity>
+
+    @GET("api/v1/planners/{planner_id}/{date}/find")
+    suspend fun findByPlannerIdWithDate(
+        @Path("planner_id") planner_id:Long,
+        @Path("date") date : String
+    ) : BaseResponse<List<PlanResponse>>
 }

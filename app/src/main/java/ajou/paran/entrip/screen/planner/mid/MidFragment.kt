@@ -73,7 +73,7 @@ class MidFragment: Fragment(),PlanAdapter.RowClickListener {
     }
 
     override fun onDeletePlanClickListener(planEntity: PlanEntity) {
-        viewModel.deletePlan(planEntity.id, planEntity.planner_idFK)
+        viewModel.deletePlan(planEntity.id, planEntity.planner_idFK, planEntity.date)
     }
 
     override fun onItemClickListener(planEntity: PlanEntity) {

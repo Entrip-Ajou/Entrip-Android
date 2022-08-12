@@ -42,4 +42,7 @@ interface PlanDao {
 
     @Query("SELECT * FROM 'planner'")
     fun selectAllPlanner() : Flow<List<PlannerEntity>>
+
+    @Query("DELETE FROM 'plan' WHERE planner_idFK = :planner_id AND date= :date")
+    fun deletePlanWithDate(planner_id : Long, date : String)
 }

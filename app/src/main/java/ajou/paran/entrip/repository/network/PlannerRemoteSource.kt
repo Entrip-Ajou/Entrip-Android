@@ -91,41 +91,6 @@ class PlannerRemoteSource
         BaseResult.Error(Failure(-1, e.message.toString()))
     }
 
-
-    /**
-     * @GET : findById (2ntrip.com/api/v1/planners/{planner_id})
-     * @PathVariable : Long planner_id
-     * **/
-    suspend fun findPlanner(plannerId: Long): BaseResult<PlannerEntity, Failure> =
-        try {
-            val response = planApi.fetchPlanner(plannerId)
-            if (response.status == 200) {
-                val planner = response.data?.let { t ->
-                    PlannerEntity(
-                        t.planner_id,
-                        t.title,
-                        t.start_date,
-                        t.end_date,
-                        t.timeStamp,
-                        t.comment_timeStamp
-                    )
-                }
-                BaseResult.Success(planner!!)
-            } else {
-                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
-                BaseResult.Error(Failure(response.status, response.message))
-            }
-        } catch (e: NoInternetException) {
-            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
-            BaseResult.Error(Failure(0, e.message))
-        } catch (e: HttpException) {
-            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
-            BaseResult.Error(Failure(e.code(), e.message()))
-        } catch (e: Exception) {
-            Log.e(TAG, "Exception Message = " + e.localizedMessage)
-            BaseResult.Error(Failure(-1, e.message.toString()))
-        }
-
     /**
      *  Home 화면 -> Planner 로 넘어가는 과정에서 사용자가
      *  planner list 중 planner를 선택했을 때 호출되는 함수
@@ -228,9 +193,45 @@ class PlannerRemoteSource
                 }
                 BaseResult.Success(planner!!)
             } else {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+            BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            BaseResult.Error(Failure(e.code(), e.message()))
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
+            BaseResult.Error(Failure(-1, e.message.toString()))
+        }
+
+    suspend fun findByPlannerIdWithDate(planner_id : Long, date : String) : BaseResult<List<PlanEntity>, Failure> =
+        try{
+            val response = planApi.findByPlannerIdWithDate(planner_id, date)
+            if(response.status == 200){
+                val plans = mutableListOf<PlanEntity>()
+                response.data?.forEach { t ->
+                    plans.add(
+                        PlanEntity(
+                            t.id,
+                            t.planner_idFK,
+                            t.todo,
+                            t.rgb,
+                            t.time,
+                            t.location,
+                            t.date,
+                            t.isExistComments
+                        )
+                    )
+                }
+                BaseResult.Success(plans)
+            }else{
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        }catch (e: NoInternetException) {
             Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
             BaseResult.Error(Failure(0, e.message))
         } catch (e: HttpException) {

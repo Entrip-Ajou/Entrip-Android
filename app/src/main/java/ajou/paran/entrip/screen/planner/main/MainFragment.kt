@@ -104,10 +104,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main),
                 builder.show()
             }
 
-            500 -> {
-                Toast.makeText(activity, "다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
-            }
-
             -1 -> {
                 Log.e(TAG, "최상위 Exception class에서 예외 발생 -> 코드 로직 오류")
             }

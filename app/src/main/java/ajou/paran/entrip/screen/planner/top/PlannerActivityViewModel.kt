@@ -15,10 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.json.JSONObject
-import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
-import ua.naiksoftware.stomp.dto.LifecycleEvent
-import java.net.SocketException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,20 +23,19 @@ class PlannerActivityViewModel
 @Inject
 constructor(
     private val plannerRepository: PlannerRepositoryImpl,
-    val stompClient : StompClient,
-    val sharedPreferences : SharedPreferences
+    val stompClient: StompClient,
+    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
-    companion object{
+    companion object {
         private const val TAG = "[PlannerActViewModel]"
     }
 
-    val intervalMills = 1000
     private val gson = Gson()
 
     private val _state = MutableStateFlow<PlannerState>(PlannerState.Init)
-    val state : StateFlow<PlannerState> get() = _state
+    val state: StateFlow<PlannerState> get() = _state
 
-    val user_id = sharedPreferences.getString("user_id", null)?.toString()
+    private val user_id = sharedPreferences.getString("user_id", null)?.toString()
 
     fun setLoading() {
         _state.value = PlannerState.IsLoading(true)
@@ -49,58 +45,49 @@ constructor(
         _state.value = PlannerState.IsLoading(false)
     }
 
-    fun getFlowPlanner(plannerId : Long): Flow<PlannerEntity> = plannerRepository.getFlowPlanner(plannerId)
+    fun getFlowPlanner(plannerId: Long): Flow<PlannerEntity> =
+        plannerRepository.getFlowPlanner(plannerId)
 
-    fun plannerChange(list: List<PlannerDate>, planner : PlannerEntity){
+    fun plannerChange(list: List<PlannerDate>, planner: PlannerEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             setLoading()
-            val fetch = plannerRepository.findPlanner(planner.planner_id)
-            if(fetch is BaseResult.Success){
-                val res = plannerRepository.updatePlanner(planner.planner_id, planner.let { t ->
-                    PlannerUpdateRequest(
-                        title = t.title,
-                        start_date = list.first().date,
-                        end_date = list.last().date
-                    )
-                })
-                when(res){
-                    is BaseResult.Success -> {
-                        _state.value = PlannerState.Success(Unit)
-                        getFlowPlanner(planner.planner_id)
-                        sendPlannerChangeMessage(user_id!!, 0, planner.planner_id)
-                    }
-                    is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
+            val res = plannerRepository.updatePlanner(planner.planner_id, planner.let { t ->
+                PlannerUpdateRequest(
+                    title = t.title,
+                    start_date = list.first().date,
+                    end_date = list.last().date
+                )
+            })
+            when (res) {
+                is BaseResult.Success -> {
+                    _state.value = PlannerState.Success(Unit)
+                    getFlowPlanner(planner.planner_id)
+                    sendPlannerChangeMessage(user_id!!, 0, planner.planner_id)
                 }
-            }else{
-                _state.value = PlannerState.Failure((fetch as BaseResult.Error).err.code)
+                is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
             }
             delay(500)
             hideLoading()
         }
     }
 
-    fun plannerChange(title: String, planner : PlannerEntity){
+    fun plannerChange(title: String, planner: PlannerEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             setLoading()
-            val fetch = plannerRepository.findPlanner(planner.planner_id)
-            if(fetch is BaseResult.Success){
-                val res = plannerRepository.updatePlanner(planner.planner_id, planner.let { t ->
-                    PlannerUpdateRequest(
-                        title = title,
-                        start_date = t.start_date,
-                        end_date = t.end_date
-                    )
-                })
-                when(res){
-                    is BaseResult.Success -> {
-                        _state.value = PlannerState.Success(Unit)
-                        getFlowPlanner(planner.planner_id)
-                        sendPlannerChangeMessage(user_id!!, 0, planner.planner_id)
-                    }
-                    is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
+            val res = plannerRepository.updatePlanner(planner.planner_id, planner.let { t ->
+                PlannerUpdateRequest(
+                    title = title,
+                    start_date = t.start_date,
+                    end_date = t.end_date
+                )
+            })
+            when (res) {
+                is BaseResult.Success -> {
+                    _state.value = PlannerState.Success(Unit)
+                    getFlowPlanner(planner.planner_id)
+                    sendPlannerChangeMessage(user_id!!, 0, planner.planner_id)
                 }
-            }else{
-                _state.value = PlannerState.Failure((fetch as BaseResult.Error).err.code)
+                is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
             }
 
             delay(500)
@@ -108,11 +95,11 @@ constructor(
         }
     }
 
-    fun deletePlanner(user_id : String, planner_id : Long){
-        viewModelScope.launch(Dispatchers.IO){
+    fun deletePlanner(user_id: String, planner_id: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
             setLoading()
             val res = plannerRepository.deletePlanner(user_id, planner_id)
-            when(res){
+            when (res) {
                 is BaseResult.Success -> _state.value = PlannerState.Success(res.data)
                 is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
             }
@@ -122,83 +109,9 @@ constructor(
         }
     }
 
-    /**
-     * syncRemoteDB & observeTimeStamp => Polling 방식을 Websocket으로 대체할 예정
-
-
-    fun syncRemoteDB(planner_id: Long) {
-        job = viewModelScope.launch(Dispatchers.IO) {
-            plannerRepository.syncRemoteDB(planner_id)
-                .catch { e ->
-                    Log.e(TAG, "Error message = " + e.message)
-                }
-                .collect { res ->
-                    when (res) {
-                        is BaseResult.Success -> {
-                            lastTimeStamp = res.data as String
-                        }
-                        is BaseResult.Error -> {
-                            _state.value = PlannerState.Failure(500)
-                        }
-                    }
-                }
-        }
-    }
-
-    fun observeTimeStamp(planner_id: Long){
-        runBlocking{
-            job.join()
-        }
-        viewModelScope.launch{
-            plannerRepository.latestTimeStamp(planner_id).collectLatest{
-                when {
-                    //it == "NotExist" -> _state.value = PlannerState.Failure(500)
-                    it == "NoInternet" -> _state.value = PlannerState.Failure(0)
-                    lastTimeStamp != it -> setUpdate()
-                    else -> setNotUpdate()
-                }
-            }
-        }
-    }
-    */
-
-
-
-    fun runStomp(planner_id : Long) {
-        stompClient.withServerHeartbeat(intervalMills).withClientHeartbeat(intervalMills)
-
-        stompClient.lifecycle().subscribe{ lifecycleEvent ->
-            when(lifecycleEvent.type){
-                LifecycleEvent.Type.OPENED -> {
-                    Log.i(TAG, "OPEND!!")
-                }
-                LifecycleEvent.Type.CLOSED -> {
-                    Log.i(TAG, "CLOSED!!")
-                }
-                LifecycleEvent.Type.ERROR -> {
-                    Log.i(TAG, "ERROR!!")
-                    Log.e(TAG, "CONNECT ERROR "+lifecycleEvent.exception.toString())
-
-                    when(lifecycleEvent.exception.cause){
-                        is SocketException -> {
-
-                        }
-                    }
-                }
-
-                LifecycleEvent.Type.FAILED_SERVER_HEARTBEAT -> {
-                    Log.i(TAG, "FAILED_SERVER_HEARTBEAT")
-                }
-
-                else ->{
-                    Log.i(TAG, "ELSE "+lifecycleEvent.message)
-                }
-            }
-        }
-
-        // 메시지를 받을 때
-        stompClient.topic("/topic/public/"+planner_id).subscribe{ topicMessage ->
-            Log.i("[WebSocket]","message Receive" + topicMessage.payload)
+    fun runStomp(planner_id: Long) {
+        stompClient.topic("/topic/public/" + planner_id).subscribe { topicMessage ->
+            Log.i("[WebSocket]", "message Receive" + topicMessage.payload)
             val messageDto = gson.fromJson(topicMessage.payload, WebSocketMessage::class.java)
             Log.d("[WebSocket]", "content = " + messageDto.content)
             Log.d("[WebSocket]", "sender = " + messageDto.sender)
@@ -206,15 +119,23 @@ constructor(
             Log.d("[WebSocket]", "planner_id = " + messageDto.planner_id)
             Log.d("[WebSocket]", "date = " + messageDto.date)
 
-            if(user_id != messageDto.sender){
-                when(messageDto.content){
+            if (user_id != messageDto.sender) {
+                when (messageDto.content) {
                     0 -> {
-                        Log.d("[WebSocket]", "Planner_id " + planner_id+" Sync 작업 시작")
+                        Log.d("[WebSocket]", "Planner_id " + planner_id + " Sync 작업 시작")
                         fetchPlanner(planner_id)
                     }
 
                     1 -> {
-                        Log.d("[WebSocket]", "Date = " + messageDto.date +"에 해당하는 plan들 Sync 작업 시작")
+                        Log.d(
+                            "[WebSocket]",
+                            "Date = " + messageDto.date + "에 해당하는 plan들 Sync 작업 시작"
+                        )
+                        val date = messageDto.date.substring(0, 4) + messageDto.date.substring(
+                            5,
+                            7
+                        ) + messageDto.date.substring(8, 10)
+                        fetchPlan(planner_id, date)
                     }
                 }
             }
@@ -222,11 +143,11 @@ constructor(
         stompClient.connect()
     }
 
-    fun fetchPlanner(planner_id : Long){
-        viewModelScope.launch(Dispatchers.IO){
+    fun fetchPlanner(planner_id: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
             setLoading()
             val res = plannerRepository.fetchPlanner(planner_id)
-            when(res){
+            when (res) {
                 is BaseResult.Success -> _state.value = PlannerState.Success(res.data)
                 is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
             }
@@ -235,8 +156,20 @@ constructor(
         }
     }
 
-    // todo : planner update하는 부분에 넣으면 된다
-    fun sendPlannerChangeMessage(sender : String, content : Int, planner_id : Long){
+    fun fetchPlan(planner_id: Long, date: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            setLoading()
+            val res = plannerRepository.findByPlannerIdWithDate(planner_id, date)
+            when (res) {
+                is BaseResult.Success -> _state.value = PlannerState.Success(res.data)
+                is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
+            }
+            delay(500)
+            hideLoading()
+        }
+    }
+
+    fun sendPlannerChangeMessage(sender: String, content: Int, planner_id: Long) {
         val data = JSONObject()
         data.put("type", "CHAT")
         data.put("content", content)
@@ -244,13 +177,52 @@ constructor(
         data.put("planner_id", planner_id)
         data.put("date", null)
         stompClient.send("/app/chat.sendMessage", data.toString()).subscribe()
-        Log.e("[WebSocket]", "update가 일어나서 Message 전송 + Planner_id : "+planner_id)
+        Log.e("[WebSocket]", "<Planner update> + Planner_id : " + planner_id)
     }
 }
 
 sealed class PlannerState {
     object Init : PlannerState()
     data class IsLoading(val isLoading: Boolean) : PlannerState()
-    data class Success(val data : Any) : PlannerState()
-    data class Failure(val code : Int) : PlannerState()
+    data class Success(val data: Any) : PlannerState()
+    data class Failure(val code: Int) : PlannerState()
 }
+
+/**
+syncRemoteDB & observeTimeStamp => Polling 방식을 Websocket으로 대체
+
+fun syncRemoteDB(planner_id: Long) {
+job = viewModelScope.launch(Dispatchers.IO) {
+plannerRepository.syncRemoteDB(planner_id)
+.catch { e ->
+Log.e(TAG, "Error message = " + e.message)
+}
+.collect { res ->
+when (res) {
+is BaseResult.Success -> {
+lastTimeStamp = res.data as String
+}
+is BaseResult.Error -> {
+_state.value = PlannerState.Failure(500)
+}
+}
+}
+}
+}
+
+fun observeTimeStamp(planner_id: Long) {
+runBlocking {
+job.join()
+}
+viewModelScope.launch {
+plannerRepository.latestTimeStamp(planner_id).collectLatest {
+when {
+//it == "NotExist" -> _state.value = PlannerState.Failure(500)
+it == "NoInternet" -> _state.value = PlannerState.Failure(0)
+lastTimeStamp != it -> setUpdate()
+else -> setNotUpdate()
+}
+}
+}
+}
+ **/

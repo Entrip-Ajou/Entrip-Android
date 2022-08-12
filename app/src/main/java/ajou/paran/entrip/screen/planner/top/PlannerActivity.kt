@@ -106,6 +106,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         observeState()
         initDateRecyclerView(date)
         subscribeObservers()
+        // todo : 서버의 DB와 sync를 맞추는 작업 필요
         viewModel.runStomp(selectedPlanner.planner_id)
     }
 
@@ -344,6 +345,9 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
                 finish()
+            }
+            is Unit -> {
+
             }
             else -> {
                 Log.e(TAG, "State = Success<"+data.javaClass.toString()+ ">Type의 처리 필요")

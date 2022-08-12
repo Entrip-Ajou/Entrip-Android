@@ -14,7 +14,6 @@ interface PlannerRepository {
     suspend fun selectAllPlanner(): Flow<List<PlannerEntity>>
     suspend fun createPlanner(user: String) : BaseResult<PlannerEntity, Failure>
     suspend fun deletePlanner(user_id : String, plannerId: Long) : BaseResult<Boolean, Failure>
-    suspend fun findPlanner(plannerId : Long) : BaseResult<PlannerEntity, Failure>
     suspend fun isExist(planner_id : Long) : BaseResult<Boolean, Failure>
     suspend fun fetchPlanner(planner_id : Long) : BaseResult<Unit, Failure>
 }
