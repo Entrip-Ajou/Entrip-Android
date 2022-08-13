@@ -91,41 +91,6 @@ class PlannerRemoteSource
         BaseResult.Error(Failure(-1, e.message.toString()))
     }
 
-
-    /**
-     * @GET : findById (2ntrip.com/api/v1/planners/{planner_id})
-     * @PathVariable : Long planner_id
-     * **/
-    suspend fun findPlanner(plannerId: Long): BaseResult<PlannerEntity, Failure> =
-        try {
-            val response = planApi.fetchPlanner(plannerId)
-            if (response.status == 200) {
-                val planner = response.data?.let { t ->
-                    PlannerEntity(
-                        t.planner_id,
-                        t.title,
-                        t.start_date,
-                        t.end_date,
-                        t.timeStamp,
-                        t.comment_timeStamp
-                    )
-                }
-                BaseResult.Success(planner!!)
-            } else {
-                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
-                BaseResult.Error(Failure(response.status, response.message))
-            }
-        } catch (e: NoInternetException) {
-            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
-            BaseResult.Error(Failure(0, e.message))
-        } catch (e: HttpException) {
-            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
-            BaseResult.Error(Failure(e.code(), e.message()))
-        } catch (e: Exception) {
-            Log.e(TAG, "Exception Message = " + e.localizedMessage)
-            BaseResult.Error(Failure(-1, e.message.toString()))
-        }
-
     /**
      *  Home 화면 -> Planner 로 넘어가는 과정에서 사용자가
      *  planner list 중 planner를 선택했을 때 호출되는 함수
@@ -157,28 +122,13 @@ class PlannerRemoteSource
      * @PathVariable : Long planner_id
      * @Limit OrphanRemoval = true 때문에 Planners와 Join되어있는 모든 Plans 역시 삭제
      * **/
-    suspend fun deletePlanner(planner_id: Long): BaseResult<Long, Failure> = try {
-        val response1 = planApi.isExist(planner_id)
-        var isExist: Boolean
-        if (response1.status == 200) {
-            isExist = response1.data
-            if (isExist) {
-                val response2 = planApi.deletePlanner(planner_id)
-                if (response2.status == 200) BaseResult.Success(response2.data)
-                else {
-                    Log.e(
-                        TAG,
-                        "Err code = " + response2.status + " Err message = " + response2.message
-                    )
-                    BaseResult.Error(Failure(response2.status, response2.message))
-                }
-            } else {
-                // 존재하지 않는 경우(다른 사용자가 이미 삭제함)
-                BaseResult.Success(planner_id)
-            }
-        } else {
-            Log.e(TAG, "Err code = " + response1.status + " Err message = " + response1.message)
-            BaseResult.Error(Failure(response1.status, response1.message))
+    suspend fun deletePlanner(user_id : String, planner_id: Long): BaseResult<Boolean, Failure> = try {
+        val response = planApi.deletePlanner(user_id, planner_id)
+        if(response.status == 200){
+            BaseResult.Success(response.data)
+        }else {
+            Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+            BaseResult.Error(Failure(response.status, response.message))
         }
     } catch (e: NoInternetException) {
         Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
@@ -243,9 +193,45 @@ class PlannerRemoteSource
                 }
                 BaseResult.Success(planner!!)
             } else {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }
         } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+            BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            BaseResult.Error(Failure(e.code(), e.message()))
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
+            BaseResult.Error(Failure(-1, e.message.toString()))
+        }
+
+    suspend fun findByPlannerIdWithDate(planner_id : Long, date : String) : BaseResult<List<PlanEntity>, Failure> =
+        try{
+            val response = planApi.findByPlannerIdWithDate(planner_id, date)
+            if(response.status == 200){
+                val plans = mutableListOf<PlanEntity>()
+                response.data?.forEach { t ->
+                    plans.add(
+                        PlanEntity(
+                            t.id,
+                            t.planner_idFK,
+                            t.todo,
+                            t.rgb,
+                            t.time,
+                            t.location,
+                            t.date,
+                            t.isExistComments
+                        )
+                    )
+                }
+                BaseResult.Success(plans)
+            }else{
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        }catch (e: NoInternetException) {
             Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
             BaseResult.Error(Failure(0, e.message))
         } catch (e: HttpException) {

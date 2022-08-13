@@ -1,14 +1,17 @@
 package ajou.paran.entrip.repository.network.api
 
 import ajou.paran.entrip.repository.network.dto.*
+import ajou.paran.entrip.util.network.BaseResult
 import retrofit2.http.*
 
 interface UserApi {
+    // todo : 실패시 202
     @GET("api/v1/users/{user_id}/user_id/exist")
     suspend fun isExistUserId(
         @Path("user_id") user_id: String
     ) : BaseResponse<Boolean>
 
+    // todo : 실패시 202
     @GET("api/v1/users/{nickname}/nickname/exist")
     suspend fun isExistNickname(
         @Path("nickname") nickname: String
@@ -25,10 +28,11 @@ interface UserApi {
         @Path("token") token : String
     ) : BaseResponse<Unit>
 
+    // todo : 실패시 202
     @GET("api/v1/users/findUserWithNicknameOrUserId/{user_id_or_nickname}")
     suspend fun searchUser(
         @Path("user_id_or_nickname") user_id_or_nickname : String
-    ) : BaseResponse<UserInformation?>
+    ) : BaseResponse<UserInformation>
 
     @GET("api/v1/planners/{planner_id}/getAllUser")
     suspend fun findAllUsersWithPlannerId(
@@ -60,4 +64,18 @@ interface UserApi {
     suspend fun findTrip(
         @Path("travelFavorite") travelFavorite: String?
     ) : BaseResponse<List<TripResponse>>
+
+    // todo : 실패시 202
+    @GET("api/v1/planners/{planner_id}/{user_id}/exist")
+    suspend fun userIsExistWithPlanner(
+        @Path ("planner_id") planner_id : Long,
+        @Path ("user_id") user_id : String
+    ) : BaseResponse<Boolean>
+
+    // todo : 실패시 202
+    @GET("api/v1/planners/{planner_id}/{nickname}/exist")
+    suspend fun userNickNameIsExistWithPlanner(
+        @Path ("planner_id") planner_id : Long,
+        @Path ("nickname") nickname : String
+    ) : BaseResponse<Boolean>
 }

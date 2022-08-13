@@ -4,6 +4,7 @@ import ajou.paran.entrip.databinding.ActivityMapBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.planner.mid.input.InputActivity
+import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -28,6 +29,10 @@ import net.daum.mf.map.api.MapPoint
 
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
+
+    companion object{
+        const val TAG = "[MapAct]"
+    }
 
     private lateinit var binding : ActivityMapBinding
 
@@ -97,6 +102,25 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, InputActivity::class.java)
+        intent.apply {
+            this.putExtra("isUpdate", isUpdate)
+            this.putExtra("Id", update_id)
+            this.putExtra("Todo",todo)
+            this.putExtra("Rgb",rgb)
+            this.putExtra("Time",time)
+            this.putExtra("Location",location)
+            this.putExtra("date", date)
+            this.putExtra("plannerId", planner_id)
+            this.putExtra("PlannerEntity", selectedPlanner)
+            this.putExtra("last_select_palette",last_select_palette)
+        }
+        startActivity(intent)
+        finish()
+    }
+
     fun onClick(v : View?){
         v?.let{
             when(it.id){
@@ -115,7 +139,6 @@ class MapActivity : AppCompatActivity() {
                         this.putExtra("last_select_palette",last_select_palette)
                     }
                     startActivity(intent)
-                    finish()
                 }
 
                 binding.viewInformation.id -> {
@@ -147,21 +170,7 @@ class MapActivity : AppCompatActivity() {
                 }
 
                 binding.imgBackInput.id -> {
-                    val intent = Intent(this, InputActivity::class.java)
-                    intent.apply {
-                        this.putExtra("isUpdate", isUpdate)
-                        this.putExtra("Id", update_id)
-                        this.putExtra("Todo",todo)
-                        this.putExtra("Rgb",rgb)
-                        this.putExtra("Time",time)
-                        this.putExtra("Location",location)
-                        this.putExtra("date", date)
-                        this.putExtra("plannerId", planner_id)
-                        this.putExtra("PlannerEntity", selectedPlanner)
-                        this.putExtra("last_select_palette",last_select_palette)
-                    }
-                    startActivity(intent)
-                    finish()
+                    onBackPressed()
                 }
 
                 else -> {}
@@ -185,16 +194,9 @@ class MapActivity : AppCompatActivity() {
             val uNowPosition = MapPoint.mapPointWithGeoCoord(uLatitude!!, uLongitude!!)
             binding.kakaoMap.setMapCenterPoint(uNowPosition, true)
         }catch(e: NullPointerException){
-            Log.e("LOCATION_ERROR", e.toString())
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                ActivityCompat.finishAffinity(this)
-            }else{
-                ActivityCompat.finishAffinity(this)
-            }
-
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-            System.exit(0)
+            Log.w("[MAP]", "getLastKnownLocation => null Error => 초기 위치(서울 시청)으로 설정")
+            // 초기 위치 -> 서울 시청
+            binding.kakaoMap.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.5666805, 126.9784147), true)
         }
     }
 

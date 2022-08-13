@@ -9,6 +9,7 @@ import kotlinx.android.parcel.Parcelize
 @Entity(tableName = "invite")
 data class InviteEntity(
     @PrimaryKey(autoGenerate = true) val invite_id : Int = 0,
+    val user_id : String,
     val nickname: String,
     val photoUrl: String,
     val token: String,

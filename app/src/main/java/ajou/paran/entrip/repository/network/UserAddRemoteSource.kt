@@ -2,6 +2,7 @@ package ajou.paran.entrip.repository.network
 
 import ajou.paran.entrip.repository.network.api.FcmApi
 import ajou.paran.entrip.repository.network.api.UserApi
+import ajou.paran.entrip.repository.network.dto.BaseResponse
 import ajou.paran.entrip.repository.network.dto.PushNotification
 import ajou.paran.entrip.repository.network.dto.SharingFriend
 import ajou.paran.entrip.repository.network.dto.UserInformation
@@ -11,6 +12,8 @@ import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
+import retrofit2.http.GET
+import retrofit2.http.Path
 import javax.inject.Inject
 
 class UserAddRemoteSource
@@ -110,6 +113,49 @@ constructor(
             return if (response.status == 200) {
                 BaseResult.Success(Unit)
             } else {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(e.code(), e.message()))
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(-1, e.message.toString()))
+        }
+    }
+
+    suspend fun userIsExistWithPlanner(planner_id : Long, user_id : String) : BaseResult<Boolean, Failure>{
+        try{
+            val response = userApi.userIsExistWithPlanner(planner_id, user_id)
+            return if(response.status == 200){
+                BaseResult.Success(response.data)
+            } else{
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        } catch (e: NoInternetException) {
+            Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(0, e.message))
+        } catch (e: HttpException) {
+            Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+            Log.e(TAG, "HTTP 500일 경우=> 처리 완료 / 단, 다른 번호일 경우 처리해야 함")
+            return BaseResult.Error(Failure(e.code(), e.message()))
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception Message = " + e.localizedMessage)
+            return BaseResult.Error(Failure(-1, e.message.toString()))
+        }
+    }
+
+    suspend fun userNickNameIsExistWithPlanner(planner_id : Long, nickname : String) : BaseResult<Boolean, Failure>{
+        try{
+            val response = userApi.userNickNameIsExistWithPlanner(planner_id, nickname)
+            return if(response.status == 200){
+                BaseResult.Success(response.data)
+            } else{
                 Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
             }

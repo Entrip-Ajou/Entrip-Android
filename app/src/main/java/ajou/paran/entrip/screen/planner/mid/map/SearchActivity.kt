@@ -4,6 +4,7 @@ import ajou.paran.entrip.databinding.ActivitySearchBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.dto.Place
 import ajou.paran.entrip.repository.network.dto.ResultSearchKeyword
+import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.ui.hideKeyboard
 import android.content.DialogInterface
@@ -71,6 +72,25 @@ class SearchActivity : AppCompatActivity() {
                 false
             }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, MapActivity::class.java)
+        intent.apply{
+            this.putExtra("isUpdate", isUpdate)
+            this.putExtra("Id", update_id)
+            this.putExtra("Todo",todo)
+            this.putExtra("Rgb",rgb)
+            this.putExtra("Time",time)
+            this.putExtra("Location",location)
+            this.putExtra("date", date)
+            this.putExtra("plannerId", planner_id)
+            this.putExtra("PlannerEntity", selectedPlanner)
+            this.putExtra("last_select_palette",last_select_palette)
+        }
+        startActivity(intent)
+        finish()
     }
 
     private fun observeState() {
@@ -147,21 +167,7 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 binding.imgBackMap.id -> {
-                    val intent = Intent(this, MapActivity::class.java)
-                    intent.apply{
-                        this.putExtra("isUpdate", isUpdate)
-                        this.putExtra("Id", update_id)
-                        this.putExtra("Todo",todo)
-                        this.putExtra("Rgb",rgb)
-                        this.putExtra("Time",time)
-                        this.putExtra("Location",location)
-                        this.putExtra("date", date)
-                        this.putExtra("plannerId", planner_id)
-                        this.putExtra("PlannerEntity", selectedPlanner)
-                        this.putExtra("last_select_palette",last_select_palette)
-                    }
-                    startActivity(intent)
-                    finish()
+                    onBackPressed()
                 }
 
                 else -> {}
