@@ -16,16 +16,26 @@ class HomeRecommendAdapter
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
-        = HomeRecommendViewHolder(ItemLayoutHomeRecommendationBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    = HomeRecommendViewHolder(
+        ItemLayoutHomeRecommendationBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+    )
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int)
-        = (holder as HomeRecommendViewHolder).bind(getItem(position))
+    = (holder as HomeRecommendViewHolder).bind(getItem(position))
 
     fun setList(list: List<TripResponse>) {
         submitList(list)
     }
 
-    inner class HomeRecommendViewHolder constructor(private val binding: ItemLayoutHomeRecommendationBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class HomeRecommendViewHolder
+    constructor(
+        private val binding: ItemLayoutHomeRecommendationBinding
+    ): RecyclerView.ViewHolder(binding.root) {
+
         fun bind(item: TripResponse) {
             Glide.with(binding.root)
                 .load(item.photoUrl)
@@ -33,5 +43,6 @@ class HomeRecommendAdapter
                 .centerCrop()
                 .into(binding.itemRecommedImage)
         }
+
     }
 }

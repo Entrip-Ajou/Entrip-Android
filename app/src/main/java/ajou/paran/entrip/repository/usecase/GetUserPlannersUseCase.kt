@@ -14,6 +14,9 @@ class GetUserPlannersUseCase
 constructor(
     private val userRepository: UserRepository
 ){
-    fun execute(user_id: String): Flow<BaseResult<List<PlannerResponse>, Failure>> = userRepository.getUserPlanners(user_id).flowOn(
-        Dispatchers.IO)
+    fun execute(user_id: String): Flow<BaseResult<List<PlannerResponse>, Failure>>
+    = userRepository.getUserPlanners(user_id).flowOn(Dispatchers.IO)
+
+    suspend fun executed(user_id: String): BaseResult<List<PlannerResponse>, Failure>
+    = userRepository.getUserPlannersResult(user_id)
 }

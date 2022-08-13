@@ -15,5 +15,7 @@ constructor(
         const val TAG = "[CommunityFragmentViewModel]"
     }
 
-    fun getUserId(): String? = sharedPreferences.getString("user_id", null)
+    val userId: String
+    get() = sharedPreferences.getString("user_id", null) ?: ""
+
 }

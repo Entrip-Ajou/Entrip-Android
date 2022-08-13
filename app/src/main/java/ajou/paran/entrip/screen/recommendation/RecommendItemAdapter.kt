@@ -27,27 +27,35 @@ class RecommendItemAdapter
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
-            =   if (viewType != TYPE_HEADER)
-        RecommendItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_layout_recommedation, parent, false))
-    else
-        RecommendHeaderItemViewHolder(parent.context, LayoutInflater.from(parent.context).inflate(R.layout.item_layout_recommend_header, parent, false))
+    = when (viewType) {
+        TYPE_HEADER -> {
+            RecommendHeaderItemViewHolder(
+                context = parent.context,
+                LayoutInflater.from(parent.context).inflate(R.layout.item_layout_recommend_header, parent, false)
+            )
+        }
+        else -> {
+            RecommendItemViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.item_layout_recommedation, parent, false)
+            )
+        }
+    }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int){
-        if (holder is RecommendItemViewHolder)
-            holder.bind(getItem(position-1))
-        else if (holder is RecommendHeaderItemViewHolder)
-            holder.bind()
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(holder) {
+            is RecommendItemViewHolder -> { holder.bind(getItem(position-1)) }
+            is RecommendHeaderItemViewHolder -> { holder.bind() }
+        }
     }
 
     override fun getItemCount(): Int = super.getItemCount()+1
 
-    override fun getItemViewType(position: Int): Int {
-        return if(position == 0){
-            TYPE_HEADER
-        } else {
-            TYPE_ITEM
-        }
+    override fun getItemViewType(position: Int): Int
+    = when (position) {
+        0 -> { TYPE_HEADER }
+        else -> { TYPE_ITEM }
     }
+
 
     fun setList(list: List<TripResponse>) {
         submitList(list)
@@ -56,15 +64,21 @@ class RecommendItemAdapter
     inner class RecommendItemViewHolder constructor(itemView: View): RecyclerView.ViewHolder(itemView){
         fun bind(item: TripResponse){
             itemView.findViewById<TextView>(R.id.recomItem_name).text = item.name
+
             Glide.with(itemView.context)
                 .load(item.photoUrl)
                 .override(300,300)
                 .centerCrop()
                 .into(itemView.findViewById(R.id.recomItem_image))
+
             itemView.findViewById<RecyclerView>(R.id.recomItem_rv).apply {
                 val flexBoxLayoutManager = FlexboxLayoutManager(itemView.context)
-                flexBoxLayoutManager.flexDirection = FlexDirection.ROW
-                flexBoxLayoutManager.justifyContent = JustifyContent.FLEX_START
+
+                flexBoxLayoutManager.run {
+                    flexDirection = FlexDirection.ROW
+                    justifyContent = JustifyContent.FLEX_START
+                }
+
                 layoutManager = flexBoxLayoutManager
                 val list = ArrayList<String>()
                 item.tags.forEach { tag ->
@@ -84,7 +98,11 @@ class RecommendItemAdapter
         }
     }
 
-    inner class RecommendHeaderItemViewHolder constructor(private val context : Context, itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class RecommendHeaderItemViewHolder
+    constructor(
+        private val context : Context,
+        itemView: View
+    ) : RecyclerView.ViewHolder(itemView){
         fun bind(){
             itemView.findViewById<Button>(R.id.recomAct_testBtn).setOnClickListener {
                 Log.d("[RecommendHeaderItem]", "설문조사 하러 가기 눌림")

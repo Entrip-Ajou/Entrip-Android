@@ -36,12 +36,10 @@ constructor(
     lateinit var user_id: String
 
     private val _isExistNicknameResult = MutableStateFlow<ApiState>(ApiState.Init)
+    private val _isSaveUserResult = MutableStateFlow<ApiState>(ApiState.Init)
 
     val isExistNicknameResult: StateFlow<ApiState>
         get() = _isExistNicknameResult
-
-    private val _isSaveUserResult = MutableStateFlow<ApiState>(ApiState.Init)
-
     val isSaveUserResult: StateFlow<ApiState>
         get() = _isSaveUserResult
 
@@ -49,14 +47,17 @@ constructor(
         isExistNicknameUseCase
             .execute(userNickname)
             .collect {
-                if (it is BaseResult.Success){
-                    if (it.data){
-                        _isExistNicknameResult.value = ApiState.Failure(999)
-                    } else {
-                        _isExistNicknameResult.value = ApiState.Success(it)
+                when(it) {
+                    is BaseResult.Success -> {
+                        if (it.data){
+                            _isExistNicknameResult.value = ApiState.Failure(999)
+                        } else {
+                            _isExistNicknameResult.value = ApiState.Success(it)
+                        }
                     }
-                } else {
-                    _isExistNicknameResult.value = ApiState.Failure((it as BaseResult.Error).err.code)
+                    is BaseResult.Error -> {
+                        _isExistNicknameResult.value = ApiState.Failure(it.err.code)
+                    }
                 }
             }
     }
@@ -65,18 +66,21 @@ constructor(
         saveUserUseCase
             .execute(user_id, gender, nickname)
             .collect {
-                if (it is BaseResult.Success){
-                    if (it.data.userId.isNotBlank()){
-                        Log.e(TAG, "User ID Response = " + it.data.userId)
-                        sharedPreferences.edit().putString("nickname", nickname).commit()
-                        sharedPreferences.edit().putString("gender", gender.toString()).commit()
-                        sharedPreferences.edit().putString("photo_url","https://user-images.githubusercontent.com/77181865/169517449-f000a59d-5659-4957-9cb4-c6e5d3f4b197.png").commit()
-                        _isSaveUserResult.value = ApiState.Success(it)
-                    } else {
-                        _isSaveUserResult.value = ApiState.Failure(999)
+                when(it) {
+                    is BaseResult.Success -> {
+                        if (it.data.userId.isNotBlank()){
+                            Log.e(TAG, "User ID Response = " + it.data.userId)
+                            sharedPreferences.edit().putString("nickname", nickname).commit()
+                            sharedPreferences.edit().putString("gender", gender.toString()).commit()
+                            sharedPreferences.edit().putString("photo_url","https://user-images.githubusercontent.com/77181865/169517449-f000a59d-5659-4957-9cb4-c6e5d3f4b197.png").commit()
+                            _isSaveUserResult.value = ApiState.Success(it)
+                        } else {
+                            _isSaveUserResult.value = ApiState.Failure(999)
+                        }
                     }
-                } else {
-                    _isSaveUserResult.value = ApiState.Failure((it as BaseResult.Error).err.code)
+                    is BaseResult.Error -> {
+                        _isSaveUserResult.value = ApiState.Failure(it.err.code)
+                    }
                 }
             }
     }
@@ -84,15 +88,14 @@ constructor(
     fun userIdShared() = sharedPreferences.edit().putString("user_id", user_id).commit()
 
     fun updateUserToken(){
-        val user_id = sharedPreferences.getString("user_id", null)?.toString()
-        val user_token = sharedPreferences.getString("token", null)?.toString()
-
-        viewModelScope.launch(Dispatchers.IO) {
-            val res = userRemoteSource.updateUserToken(user_id!!,user_token!!)
-            if(res is BaseResult.Success){
-                Log.d(TAG, "초기 사용자가 등록할 때 Token 등록 완료")
-            }else{
-                Log.e(TAG, "Err code = "+(res as BaseResult.Error).err.code+ " Err message = "+res.err.message)
+        sharedPreferences.getString("user_id", null)?.let { userID ->
+            sharedPreferences.getString("token", null)?.let { userToken ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    when (val res = userRemoteSource.updateUserToken(userID, userToken)) {
+                        is BaseResult.Success -> { Log.d(TAG, "초기 사용자가 등록할 때 Token 등록 완료") }
+                        is BaseResult.Error -> { Log.e(TAG, "Err code = ${res.err.code}, Err message = ${res.err.message}") }
+                    }
+                }
             }
         }
     }

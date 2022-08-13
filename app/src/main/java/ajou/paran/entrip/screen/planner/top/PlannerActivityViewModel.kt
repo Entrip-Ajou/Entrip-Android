@@ -32,10 +32,11 @@ constructor(
 
     private val gson = Gson()
 
+    val userId: String
+    get() = sharedPreferences.getString("user_id", null) ?: ""
+
     private val _state = MutableStateFlow<PlannerState>(PlannerState.Init)
     val state: StateFlow<PlannerState> get() = _state
-
-    private val user_id = sharedPreferences.getString("user_id", null)?.toString()
 
     fun setLoading() {
         _state.value = PlannerState.IsLoading(true)

@@ -12,5 +12,9 @@ constructor(
     private val sharedPreferences: SharedPreferences
 )
 : ViewModel(){
-    fun getUserId(): String? = sharedPreferences.getString("user_id", null)
+
+    val userId: String
+    get() = sharedPreferences.getString("user_id", null) ?: ""
+
+
 }

@@ -5,7 +5,6 @@ import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityRegisterBinding
 import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.util.ApiState
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -33,50 +32,64 @@ class RegisterActivity
         binding.radioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
             when(checkedId){
                 binding.registerActRadioMan.id -> {
-                    binding.registerActRadioMan.setBackgroundResource(R.drawable.shape_btn_round_recommend)
-                    binding.registerActRadioMan.setTextColor(Color.parseColor("#1a83e6"))
-                    binding.registerActRadioWoman.setBackgroundResource(R.drawable.shape_register)
-                    binding.registerActRadioWoman.setTextColor(Color.parseColor("#616161"))
+                    binding.registerActRadioMan.run {
+                        setBackgroundResource(R.drawable.shape_btn_round_recommend)
+                        setTextColor(Color.parseColor("#1a83e6"))
+                    }
+                    binding.registerActRadioWoman.run {
+                        setBackgroundResource(R.drawable.shape_register)
+                        setTextColor(Color.parseColor("#616161"))
+                    }
                 }
                 binding.registerActRadioWoman.id -> {
-                    binding.registerActRadioMan.setBackgroundResource(R.drawable.shape_register)
-                    binding.registerActRadioMan.setTextColor(Color.parseColor("#616161"))
-                    binding.registerActRadioWoman.setBackgroundResource(R.drawable.shape_btn_round_recommend)
-                    binding.registerActRadioWoman.setTextColor(Color.parseColor("#1a83e6"))
+                    binding.registerActRadioMan.run {
+                        setBackgroundResource(R.drawable.shape_register)
+                        setTextColor(Color.parseColor("#616161"))
+                    }
+                    binding.registerActRadioWoman.run {
+                        setBackgroundResource(R.drawable.shape_btn_round_recommend)
+                        setTextColor(Color.parseColor("#1a83e6"))
+                    }
                 }
                 else -> {
-                    binding.registerActRadioMan.setBackgroundResource(R.drawable.shape_register)
-                    binding.registerActRadioMan.setTextColor(Color.parseColor("#616161"))
-                    binding.registerActRadioWoman.setBackgroundResource(R.drawable.shape_register)
-                    binding.registerActRadioWoman.setTextColor(Color.parseColor("#616161"))
+                    binding.registerActRadioMan.run {
+                        setBackgroundResource(R.drawable.shape_register)
+                        setTextColor(Color.parseColor("#616161"))
+                    }
+                    binding.registerActRadioWoman.run {
+                        setBackgroundResource(R.drawable.shape_register)
+                        setTextColor(Color.parseColor("#616161"))
+                    }
                 }
             }
         }
     }
 
     override fun onClick(view: View?) {
-        view?.let { view ->
-            when(view.id){
+        view?.let {
+            when(it.id){
                 binding.registerActCheckBtn.id -> {
                     viewModel.nickNameResult(binding.registerActEtNickname.text.toString())
                     observeNickname()
                 }
                 binding.registerActEndBtn.id -> {
                     if (endCondition){
-                        if(binding.radioGroup.checkedRadioButtonId == binding.registerActRadioMan.id) {
-                            viewModel.saveUserResult(0, binding.registerActTvNickname.text.toString())
-                            observeSave()
-                        }
-                        else if (binding.radioGroup.checkedRadioButtonId == binding.registerActRadioWoman.id){
-                            viewModel.saveUserResult(1, binding.registerActTvNickname.text.toString())
-                            observeSave()
-                        }
-                        else if (binding.radioGroup.checkedRadioButtonId == -1){
-                            binding.registerActRadioMan.setBackgroundResource(R.drawable.shape_register_error)
-                            binding.registerActRadioWoman.setBackgroundResource(R.drawable.shape_register_error)
-                        }
-                        else {
-                            Log.d(TAG, "성별이 더 들어갈 경우 들어옴")
+                        when (binding.radioGroup.checkedRadioButtonId) {
+                            binding.registerActRadioMan.id -> {
+                                viewModel.saveUserResult(0, binding.registerActTvNickname.text.toString())
+                                observeSave()
+                            }
+                            binding.registerActRadioWoman.id -> {
+                                viewModel.saveUserResult(1, binding.registerActTvNickname.text.toString())
+                                observeSave()
+                            }
+                            -1 -> {
+                                binding.registerActRadioMan.setBackgroundResource(R.drawable.shape_register_error)
+                                binding.registerActRadioWoman.setBackgroundResource(R.drawable.shape_register_error)
+                            }
+                            else -> {
+                                Log.d(TAG, "성별이 더 들어갈 경우 들어옴")
+                            }
                         }
                     } else {
                         Log.d(TAG, "중복체크 실패")
@@ -92,85 +105,81 @@ class RegisterActivity
 
     private fun observeNickname() = lifecycleScope.launchWhenStarted {
         viewModel.isExistNicknameResult.collect {
-            if (it is ApiState.Success){
-                // 존재하지 않는 닉네임
-                Log.d(TAG, "존재하지 않는 닉네임")
-                endCondition = true
-                val builder = AlertDialog.Builder(this@RegisterActivity)
-                builder.setMessage("존재하지 않는 닉네임입니다")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which -> })
-                builder.show()
-                val nickname = binding.registerActEtNickname.text.toString()
-                binding.registerActEtNickname.visibility = View.GONE
-                binding.registerActCheckBtn.visibility = View.GONE
-                binding.registerActTvNickname.visibility = View.VISIBLE
-                binding.registerActTvNickname.text = nickname
-                binding.registerActCheckBtnSuccess.visibility = View.VISIBLE
-            } else if (it is ApiState.Failure) {
-                if (it.code == 999){
-                    // 이미 존재하는 아이디
-                    Log.d(TAG, "이미 존재하는 닉네임")
-                    val builder = AlertDialog.Builder(this@RegisterActivity)
-                    builder.setMessage("이미 존재하는 닉네임입니다")
-                        .setPositiveButton("확인",
-                            DialogInterface.OnClickListener{ dialog, which -> })
-                    builder.show()
-                } else {
-                    Log.e(
-                        TAG,
-                        "observeNickname() code: ${it.code}"
-                    )
+            when(it) {
+                is ApiState.Success -> {
+                    Log.d(TAG, "존재하지 않는 닉네임")
+                    endCondition = true
+                    AlertDialog.Builder(this@RegisterActivity)
+                        .setMessage("존재하지 않는 닉네임입니다")
+                        .setPositiveButton("확인") { dialog, which -> dialog.dismiss() }
+                        .show()
+                    binding.registerActEtNickname.visibility = View.GONE
+                    binding.registerActCheckBtn.visibility = View.GONE
+                    binding.registerActTvNickname.run {
+                        visibility = View.VISIBLE
+                        text = binding.registerActEtNickname.text.toString()
+                    }
+                    binding.registerActCheckBtnSuccess.visibility = View.VISIBLE
                 }
-            } else if (it is ApiState.Init) {}
-            else {
-                Log.e(
-                    TAG,
-                    "예상 못한 에러"
-                )
-                val builder = AlertDialog.Builder(this@RegisterActivity)
-                builder.setMessage("예상하지 못한 오류 발생")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which -> })
-                builder.show()
+                is ApiState.Failure -> {
+                    when(it.code) {
+                        999 -> {
+                            // 이미 존재하는 아이디
+                            Log.d(TAG, "이미 존재하는 닉네임")
+                            AlertDialog.Builder(this@RegisterActivity)
+                                .setMessage("이미 존재하는 닉네임입니다")
+                                .setPositiveButton("확인") { dialog, which -> dialog.dismiss() }
+                                .show()
+                        }
+                        else -> { Log.e(TAG, "observeNickname() code: ${it.code}") }
+                    }
+                }
+                is ApiState.Init -> { Log.d(TAG, "observeNickname() Init") }
+                else -> {
+                    Log.e(TAG, "예상 못한 에러")
+                    AlertDialog.Builder(this@RegisterActivity)
+                        .setMessage("예상하지 못한 오류 발생")
+                        .setPositiveButton("확인") { dialog, which -> dialog.dismiss() }
+                        .show()
+                }
             }
         }
     }
 
     private fun observeSave() = lifecycleScope.launchWhenStarted {
         viewModel.isSaveUserResult.collect {
-            if (it is ApiState.Success) {
-                Log.d(TAG, "유저 저장 성공")
-                viewModel.userIdShared()
-                viewModel.updateUserToken()
-                startActivity(Intent(this@RegisterActivity, HomeActivity::class.java))
-            } else if (it is ApiState.Failure) {
-                if (it.code == 999) {
-                    // 저장 실패
-                    Log.d(TAG, "유저 저장 실패")
-                    val builder = AlertDialog.Builder(this@RegisterActivity)
-                    builder.setMessage("유저 저장 실패")
-                        .setPositiveButton("확인",
-                            DialogInterface.OnClickListener{ dialog, which -> })
-                    builder.show()
-                } else {
-                    Log.e(
-                        TAG,
-                        "observeSave() code: ${it.code}"
-                    )
+            when(it) {
+                is ApiState.Success -> {
+                    Log.d(TAG, "유저 저장 성공")
+                    viewModel.userIdShared()
+                    viewModel.updateUserToken()
+                    startActivity(Intent(this@RegisterActivity, HomeActivity::class.java))
                 }
-            } else if (it is ApiState.Init) {
-                Log.d(TAG, "observe 시작")
-            } else {
-                Log.e(
-                    TAG,
-                    "예상 못한 에러"
-                )
-                val builder = AlertDialog.Builder(this@RegisterActivity)
-                builder.setMessage("예상하지 못한 오류 발생")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which -> })
-                builder.show()
+                is ApiState.Failure -> {
+                    when(it.code) {
+                        999 -> {
+                            // 저장 실패
+                            Log.d(TAG, "유저 저장 실패")
+                            AlertDialog.Builder(this@RegisterActivity)
+                                .setMessage("유저 저장 실패")
+                                .setPositiveButton("확인") { dialog, which -> dialog.dismiss() }
+                                .show()
+                        }
+                        else -> {
+                            Log.e(TAG, "observeSave() code: ${it.code}")
+                        }
+                    }
+                }
+                is ApiState.Init -> {
+                    Log.d(TAG, "observe 시작")
+                }
+                else -> {
+                    Log.e(TAG, "예상 못한 에러")
+                    AlertDialog.Builder(this@RegisterActivity)
+                        .setMessage("예상하지 못한 오류 발생")
+                        .setPositiveButton("확인") { dialog, which -> dialog.dismiss() }
+                        .show()
+                }
             }
         }
     }

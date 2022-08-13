@@ -64,11 +64,9 @@ constructor(
     fun acceptInvitation(inviteEntity : InviteEntity, user_id : String, notificationData: PushNotification){
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
-            val res1 = plannerRepository.isExist(inviteEntity.planner_id)
-            when(res1){
+            when(val res1 = plannerRepository.isExist(inviteEntity.planner_id)){
                 is BaseResult.Success -> {
-                    val res2 = userAddRepositoryImpl.addUserToPlanner(inviteEntity.planner_id, user_id)
-                    when(res2){
+                    when(val res2 = userAddRepositoryImpl.addUserToPlanner(inviteEntity.planner_id, user_id)){
                         is BaseResult.Success -> {
                             val res3 = plannerRepository.acceptInvitation(inviteEntity.planner_id)
                             when(res3){
@@ -113,11 +111,9 @@ constructor(
     fun rejectInvitation(inviteEntity: InviteEntity, notificationData: PushNotification){
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
-            val res1 = userAddRepositoryImpl.userIsExistWithPlanner(inviteEntity.planner_id, inviteEntity.user_id)
-            when(res1){
+            when(val res1 = userAddRepositoryImpl.userIsExistWithPlanner(inviteEntity.planner_id, inviteEntity.user_id)){
                 is BaseResult.Success -> {
-                    val res2 = userAddRepositoryImpl.postNotification(notificationData, inviteEntity)
-                    when(res2){
+                    when(val res2 = userAddRepositoryImpl.postNotification(notificationData, inviteEntity)){
                         is BaseResult.Success -> _state.value = ApiState.Success(Unit)
                         is BaseResult.Error -> _state.value = ApiState.Failure(res2.err.code)
                     }
@@ -137,4 +133,5 @@ constructor(
             hideLoading()
         }
     }
+
 }

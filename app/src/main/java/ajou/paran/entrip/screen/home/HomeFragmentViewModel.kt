@@ -65,10 +65,9 @@ constructor(
         getUserUseCase
             .execute(user_id)
             .collect{
-                if (it is BaseResult.Success){
-                    _recommendItemList.postValue(it.data)
-                } else {
-                    _recommendItemList.postValue(nullRecommenItem)
+                when(it) {
+                    is BaseResult.Success -> { _recommendItemList.postValue(it.data) }
+                    is BaseResult.Error -> { _recommendItemList.postValue(nullRecommenItem) }
                 }
             }
     }
