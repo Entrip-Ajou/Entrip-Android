@@ -54,15 +54,18 @@
             android:name=".screen.intro.register.RegisterActivity"
             android:exported="false" />
         <activity
+            android:launchMode="singleTop"
             android:name=".screen.planner.mid.map.MapActivity"
             android:exported="false" />
         <activity
+            android:launchMode="singleTop"
             android:name=".screen.planner.mid.input.InputActivity"
             android:exported="false" />
         <activity
             android:name=".screen.home.HomeActivity"
             android:exported="false" />
         <activity
+            android:launchMode="singleTop"
             android:name=".screen.planner.top.PlannerActivity"
             android:exported="false" />
         <activity

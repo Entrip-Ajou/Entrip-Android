@@ -104,6 +104,7 @@ dependencies {
     def retrofit_version = "2.9.0"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
 
     // okhttp
     def okhttp_logging_version = "4.9.0"
@@ -113,7 +114,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation platform('com.google.firebase:firebase-bom:30.0.0')
-
 
     // FCM
     implementation 'com.google.firebase:firebase-messaging-ktx'
@@ -131,4 +131,14 @@ dependencies {
     // KakaoMap
     implementation fileTree(include: ['*.jar'], dir:'libs')
     implementation files('libs/libDaumMapAndroid.jar')
+
+    //rx
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.5'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+
+    // stomp
+    implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.6.6'
+
+    //okhttp
+    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
 }

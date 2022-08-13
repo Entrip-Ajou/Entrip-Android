@@ -7,7 +7,9 @@ import ajou.paran.entrip.repository.network.dto.PlanRequest
 import ajou.paran.entrip.repository.network.dto.PlanUpdateRequest
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
+import android.content.SharedPreferences
 import android.graphics.Color
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,11 +20,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import ua.naiksoftware.stomp.StompClient
 import javax.inject.Inject
 
 @HiltViewModel
 class InputViewModel @Inject constructor(
-    private val planRepository: PlanRepositoryImpl
+    private val planRepository: PlanRepositoryImpl,
+    private val stompClient: StompClient,
+    private val sharedPreferences : SharedPreferences
     ): ViewModel() {
     companion object{
         private const val TAG = "[InputViewModel]"
@@ -33,6 +39,8 @@ class InputViewModel @Inject constructor(
 
     lateinit var date : String
     var planner_id : Long = -1L
+
+    private val user_id = sharedPreferences.getString("user_id", null)?.toString()
 
     lateinit var selectedPlanner : PlannerEntity
 
@@ -87,6 +95,7 @@ class InputViewModel @Inject constructor(
                         val res = planRepository.insertPlan(planRequest)
                         if(res is BaseResult.Success){
                             _inputState.value = InputState.Success
+                            sendPlanChangeMessage(user_id!!, 1, planner_id, date)
                             delay(500)
                             _inputState.value = InputState.IsLoading(false)
                         }else{
@@ -109,6 +118,7 @@ class InputViewModel @Inject constructor(
                         if(res is BaseResult.Success){
                             _inputState.value = InputState.IsLoading(false)
                             _inputState.value = InputState.Success
+                            sendPlanChangeMessage(user_id!!, 1, planner_id, date)
                         }else{
                             _inputState.value = InputState.IsLoading(false)
                             _inputState.value = InputState.Failure((res as BaseResult.Error).err.code)
@@ -117,6 +127,18 @@ class InputViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun sendPlanChangeMessage(sender : String, content : Int, planner_id : Long, date: String){
+        val data = JSONObject()
+        data.put("type", "CHAT")
+        data.put("content", content)
+        data.put("sender", sender)
+        data.put("planner_id", planner_id)
+        data.put("date", date)
+        stompClient.send("/app/chat.sendMessage", data.toString()).subscribe()
+
+        Log.e("[WebSocket]", "<Plan update>  + Planner_id : "+planner_id)
     }
 }
 

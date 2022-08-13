@@ -64,7 +64,9 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             this.putExtra("date", viewModel.date)
             this.putExtra("PlannerEntity", viewModel.selectedPlanner)
         }
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
+        finish()
     }
 
     private fun setUpView() {
@@ -164,10 +166,6 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
                             .setPositiveButton("확인",
                                 DialogInterface.OnClickListener { dialog, which -> })
                         builder.show()
-                    }
-
-                    500 -> {
-                        Toast.makeText(this, "다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
                     }
 
                     -1 -> {
@@ -270,7 +268,6 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
                     this.putExtra("last_select_palette", last_select_palette)
                 }
                 startActivity(intent)
-                finish()
             }
         }
     }

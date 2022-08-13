@@ -30,4 +30,7 @@ interface UserDao {
 
     @Query("DELETE FROM 'waiting' WHERE user_id = :user_id AND planner_id = :planner_id")
     fun deleteWaiting(user_id : String, planner_id : Long)
+
+    @Query("DELETE FROM 'waiting' WHERE planner_id = :planner_id")
+    fun deleteWaitWithPlannerId(planner_id : Long)
 }

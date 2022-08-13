@@ -6,10 +6,13 @@ import ajou.paran.entrip.databinding.ActivityHomeBinding
 import ajou.paran.entrip.model.InviteEntity
 import ajou.paran.entrip.repository.network.dto.NotificationData
 import ajou.paran.entrip.repository.network.dto.PushNotification
+import ajou.paran.entrip.screen.community.CommunityFragment
 import ajou.paran.entrip.screen.planner.main.InviteAdapter
 import ajou.paran.entrip.screen.planner.main.MainFragment
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.util.ApiState
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -33,6 +36,13 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import android.content.pm.PackageManager
+
+import android.content.pm.PackageInfo
+import android.util.Base64
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+
 
 @AndroidEntryPoint
 class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), InviteAdapter.TextViewClickListner {
@@ -53,7 +63,29 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
         }
         observeState()
         setUpInviteFlag()
+        //getDebugHashKey()
+
     }
+
+    /*
+    private fun getDebugHashKey() {
+        var packageInfo: PackageInfo? = null
+        try {
+            packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+            if (packageInfo == null) Log.e("KeyHash", "KeyHash:null") else {
+                for (signature in packageInfo.signatures) {
+                    val md: MessageDigest = MessageDigest.getInstance("SHA")
+                    md.update(signature.toByteArray())
+                    Log.d("KeyHash", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+                }
+            }
+        } catch (e: NoSuchAlgorithmException) {
+            e.printStackTrace()
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+    }
+    */
 
     private fun setUpBottomNavigationBar(){
         supportFragmentManager.beginTransaction()
@@ -126,8 +158,13 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
                 builder.show()
             }
 
-            500 -> {
-                Toast.makeText(this, "다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
+            204 -> {
+                /** No content -> 서버 내 플래너가 이미 삭제된 경우 **/
+
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("이미 삭제된 플래너입니다.")
+                    .setPositiveButton("확인") { dialog, which -> dialog.dismiss() }
+                builder.show()
             }
 
             -1 -> {
@@ -135,7 +172,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
             }
 
             else -> {
-                Log.e(TAG, "$code Error handleError()에 추가 및 trouble shooting하기")
+                Log.e(TAG, "${code} Error handleError()에 추가 및 trouble shooting하기")
             }
         }
     }
@@ -177,7 +214,6 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
             }
     }
 
-
     private fun setUpInvitationRecyclerView(v: View) {
         val inviteAdapter = InviteAdapter(this@HomeActivity)
         v.rv_invite_log.adapter = inviteAdapter
@@ -185,7 +221,9 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
         lifecycle.coroutineScope.launch {
             viewModel.selectAllInvite()
                 .onStart { viewModel.setLoading() }
-                .catch { viewModel.hideLoading() }
+                .catch { e ->
+                    viewModel.hideLoading()
+                }
                 .collect {
                     viewModel.hideLoading()
                     inviteAdapter.submitList(it.toList())

@@ -15,8 +15,8 @@ interface PlanApi {
     @POST("api/v1/planners/{user_id}")
     suspend fun createPlanner(@Path ("user_id") user_id : String) : BaseResponse<PlannerResponse>
 
-    @DELETE("api/v1/planners/{planner_id}")
-    suspend fun deletePlanner(@Path("planner_id") planner_id : Long) : BaseResponse<Long>
+    @DELETE("api/v1/planners/{planner_id}/{user_id}/exit")
+    suspend fun deletePlanner(@Path("user_id") user_id : String, @Path("planner_id") planner_id : Long) : BaseResponse<Boolean>
 
     // Home화면 Planner 선택란에서 기존에 저장된 Planner를 눌렀을 때
     @GET("api/v1/planners/{planner_id}")
@@ -25,6 +25,7 @@ interface PlanApi {
     @GET("api/v1/planners/{planner_id}/all")
     suspend fun fetchPlans(@Path("planner_id") planner_idFK : Long) : BaseResponse<List<PlanResponse>>
 
+    // todo : 실패시 202
     @GET("api/v1/planners/{planner_id}/exist")
     suspend fun isExist(@Path("planner_id") planner_id: Long) : BaseResponse<Boolean>
 
@@ -39,4 +40,10 @@ interface PlanApi {
 
     @PUT("api/v1/planners/{planner_id}")
     suspend fun updatePlanner(@Path("planner_id") planner_id : Long, @Body planner : PlannerUpdateRequest) : BaseResponse<PlannerEntity>
+
+    @GET("api/v1/planners/{planner_id}/{date}/find")
+    suspend fun findByPlannerIdWithDate(
+        @Path("planner_id") planner_id:Long,
+        @Path("date") date : String
+    ) : BaseResponse<List<PlanResponse>>
 }

@@ -91,6 +91,7 @@ class MyFirebaseMessaingService : FirebaseMessagingService() {
         if(message.data["isInvite"].toBoolean()){
             CoroutineScope(Dispatchers.IO).launch{
                 val inviteEntity = InviteEntity(
+                    user_id = message.data["owner_id"].toString(),
                     nickname = message.data["owner"].toString(),
                     photoUrl = message.data["photo_url"].toString(),
                     token = message.data["owner_token"].toString(),

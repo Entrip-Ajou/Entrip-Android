@@ -206,22 +206,11 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                 builder.show()
             }
 
-            404 -> {
+            202 -> {
+                Log.e(TAG, "Err code = 202 -> 검색 결과가 없다고 처리")
                 Toast.makeText(this, "검색 결과가 없습니다", Toast.LENGTH_LONG).show()
                 binding.layoutSearchSuccess.visibility = View.INVISIBLE
                 binding.tvSearchFailure.visibility = View.VISIBLE
-            }
-
-            500 -> {
-                val builder = AlertDialog.Builder(this)
-                builder.setMessage("다른 사용자로 의해 삭제되었습니다.")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener { dialog, which ->
-                            val intent = Intent(this, HomeActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        })
-                builder.show()
             }
 
             -1 -> {
@@ -238,10 +227,7 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
         view?.let {
             when (it.id) {
                 binding.btnBackToPlanner.id -> {
-                    val intent = Intent(this, PlannerActivity::class.java)
-                    intent.putExtra("PlannerEntity", selectedPlanner)
-                    startActivity(intent)
-                    finish()
+                    onBackPressed()
                 }
 
                 binding.imgUserSearch.id -> {
@@ -272,10 +258,16 @@ class PlannerUserAddActivity : BaseActivity<ActivityUseraddBinding>(
                     binding.tvInvite.isClickable = false
                     binding.tvInvite.setTextColor(Color.parseColor("#9e9e9e"))
                 }
-
-
             }
-
         }
+    }
+
+    override fun onBackPressed() {
+        Log.i(TAG, "onBackPressed() 호출")
+        super.onBackPressed()
+        val intent = Intent(this, PlannerActivity::class.java)
+        intent.putExtra("PlannerEntity", selectedPlanner)
+        startActivity(intent)
+        finish()
     }
 }

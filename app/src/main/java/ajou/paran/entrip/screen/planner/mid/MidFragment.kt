@@ -73,7 +73,7 @@ class MidFragment: Fragment(),PlanAdapter.RowClickListener {
     }
 
     override fun onDeletePlanClickListener(planEntity: PlanEntity) {
-        viewModel.deletePlan(planEntity.id, planEntity.planner_idFK)
+        viewModel.deletePlan(planEntity.id, planEntity.planner_idFK, planEntity.date)
     }
 
     override fun onItemClickListener(planEntity: PlanEntity) {
@@ -154,10 +154,6 @@ class MidFragment: Fragment(),PlanAdapter.RowClickListener {
                     .setPositiveButton("확인",
                         DialogInterface.OnClickListener{ dialog, which -> })
                 builder.show()
-            }
-
-            500 -> {
-                Toast.makeText(activity,"다른 사용자에 의해 삭제된 플래너입니다.", Toast.LENGTH_LONG).show()
             }
 
             -1 -> {

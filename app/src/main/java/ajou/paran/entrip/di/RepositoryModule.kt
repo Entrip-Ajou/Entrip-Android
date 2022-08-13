@@ -97,8 +97,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePlannerRepository(plannerRemoteSource: PlannerRemoteSource, planDao: PlanDao) : PlannerRepository{
-        return PlannerRepositoryImpl(plannerRemoteSource, planDao)
+    fun providePlannerRepository(plannerRemoteSource: PlannerRemoteSource, planDao: PlanDao, userDao: UserDao) : PlannerRepository{
+        return PlannerRepositoryImpl(plannerRemoteSource, planDao, userDao)
     }
 
     @Provides

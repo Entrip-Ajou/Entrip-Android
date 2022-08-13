@@ -34,12 +34,19 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
+
+/**
+ * 해당 ?? 생명주기일때 function 호출
+ * @OnLifecycleEvent(Lifecycle.EVENT.???)
+ * fun method() { }
+ */
+
 @AndroidEntryPoint
 class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     R.layout.activity_planner
 ), View.OnClickListener {
     companion object{
-        const val TAG = "[PlannerActivity]"
+        const val TAG = "[PlannerAct]"
     }
 
     private lateinit var dateRecyclerViewAdapter: DateRecyclerViewAdapter
@@ -94,10 +101,9 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             }
         }
         observeState()
-        viewModel.syncRemoteDB(selectedPlanner.planner_id)
-        viewModel.observeTimeStamp(selectedPlanner.planner_id)
         initDateRecyclerView(date)
         subscribeObservers()
+        viewModel.runStomp(selectedPlanner.planner_id)
     }
 
     /**
@@ -117,14 +123,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         view?.let {
             when(it.id){
                 binding.plannerActIvClose.id -> {
-                    Log.d(TAG, "Case: Close")
-                    val intent = Intent(this, HomeActivity::class.java)
-                    intent.run {
-                        putExtra("isFromPlanner",true)
-                        putExtra("last_pos", R.id.nav_planner)
-                    }
-                    startActivity(intent)
-                    finish()
+                    onBackPressed()
                 }
                 binding.plannerActEtTitle.id -> {
                     Log.d(TAG, "Case: Click planner title button")
@@ -137,18 +136,27 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     Log.d(TAG, "Case: Edit planner Date")
                     startDateRangePicker()
                 }
-                binding.plannerActIvPlannerAdd.id -> {
-                    Log.d(TAG, "Case: Add planner")
-                    viewModel.createPlanner()
+
+                binding.plannerActIvPlannerExit.id -> {
+                    // dialog
+                    val builder = AlertDialog.Builder(this)
+                    builder.setMessage("플래너를 삭제하시겠습니까?")
+                        .setPositiveButton("확인",
+                            DialogInterface.OnClickListener { dialog, which ->
+                                viewModel.deletePlanner(selectedPlanner.planner_id)
+                            })
+                        .setNegativeButton("취소",
+                            DialogInterface.OnClickListener { dialog, which ->
+
+                            })
+                    builder.show()
                 }
+
                 binding.plannerActPersonAdd.id -> {
                     Log.d(TAG, "Case: Add user")
                     val intent = Intent(this, PlannerUserAddActivity::class.java)
-                    intent.run {
-                        putExtra("PlannerEntity", selectedPlanner)
-                    }
+                    intent.putExtra("PlannerEntity", selectedPlanner)
                     startActivity(intent)
-                    finish()
                 }
                 else -> {
                     return
@@ -189,7 +197,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         }
     }
 
-
     private fun setUpBottomNavigationBar(){
         binding.plannerActBottomNav.setOnItemSelectedListener {
             when(it.itemId){
@@ -201,6 +208,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                         putExtra("last_pos", R.id.nav_home)
                     }
                     startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.nav_planner -> {
@@ -216,6 +224,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                         putExtra("last_pos", R.id.nav_recommendation)
                     }
                     startActivity(intent)
+                    finish()
                     true
                 }
 //                R.id.nav_board -> {
@@ -314,7 +323,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         when(state){
             is PlannerState.Init -> Unit
             is PlannerState.IsLoading -> handleLoading(state.isLoading)
-            is PlannerState.IsUpdate -> handleUpdate(state.isUpdate)
             is PlannerState.Success -> handleSuccess(state.data)
             is PlannerState.Failure -> handleError(state.code)
         }
@@ -328,16 +336,19 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         }
     }
 
-    private fun handleUpdate(isUpdate : Boolean){
-        if(isUpdate) viewModel.syncRemoteDB(selectedPlanner.planner_id)
-    }
-
     private fun handleSuccess(data : Any){
-        if(data is PlannerEntity){
-            val intent = Intent(baseContext, PlannerActivity::class.java)
-            intent.putExtra("PlannerEntity", data)
-            startActivity(intent)
-            finish()
+        when (data) {
+            is Boolean -> {
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+            is Unit -> {
+
+            }
+            else -> {
+                Log.e(TAG, "State = Success<"+data.javaClass.toString()+ ">Type의 처리 필요")
+            }
         }
     }
 
@@ -351,18 +362,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 builder.show()
             }
 
-            500 -> {
-                val builder = AlertDialog.Builder(this)
-                builder.setMessage("다른 사용자로 의해 삭제되었습니다.")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which ->
-                            val intent = Intent(this, HomeActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        })
-                builder.show()
-            }
-
             -1 -> {
                 Log.e(TAG, "최상위 Exception class에서 예외 발생 -> 코드 로직 오류")
             }
@@ -371,5 +370,21 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                 Log.e(TAG, "${code} Error handleError()에 추가 및 trouble shooting하기")
             }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Log.d(TAG, "Case: Close")
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.putExtra("isFromPlanner",true)
+        intent.putExtra("last_pos", R.id.nav_planner)
+        startActivity(intent)
+        finish()
+    }
+
+    override fun onDestroy()
+    {
+        viewModel.stompClient.disconnect()
+        super.onDestroy()
     }
 }

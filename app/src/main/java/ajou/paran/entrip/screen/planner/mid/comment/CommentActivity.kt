@@ -188,10 +188,7 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
         v?.let {
             when (it.id) {
                 binding.backButton.id -> {
-                    val intent = Intent(this, PlannerActivity::class.java)
-                    intent.putExtra("PlannerEntity", selectedPlannner)
-                    startActivity(intent)
-                    finish()
+                    onBackPressed()
                 }
 
                 binding.tvEnter.id -> {
@@ -222,5 +219,14 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
                 )
             builder.show()
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, PlannerActivity::class.java)
+        intent.putExtra("PlannerEntity", selectedPlannner)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+        finish()
     }
 }

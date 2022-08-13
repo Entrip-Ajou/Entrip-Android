@@ -1,4 +1,4 @@
-package ajou.paran.entrip.screen.planner.main
+package ajou.paran.entrip.screen.home
 
 import ajou.paran.entrip.databinding.ItemLayoutInviteBinding
 import ajou.paran.entrip.model.InviteEntity
