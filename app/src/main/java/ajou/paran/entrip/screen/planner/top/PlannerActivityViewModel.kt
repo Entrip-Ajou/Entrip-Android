@@ -63,7 +63,7 @@ constructor(
                 is BaseResult.Success -> {
                     _state.value = PlannerState.Success(Unit)
                     getFlowPlanner(planner.planner_id)
-                    sendPlannerChangeMessage(user_id!!, 0, planner.planner_id)
+                    sendPlannerChangeMessage(userId, 0, planner.planner_id)
                 }
                 is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
             }
@@ -86,7 +86,7 @@ constructor(
                 is BaseResult.Success -> {
                     _state.value = PlannerState.Success(Unit)
                     getFlowPlanner(planner.planner_id)
-                    sendPlannerChangeMessage(user_id!!, 0, planner.planner_id)
+                    sendPlannerChangeMessage(userId, 0, planner.planner_id)
                 }
                 is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
             }
@@ -96,10 +96,10 @@ constructor(
         }
     }
 
-    fun deletePlanner(user_id: String, planner_id: Long) {
+    fun deletePlanner(planner_id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             setLoading()
-            val res = plannerRepository.deletePlanner(user_id, planner_id)
+            val res = plannerRepository.deletePlanner(userId, planner_id)
             when (res) {
                 is BaseResult.Success -> _state.value = PlannerState.Success(res.data)
                 is BaseResult.Error -> _state.value = PlannerState.Failure(res.err.code)
@@ -120,7 +120,7 @@ constructor(
             Log.d("[WebSocket]", "planner_id = " + messageDto.planner_id)
             Log.d("[WebSocket]", "date = " + messageDto.date)
 
-            if (user_id != messageDto.sender) {
+            if (userId != messageDto.sender) {
                 when (messageDto.content) {
                     0 -> {
                         Log.d("[WebSocket]", "Planner_id " + planner_id + " Sync 작업 시작")

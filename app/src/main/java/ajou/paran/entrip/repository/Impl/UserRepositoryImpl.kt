@@ -188,6 +188,7 @@ constructor(
             val response = userRemoteSource.isExistUserId(user_id)
             when(response.status) {
                 200 -> { emit(BaseResult.Success(response.data)) }
+                202 -> { emit(BaseResult.Success(response.data)) }
                 else -> {
                     Log.e(TAG, "Err code = "+response.status+ " Err message = " + response.message)
                     emit(BaseResult.Error(Failure(response.status, response.message)))
@@ -211,6 +212,7 @@ constructor(
             val response = userRemoteSource.isExistNickname(nickname)
             when(response.status) {
                 200 -> { emit(BaseResult.Success(response.data)) }
+                202 -> { emit(BaseResult.Success(response.data)) }
                 else -> {
                     Log.e(TAG, "Err code = "+response.status+ " Err message = " + response.message)
                     emit(BaseResult.Error(Failure(response.status, response.message)))

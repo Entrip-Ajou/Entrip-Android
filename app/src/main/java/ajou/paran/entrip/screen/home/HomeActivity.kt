@@ -6,19 +6,14 @@ import ajou.paran.entrip.databinding.ActivityHomeBinding
 import ajou.paran.entrip.model.InviteEntity
 import ajou.paran.entrip.repository.network.dto.NotificationData
 import ajou.paran.entrip.repository.network.dto.PushNotification
-import ajou.paran.entrip.screen.community.CommunityFragment
-import ajou.paran.entrip.screen.planner.main.InviteAdapter
 import ajou.paran.entrip.screen.planner.main.MainFragment
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.util.ApiState
-import android.content.DialogInterface
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -42,7 +37,6 @@ import android.content.pm.PackageInfo
 import android.util.Base64
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-
 
 @AndroidEntryPoint
 class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), InviteAdapter.TextViewClickListner {
