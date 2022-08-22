@@ -70,10 +70,6 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
             Log.d(IntroThreeFragment.TAG, "Case: Click Login")
             getResult.launch(googleSignInClient.signInIntent)
         }
-        binding.introFourActBtnNext.setOnClickListener{
-            Log.d(IntroThreeFragment.TAG, "Case: Click Next")
-            startActivity(Intent(activity, HomeActivity::class.java))
-        }
     }
 
     override fun onResume() {
@@ -83,7 +79,6 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
 
     private fun animating() = CoroutineScope(Dispatchers.Main).launch {
         binding.introFourActBtnLogin.visibility = View.INVISIBLE
-        binding.introFourActBtnNext.visibility = View.INVISIBLE
         val animation = TranslateAnimation(0f, 0f, 200f, 0f)
         animation.duration = 1000
         animation.setAnimationListener(object: Animation.AnimationListener{
@@ -91,7 +86,6 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
             }
             override fun onAnimationEnd(p0: Animation?) {
                 binding.introFourActBtnLogin.visibility = View.VISIBLE
-                binding.introFourActBtnNext.visibility = View.VISIBLE
             }
             override fun onAnimationRepeat(p0: Animation?) {}
         })

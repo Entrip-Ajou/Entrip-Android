@@ -15,7 +15,6 @@ class SplashActivityViewModel
 constructor(
     val sharedPreferences: SharedPreferences,
     val userRemoteSource: UserRemoteSource,
-    val getUserPlannersUseCase: GetUserPlannersUseCase
 ) : ViewModel() {
     companion object {
         const val TAG = "[SplashActivityVM]"
@@ -30,19 +29,7 @@ constructor(
     suspend fun patchToken(): Boolean
     = when(val res = userRemoteSource.updateUserToken(userID, token)) {
         is BaseResult.Success -> {
-            Log.d(SplashActivity.TAG, "사용자 Token update 완료")
-            true
-        }
-        is BaseResult.Error -> {
-            Log.e(SplashActivity.TAG, "Err code = ${res.err.code}/ Err message = ${res.err.message}")
-            false
-        }
-    }
-
-    suspend fun patchPlannerSub() : Boolean
-    = when(val res = getUserPlannersUseCase.executed(userID)) {
-        is BaseResult.Success -> {
-            Log.d(TAG, "사용자 DB update 완료")
+            Log.d(TAG, "사용자 Token update 완료")
             true
         }
         is BaseResult.Error -> {
@@ -50,5 +37,4 @@ constructor(
             false
         }
     }
-
 }

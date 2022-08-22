@@ -44,49 +44,26 @@ constructor(
                                 title = data.title,
                                 start_date = data.start_date,
                                 end_date = data.end_date,
-                                time_stamp = data.timeStamp,
-                                comment_timeStamp = data.comment_timeStamp
                             )
-                            val localPlanner = planDao.findPlanner(plannerEntity.planner_id)
-
-                            when(val localTimestamp: String? = localPlanner?.time_stamp) {
-                                null -> {
-                                    planDao.insertPlanner(plannerEntity)
-
-                                    when(val remoteDB_plan = plannerRemoteSource.fetchPlans(plannerEntity.planner_id)) {
-                                        is BaseResult.Success -> { savePlanToLocal(remoteDB_plan.data, plannerEntity.planner_id) }
-                                        is BaseResult.Error -> {
-                                            Log.e(TAG, "Err code = "+response.status+ " Err message = " + response.message)
-                                            emit(
-                                                BaseResult.Error(
-                                                    Failure(
-                                                        code = remoteDB_plan.err.code,
-                                                        message = remoteDB_plan.err.message
-                                                    )
-                                                )
-                                            )
-                                        }
-                                    }
+                            planDao.insertPlanner(plannerEntity)
+                            when (val remoteDB_plan =
+                                plannerRemoteSource.fetchPlans(plannerEntity.planner_id)) {
+                                is BaseResult.Success -> {
+                                    savePlanToLocal(remoteDB_plan.data, plannerEntity.planner_id)
                                 }
-                                else -> {
-                                    if (plannerEntity.time_stamp != localTimestamp) {
-                                        // 최신 상태 x -> remoteDB fetch
-                                        planDao.updatePlanner(plannerEntity)
-                                        when (val remoteDB_plan = plannerRemoteSource.fetchPlans(plannerEntity.planner_id)) {
-                                            is BaseResult.Success -> { savePlanToLocal(remoteDB_plan.data, plannerEntity.planner_id) }
-                                            is BaseResult.Error -> {
-                                                Log.e(TAG, "Err code = "+response.status+ " Err message = " + response.message)
-                                                emit(
-                                                    BaseResult.Error(
-                                                        Failure(
-                                                            code = remoteDB_plan.err.code,
-                                                            message = remoteDB_plan.err.message
-                                                        )
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    }
+                                is BaseResult.Error -> {
+                                    Log.e(
+                                        TAG,
+                                        "Err code = " + response.status + " Err message = " + response.message
+                                    )
+                                    emit(
+                                        BaseResult.Error(
+                                            Failure(
+                                                code = remoteDB_plan.err.code,
+                                                message = remoteDB_plan.err.message
+                                            )
+                                        )
+                                    )
                                 }
                             }
                         }

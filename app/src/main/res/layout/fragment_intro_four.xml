@@ -30,21 +30,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/introFourAct_text" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/introFourAct_btn_next"
-            android:layout_width="270dp"
-            android:layout_height="44dp"
-            android:text="건너뛰기"
-            android:textSize="16sp"
-            android:textStyle="normal"
-            android:textColor="#0d82eb"
-            android:layout_marginTop="24dp"
-            android:visibility="invisible"
-            android:background="@drawable/shape_btn_round_recommend"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/introFourAct_btn_login" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
