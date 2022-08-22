@@ -3,6 +3,7 @@ package ajou.paran.entrip.util.ui
 import ajou.paran.entrip.R
 import ajou.paran.entrip.screen.planner.mid.PlanAdapter
 import android.graphics.Canvas
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -35,15 +36,19 @@ class SwipeHelperCallback(
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) { }
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-        currentDx = 0f
-        previousPosition = viewHolder.adapterPosition
-        getDefaultUIUtil().clearView(getView(viewHolder))
+        if(currentPosition != recyclerViewAdapter.itemCount-1){
+            currentDx = 0f
+            previousPosition = viewHolder.adapterPosition
+            getDefaultUIUtil().clearView(getView(viewHolder))
+        }
     }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         viewHolder?.let {
             currentPosition = viewHolder.adapterPosition
-            getDefaultUIUtil().onSelected(getView(it))
+            if(currentPosition != recyclerViewAdapter.itemCount - 1){
+                getDefaultUIUtil().onSelected(getView(it))
+            }
         }
     }
 
@@ -56,7 +61,7 @@ class SwipeHelperCallback(
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        if (actionState == ACTION_STATE_SWIPE){
+        if (actionState == ACTION_STATE_SWIPE && currentPosition != recyclerViewAdapter.itemCount - 1){
             val view = getView(viewHolder)
             val isClamped = getTag(viewHolder)
             val newX = clampViewPositionHorizontal(dX, isClamped, isCurrentlyActive)
@@ -98,7 +103,7 @@ class SwipeHelperCallback(
     }
 
     fun removePreviousClamp(recyclerView: RecyclerView){
-        if(currentPosition == previousPosition)
+        if(currentPosition == previousPosition || previousPosition == recyclerViewAdapter.itemCount - 1)
             return
 
         previousPosition?.let {
@@ -111,7 +116,7 @@ class SwipeHelperCallback(
     }
 
     private fun getView(viewHolder: RecyclerView.ViewHolder): View
-        = viewHolder.itemView.findViewById(R.id.itemClick)
+            = viewHolder.itemView.findViewById(R.id.itemClick)
 
     private fun getDeleteView(viewHolder: RecyclerView.ViewHolder): View
             = viewHolder.itemView.findViewById(R.id.ll_item_delete)
@@ -129,7 +134,7 @@ class SwipeHelperCallback(
         isCurrentlyActive: Boolean
     ): Float{
         val max = 0f
-        val newX = if (isClamped)
+        val newX = if (isClamped){
             if (isCurrentlyActive)
                 if (dX < 0)
                     // swipe right
@@ -137,10 +142,9 @@ class SwipeHelperCallback(
                 else
                     // swipe left
                     dX - clamp
-            else
-                -clamp
-        else
-            dX / 2
+            else -clamp
+        }
+        else dX / 2
 
         return min(newX, max)
     }
