@@ -103,8 +103,7 @@ class SwipeHelperCallback(
     }
 
     fun removePreviousClamp(recyclerView: RecyclerView){
-        if(currentPosition == previousPosition || previousPosition == recyclerViewAdapter.itemCount - 1)
-            return
+        if(currentPosition == previousPosition || previousPosition == recyclerViewAdapter.itemCount - 1) return
 
         previousPosition?.let {
             val viewHolder = recyclerView.findViewHolderForAdapterPosition(it) ?: return

@@ -102,6 +102,19 @@ constructor(
         }
     }
 
+    override suspend fun fetchPlan(
+        planner_id : Long
+    ) : BaseResult<Unit, Failure> {
+        val res = plannerRemoteSource.fetchPlans(planner_id)
+        when(res){
+            is BaseResult.Success ->{
+                savePlanToLocal(res.data, planner_id)
+                return BaseResult.Success(Unit)
+            }
+            is BaseResult.Error -> return BaseResult.Error(Failure(res.err.code, res.err.message))
+        }
+    }
+
     suspend fun acceptInvitation(planner_id: Long): BaseResult<Unit, Failure> {
         val planner = plannerRemoteSource.fetchPlanner(planner_id)
         if (planner is BaseResult.Success) {
@@ -144,6 +157,12 @@ constructor(
         }
         else return BaseResult.Error(Failure((res as BaseResult.Error).err.code, res.err.message))
     }
+
+    private fun savePlanToLocal(plans: List<PlanEntity>, planner_idFK: Long) {
+        planDao.deleteAllPlan(planner_idFK)
+        planDao.insertAllPlan(plans)
+    }
+
 }
 
 

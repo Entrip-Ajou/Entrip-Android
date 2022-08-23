@@ -101,6 +101,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
             }
         }
         observeState()
+        viewModel.fetchRemoteDB(selectedPlanner.planner_id)
         initDateRecyclerView(date)
         subscribeObservers()
         viewModel.runStomp(selectedPlanner.planner_id)

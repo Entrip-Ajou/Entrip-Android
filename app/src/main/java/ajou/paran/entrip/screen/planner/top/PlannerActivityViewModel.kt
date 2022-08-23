@@ -114,28 +114,15 @@ constructor(
         stompClient.topic("/topic/public/" + planner_id).subscribe { topicMessage ->
             Log.i("[WebSocket]", "message Receive" + topicMessage.payload)
             val messageDto = gson.fromJson(topicMessage.payload, WebSocketMessage::class.java)
-            Log.d("[WebSocket]", "content = " + messageDto.content)
-            Log.d("[WebSocket]", "sender = " + messageDto.sender)
-            Log.d("[WebSocket]", "type = " + messageDto.type)
-            Log.d("[WebSocket]", "planner_id = " + messageDto.planner_id)
-            Log.d("[WebSocket]", "date = " + messageDto.date)
 
             if (userId != messageDto.sender) {
                 when (messageDto.content) {
                     0 -> {
-                        Log.d("[WebSocket]", "Planner_id " + planner_id + " Sync 작업 시작")
                         fetchPlanner(planner_id)
                     }
 
                     1 -> {
-                        Log.d(
-                            "[WebSocket]",
-                            "Date = " + messageDto.date + "에 해당하는 plan들 Sync 작업 시작"
-                        )
-                        val date = messageDto.date.substring(0, 4) + messageDto.date.substring(
-                            5,
-                            7
-                        ) + messageDto.date.substring(8, 10)
+                        val date = messageDto.date.substring(0, 4) + messageDto.date.substring(5, 7) + messageDto.date.substring(8, 10)
                         fetchPlan(planner_id, date)
                     }
                 }
@@ -178,7 +165,29 @@ constructor(
         data.put("planner_id", planner_id)
         data.put("date", null)
         stompClient.send("/app/chat.sendMessage", data.toString()).subscribe()
-        Log.e("[WebSocket]", "<Planner update> + Planner_id : " + planner_id)
+        Log.i("[WebSocket]", "<Planner update> + Planner_id : " + planner_id)
+    }
+
+    fun fetchRemoteDB(planner_id : Long){
+        viewModelScope.launch(Dispatchers.IO){
+            setLoading()
+            val res1 = plannerRepository.fetchPlanner(planner_id)
+            when(res1){
+                is BaseResult.Success -> {
+                    val res2 = plannerRepository.fetchPlan(planner_id)
+                    when(res2){
+                        is BaseResult.Success -> {
+                            _state.value = PlannerState.Success(res2.data)
+                        }
+                        is BaseResult.Error -> _state.value = PlannerState.Failure(res2.err.code)
+                    }
+                }
+                is BaseResult.Error -> _state.value = PlannerState.Failure(res1.err.code)
+            }
+            delay(500)
+            hideLoading()
+        }
+
     }
 }
 

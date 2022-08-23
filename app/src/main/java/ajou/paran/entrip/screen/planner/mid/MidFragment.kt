@@ -86,6 +86,7 @@ class MidFragment: Fragment(),PlanAdapter.RowClickListener {
             this.putExtra("Time",planEntity.time)
             this.putExtra("Location",planEntity.location)
             this.putExtra("date", planEntity.date)
+            this.putExtra("plannerId", planEntity.planner_idFK)
             this.putExtra("PlannerEntity", selectedPlanner)
         }
         startActivity(intent)

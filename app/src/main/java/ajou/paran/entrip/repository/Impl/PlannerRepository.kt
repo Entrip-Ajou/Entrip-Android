@@ -16,4 +16,5 @@ interface PlannerRepository {
     suspend fun deletePlanner(user_id : String, plannerId: Long) : BaseResult<Boolean, Failure>
     suspend fun isExist(planner_id : Long) : BaseResult<Boolean, Failure>
     suspend fun fetchPlanner(planner_id : Long) : BaseResult<Unit, Failure>
+    suspend fun fetchPlan(planner_id : Long) : BaseResult<Unit, Failure>
 }
