@@ -43,10 +43,10 @@ constructor(
     fun execute(user_id : String) : Flow<BaseResult<UserResponse, Failure>> = userRepository.findById(user_id).flowOn(Dispatchers.IO)
 }
 
-class GetUserUseCase
-@Inject
-constructor(
-    private val userRepository: UserRepository
-){
-    fun execute(user_id: String): Flow<BaseResult<List<TripResponse>, Failure>> = userRepository.getTrip(user_id)
-}
+//class GetUserUseCase
+//@Inject
+//constructor(
+//    private val userRepository: UserRepository
+//){
+//    fun execute(user_id: String): Flow<BaseResult<List<TripResponse>, Failure>> = userRepository.getTrip(user_id)
+//}

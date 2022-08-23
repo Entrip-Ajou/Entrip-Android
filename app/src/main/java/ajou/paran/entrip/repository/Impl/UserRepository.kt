@@ -15,5 +15,4 @@ interface UserRepository {
     fun isExistNickname(nickName: String) : Flow<BaseResult<Boolean, Failure>>
     fun saveUser(user_id: String, gender: Int, nickName: String) : Flow<BaseResult<UserRequest, Failure>>
     fun findById(user_id : String):Flow<BaseResult<UserResponse, Failure>>
-    fun getTrip(user_id: String): Flow<BaseResult<List<TripResponse>, Failure>>
 }

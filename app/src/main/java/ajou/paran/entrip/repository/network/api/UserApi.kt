@@ -60,11 +60,6 @@ interface UserApi {
         @Path("user_id") user_id: String
     ) : BaseResponse<UserResponse>
 
-    @GET("api/v1/travelSpots/{travelFavorite}/getTravelSpotsWithTravelFavorite")
-    suspend fun findTrip(
-        @Path("travelFavorite") travelFavorite: String?
-    ) : BaseResponse<List<TripResponse>>
-
     // todo : 실패시 202
     @GET("api/v1/planners/{planner_id}/{user_id}/exist")
     suspend fun userIsExistWithPlanner(

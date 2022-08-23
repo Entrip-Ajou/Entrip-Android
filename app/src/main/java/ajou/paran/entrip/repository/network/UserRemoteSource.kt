@@ -57,7 +57,4 @@ constructor(
     suspend fun findByUserId(user_id: String): BaseResponse<UserResponse>
     = userApi.findByUserId(user_id)
 
-    suspend fun getListTrip(travelFavorite: String?): BaseResponse<List<TripResponse>>
-    = userApi.findTrip(travelFavorite)
-
 }

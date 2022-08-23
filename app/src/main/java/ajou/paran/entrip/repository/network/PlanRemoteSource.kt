@@ -30,8 +30,6 @@ class PlanRemoteSource
                         t.title,
                         t.start_date,
                         t.end_date,
-                        t.timeStamp,
-                        t.comment_timeStamp
                     )
                 }
                 BaseResult.Success(planner!!)

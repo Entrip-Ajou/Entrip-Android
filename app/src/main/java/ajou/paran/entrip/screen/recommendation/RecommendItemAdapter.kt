@@ -2,15 +2,11 @@ package ajou.paran.entrip.screen.recommendation
 
 import ajou.paran.entrip.R
 import ajou.paran.entrip.repository.network.dto.TripResponse
-import ajou.paran.entrip.screen.trip.TripTestActivity
 import ajou.paran.entrip.util.ui.RecommendDiffCallback
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -104,10 +100,7 @@ class RecommendItemAdapter
         itemView: View
     ) : RecyclerView.ViewHolder(itemView){
         fun bind(){
-            itemView.findViewById<Button>(R.id.recomAct_testBtn).setOnClickListener {
-                Log.d("[RecommendHeaderItem]", "설문조사 하러 가기 눌림")
-                context.startActivity(Intent(context, TripTestActivity::class.java))
-            }
+
         }
     }
 

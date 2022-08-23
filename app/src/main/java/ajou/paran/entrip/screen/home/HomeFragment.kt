@@ -7,10 +7,8 @@ import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.model.test.nullRecommenItem
 import ajou.paran.entrip.screen.planner.top.PlannerActivity
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
-import ajou.paran.entrip.screen.trip.TripTestActivity
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.ui.RecyclerViewDecoration
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
@@ -19,7 +17,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -50,11 +47,6 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         binding.homeFragBtnRecommendation.setOnClickListener{
             (activity as HomeActivity).changeFrag(RecommendationFragment())
         }
-        binding.homeFRagBtnTest.setOnClickListener{
-            Log.d(TAG, "성향 테스트 버튼 눌림")
-//            startActivity(Intent(context, TripTestActivity::class.java))
-        }
-
         observeState()
         setUpRecyclerView()
     }
@@ -67,6 +59,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
 
         recommendItemAdapter = HomeRecommendAdapter()
         binding.homeFragRvRecommendation.adapter = recommendItemAdapter
+        recommendItemAdapter.submitList(nullRecommenItem)
         binding.homeFragRvRecommendation.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.homeFragRvRecommendation.addItemDecoration(RecyclerViewDecoration(30))
 
@@ -86,9 +79,6 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         viewModel.state.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .onEach{ handleState(it) }
             .launchIn(lifecycleScope)
-
-        viewModel.findByUserId(sharedPreferences.getString("user_id", null).toString())
-        viewModel.recommendItemList.observe(this) { recommendItemAdapter.apply { setList(it) } }
     }
 
     private fun handleState(state : ApiState){

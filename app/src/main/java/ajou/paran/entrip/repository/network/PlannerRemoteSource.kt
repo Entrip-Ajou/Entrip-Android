@@ -33,8 +33,6 @@ class PlannerRemoteSource
                         t.title,
                         t.start_date,
                         t.end_date,
-                        t.timeStamp,
-                        t.comment_timeStamp
                     )
                 }
                 BaseResult.Success(planner!!)
@@ -71,8 +69,6 @@ class PlannerRemoteSource
                     title = t.title,
                     start_date = t.start_date,
                     end_date = t.end_date,
-                    time_stamp = t.time_stamp,
-                    comment_timeStamp = t.comment_timeStamp
                 )
             }
             BaseResult.Success(updatePlanner)
@@ -187,8 +183,6 @@ class PlannerRemoteSource
                         t.title,
                         t.start_date,
                         t.end_date,
-                        t.timeStamp,
-                        t.comment_timeStamp
                     )
                 }
                 BaseResult.Success(planner!!)

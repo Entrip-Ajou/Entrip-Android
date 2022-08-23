@@ -3,7 +3,7 @@ package ajou.paran.entrip.screen.recommendation
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseFragment
 import ajou.paran.entrip.databinding.FragmentRecommendationBinding
-import androidx.fragment.app.viewModels
+import ajou.paran.entrip.model.test.nullRecommenItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -13,8 +13,6 @@ class RecommendationFragment: BaseFragment<FragmentRecommendationBinding>(R.layo
         const val TAG = "[RecommendationFrag]"
     }
 
-    private val viewModel: RecommenFragViewModel by viewModels()
-
     private lateinit var recommendItemAdapter: RecommendItemAdapter
 
     override fun init() {
@@ -23,10 +21,6 @@ class RecommendationFragment: BaseFragment<FragmentRecommendationBinding>(R.layo
             layoutManager = LinearLayoutManager(this.context)
             adapter = recommendItemAdapter
         }
-        viewModel.findByUserId()
-        subscribeObservers()
+        recommendItemAdapter.submitList(nullRecommenItem)
     }
-
-    private fun subscribeObservers()
-    = viewModel.recommendItemList.observe(this) { recommendItemAdapter.apply { setList(it) } }
 }

@@ -73,21 +73,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/homeFrag_text2" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/homeFRag_btn_test"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="48dp"
-            android:background="@drawable/shape_btn_round_recommend"
-            android:text="여행 성향 테스트 하러 가기"
-            android:textColor="#1982e6"
-            android:textSize="16sp"
-            android:textStyle="normal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/homeFrag_rv_recommendation" />
-
         <ProgressBar
             android:id="@+id/homeFrag_pb_loading_bar"
             android:layout_width="wrap_content"

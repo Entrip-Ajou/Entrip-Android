@@ -15,7 +15,7 @@ data class UserResponse(
     @SerializedName("nickname") var nickname: String,
     @SerializedName("gender") var gender: Int,
     @SerializedName("photoUrl") var photoUrl : String,
-    @SerializedName("token") var token : String
+    @SerializedName("token") var token : String,
 )
 
 data class SharingFriend(
