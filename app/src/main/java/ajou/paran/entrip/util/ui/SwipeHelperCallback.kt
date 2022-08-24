@@ -148,4 +148,15 @@ class SwipeHelperCallback(
         return min(newX, max)
     }
 
+    fun removeMyClamp(recyclerView : RecyclerView){
+        if(currentPosition == previousPosition){
+            previousPosition?.let{
+                val viewHolder = recyclerView.findViewHolderForAdapterPosition(it) ?: return
+                getView(viewHolder).animate().x(0f).setDuration(100L).start()
+                getDeleteView(viewHolder).findViewById<LinearLayout>(R.id.ll_item_delete).visibility = View.INVISIBLE
+                setTag(viewHolder, false)
+                previousPosition = null
+            }
+        }
+    }
 }

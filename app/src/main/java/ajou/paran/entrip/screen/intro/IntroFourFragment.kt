@@ -68,7 +68,14 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
 
         binding.introFourActBtnLogin.setOnClickListener{
             Log.d(IntroThreeFragment.TAG, "Case: Click Login")
-            getResult.launch(googleSignInClient.signInIntent)
+            if(!viewModel.isTokenNull()) getResult.launch(googleSignInClient.signInIntent)
+            else{
+                val builder = AlertDialog.Builder(activity!!)
+                builder.setMessage("다시 시도해주세요")
+                    .setPositiveButton("확인",
+                        DialogInterface.OnClickListener{ dialog, which -> })
+                builder.show()
+            }
         }
     }
 

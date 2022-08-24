@@ -112,4 +112,8 @@ constructor(
             }
         }
     }
+
+    fun isTokenNull() : Boolean{
+        return sharedPreferences.getString("token", null).isNullOrEmpty()
+    }
 }
