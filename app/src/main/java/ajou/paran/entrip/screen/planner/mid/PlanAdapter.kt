@@ -15,8 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.activity_planner.view.*
 
 
 private const val FOOTER_VIEW_TYPE = 1
@@ -140,6 +138,8 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
 
             if(planEntity.isExistComments){
                 binding.imgItemComment.setImageResource(R.drawable.comment_event)
+            } else{
+                binding.imgItemComment.setImageResource(R.drawable.comment_default)
             }
 
             binding.imgItemDelete.setOnClickListener{
