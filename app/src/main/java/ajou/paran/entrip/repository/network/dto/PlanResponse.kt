@@ -10,7 +10,6 @@ data class PlanResponse(
     @SerializedName("time") var time: Int,
     @SerializedName("location") var location: String?,
     @SerializedName("planner_id") var planner_idFK: Long,
-    @SerializedName("rgb") var rgb: Int,
     @SerializedName("isExistComments") var isExistComments : Boolean
 )
 

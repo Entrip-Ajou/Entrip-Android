@@ -22,7 +22,6 @@ data class PlanEntity(
     @PrimaryKey(autoGenerate = false) val id: Long,
     val planner_idFK : Long,
     val todo : String,
-    val rgb : Int,
     val time : Int,
     val location : String?,
     val date : String,

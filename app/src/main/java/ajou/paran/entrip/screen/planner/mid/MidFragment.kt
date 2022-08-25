@@ -82,7 +82,6 @@ class MidFragment: Fragment(),PlanAdapter.RowClickListener {
             this.putExtra("isUpdate", true)
             this.putExtra("Id", planEntity.id)
             this.putExtra("Todo",planEntity.todo)
-            this.putExtra("Rgb",planEntity.rgb)
             this.putExtra("Time",planEntity.time)
             this.putExtra("Location",planEntity.location)
             this.putExtra("date", planEntity.date)

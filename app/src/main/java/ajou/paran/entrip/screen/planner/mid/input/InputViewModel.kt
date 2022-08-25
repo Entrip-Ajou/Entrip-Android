@@ -48,10 +48,6 @@ class InputViewModel @Inject constructor(
         MutableLiveData<String?>()
     }
 
-    val rgb : MutableLiveData<Int> by lazy{
-        MutableLiveData<Int>(Color.parseColor("#cfc1c1"))
-    }
-
     val time : MutableLiveData<String?> by lazy{
         MutableLiveData<String?>()
     }
@@ -89,7 +85,6 @@ class InputViewModel @Inject constructor(
                             todo = todo.value!!,
                             time = timeToInt,
                             location = location.value,
-                            RGB = rgb.value!!,
                             planner_idFK = planner_id
                         )
                         val res = planRepository.insertPlan(planRequest)
@@ -111,7 +106,6 @@ class InputViewModel @Inject constructor(
                             todo = todo.value!!,
                             time = timeToInt,
                             location = location.value,
-                            RGB = rgb.value!!
                         )
                         val res = planRepository.updatePlan(update_id, planUpdateRequest)
                         delay(500)

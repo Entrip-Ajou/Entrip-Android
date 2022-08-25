@@ -54,7 +54,7 @@ class PlanRemoteSource
             val response = planApi.insertPlan(plan)
             return if (response.status == 200) {
                 val plan = response.data?.let { t ->
-                    PlanEntity(t.id, t.planner_idFK, t.todo, t.rgb, t.time, t.location, t.date, t.isExistComments)
+                    PlanEntity(t.id, t.planner_idFK, t.todo, t.time, t.location, t.date, t.isExistComments)
                 }
                 BaseResult.Success(plan!!)
             } else {
@@ -102,7 +102,7 @@ class PlanRemoteSource
             val response = planApi.updatePlan(plan_id, plan)
             return if (response.status == 200) {
                 val plan = response.data?.let { t ->
-                    PlanEntity(t.id, t.planner_idFK, t.todo, t.rgb, t.time, t.location, t.date, t.isExistComments)
+                    PlanEntity(t.id, t.planner_idFK, t.todo, t.time, t.location, t.date, t.isExistComments)
                 }
                 BaseResult.Success(plan!!)
             } else {

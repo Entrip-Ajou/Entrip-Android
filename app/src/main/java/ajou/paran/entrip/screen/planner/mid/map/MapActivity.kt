@@ -51,12 +51,10 @@ class MapActivity : AppCompatActivity() {
     private var update_id : Long = -1L
     private var todo : String? = null
     private var location : String? = null
-    private var rgb : Int = -1
     private lateinit var date : String
     private var planner_id : Long = -1L
     private lateinit var selectedPlanner : PlannerEntity
     private var time : Int = -1
-    private var last_select_palette : Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,13 +107,11 @@ class MapActivity : AppCompatActivity() {
             this.putExtra("isUpdate", isUpdate)
             this.putExtra("Id", update_id)
             this.putExtra("Todo",todo)
-            this.putExtra("Rgb",rgb)
             this.putExtra("Time",time)
             this.putExtra("Location",location)
             this.putExtra("date", date)
             this.putExtra("plannerId", planner_id)
             this.putExtra("PlannerEntity", selectedPlanner)
-            this.putExtra("last_select_palette",last_select_palette)
         }
         startActivity(intent)
         finish()
@@ -130,13 +126,11 @@ class MapActivity : AppCompatActivity() {
                         this.putExtra("isUpdate", isUpdate)
                         this.putExtra("Id", update_id)
                         this.putExtra("Todo",todo)
-                        this.putExtra("Rgb",rgb)
                         this.putExtra("Time",time)
                         this.putExtra("Location",location)
                         this.putExtra("date", date)
                         this.putExtra("plannerId", planner_id)
                         this.putExtra("PlannerEntity", selectedPlanner)
-                        this.putExtra("last_select_palette",last_select_palette)
                     }
                     startActivity(intent)
                 }
@@ -155,13 +149,11 @@ class MapActivity : AppCompatActivity() {
                                     this.putExtra("isUpdate", isUpdate)
                                     this.putExtra("Id", update_id)
                                     this.putExtra("Todo",todo)
-                                    this.putExtra("Rgb",rgb)
                                     this.putExtra("Time",time)
                                     this.putExtra("Location",road_address_name)
                                     this.putExtra("date", date)
                                     this.putExtra("plannerId", planner_id)
                                     this.putExtra("PlannerEntity", selectedPlanner)
-                                    this.putExtra("last_select_palette",last_select_palette)
                                 }
                                 startActivity(intent)
                                 finish()
@@ -209,11 +201,9 @@ class MapActivity : AppCompatActivity() {
         update_id = intent.getLongExtra("Id", -1)
         todo = intent.getStringExtra("Todo")
         location = intent.getStringExtra("Location")
-        rgb = intent.getIntExtra("Rgb", Color.parseColor("#cfc1c1"))
         date = intent.getStringExtra("date").toString()
         planner_id = intent.getLongExtra("plannerId", -1)
         selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
         time = intent.getIntExtra("Time", -1)
-        last_select_palette = intent.getIntExtra("last_select_palette",0)
     }
 }

@@ -7,7 +7,6 @@ data class PlanRequest(
     @SerializedName("todo") var todo: String,
     @SerializedName("time") var time: Int,
     @SerializedName("location") var location: String?,
-    @SerializedName("rgb") var RGB: Int,
     @SerializedName("planner_id") var planner_idFK: Long
 )
 
@@ -16,5 +15,4 @@ data class PlanUpdateRequest(
     @SerializedName("todo") var todo: String,
     @SerializedName("time") var time: Int,
     @SerializedName("location") var location: String?,
-    @SerializedName("rgb") var RGB: Int
 )
