@@ -20,6 +20,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -71,9 +72,13 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
             if(!viewModel.isTokenNull()) getResult.launch(googleSignInClient.signInIntent)
             else{
                 val builder = AlertDialog.Builder(activity!!)
-                builder.setMessage("다시 시도해주세요")
+                builder.setMessage("앱을 재시작 해주세요.")
                     .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which -> })
+                        DialogInterface.OnClickListener{ dialog, which ->
+                            activity!!.finishAffinity()
+                            System.runFinalization()
+                            System.exit(0)
+                        })
                 builder.show()
             }
         }

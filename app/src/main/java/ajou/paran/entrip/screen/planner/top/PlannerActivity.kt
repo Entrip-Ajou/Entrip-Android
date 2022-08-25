@@ -34,13 +34,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-
-/**
- * 해당 ?? 생명주기일때 function 호출
- * @OnLifecycleEvent(Lifecycle.EVENT.???)
- * fun method() { }
- */
-
 @AndroidEntryPoint
 class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
     R.layout.activity_planner

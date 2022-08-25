@@ -51,16 +51,6 @@
             android:layout_height="72dp"
             android:background="@drawable/plan_square">
 
-            <ImageView
-                android:id="@+id/iv_rgb"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:layout_marginStart="6dp"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/circle_rgb"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <TextView
                 android:id="@+id/tv_item_time"
                 android:layout_width="wrap_content"

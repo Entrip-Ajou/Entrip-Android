@@ -37,18 +37,6 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
     }
 
     private val viewModel: InputViewModel by viewModels()
-    private val color_list = listOf(
-        Color.parseColor("#cfc1c1"),
-        Color.parseColor("#eca5a5"),
-        Color.parseColor("#fbe1b5"),
-        Color.parseColor("#e3e5a8"),
-        Color.parseColor("#c6d9bf"),
-        Color.parseColor("#c2e6e3"),
-        Color.parseColor("#bcd6e8"),
-        Color.parseColor("#d5d3ef")
-    )
-    private var palette_list = mutableListOf<ImageView>()
-    private var last_select_palette: Int = 0
 
     override fun init(savedInstanceState: Bundle?) {
         binding.inputViewModel = viewModel
@@ -76,7 +64,6 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             viewModel.update_id = intent.getLongExtra("Id", -1)
             viewModel.todo.value = intent.getStringExtra("Todo")
             viewModel.location.value = intent.getStringExtra("Location")
-            viewModel.rgb.value = intent.getIntExtra("Rgb", Color.parseColor("#cfc1c1"))
             viewModel.date = intent.getStringExtra("date").toString()
             viewModel.planner_id = intent.getLongExtra("plannerId", -1)
             viewModel.selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
@@ -114,8 +101,6 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
             viewModel.planner_id = intent.getLongExtra("plannerId", -1)
             viewModel.selectedPlanner = intent.getParcelableExtra("PlannerEntity")!!
         }
-
-        setUpColor()
     }
 
     private fun observeState() {
@@ -181,43 +166,6 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
     }
 
 
-    private fun setUpColor() {
-        var drawable: GradientDrawable =
-            ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-        drawable.setColor(color_list[0])
-        binding.color.setImageDrawable(drawable)
-        palette_list.add(binding.color)
-        drawable = ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-        drawable.setColor(color_list[1])
-        binding.color1.setImageDrawable(drawable)
-        palette_list.add(binding.color1)
-        drawable = ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-        drawable.setColor(color_list[2])
-        binding.color2.setImageDrawable(drawable)
-        palette_list.add(binding.color2)
-        drawable = ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-        drawable.setColor(color_list[3])
-        binding.color3.setImageDrawable(drawable)
-        palette_list.add(binding.color3)
-        drawable = ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-        drawable.setColor(color_list[4])
-        binding.color4.setImageDrawable(drawable)
-        palette_list.add(binding.color4)
-        drawable = ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-        drawable.setColor(color_list[5])
-        binding.color5.setImageDrawable(drawable)
-        palette_list.add(binding.color5)
-        drawable = ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-        drawable.setColor(color_list[6])
-        binding.color6.setImageDrawable(drawable)
-        palette_list.add(binding.color6)
-        drawable = ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-        drawable.setColor(color_list[7])
-        binding.color7.setImageDrawable(drawable)
-        palette_list.add(binding.color7)
-        initPaletteStroke()
-    }
-
     // backButton, time, location 클릭 이벤트 처리
     fun input_click(v: View) {
         when (v.id) {
@@ -259,111 +207,14 @@ class InputActivity : BaseActivity<ActivityInputBinding>(
                     this.putExtra("isUpdate", true)
                     this.putExtra("Id", viewModel.update_id)
                     this.putExtra("Todo", viewModel.todo.value)
-                    this.putExtra("Rgb", viewModel.rgb.value)
                     this.putExtra("Time", timeToInt)
                     this.putExtra("Location", viewModel.location.value)
                     this.putExtra("date", viewModel.date)
                     this.putExtra("plannerId", viewModel.selectedPlanner.planner_id)
                     this.putExtra("PlannerEntity", viewModel.selectedPlanner)
-                    this.putExtra("last_select_palette", last_select_palette)
                 }
                 startActivity(intent)
             }
         }
-    }
-
-    // 색상 선택
-    fun selectPalette(v: View) {
-        when (v.id) {
-            binding.color.id -> {
-                val drawable: GradientDrawable =
-                    ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-                drawable.setColor(Color.parseColor("#cfc1c1"))
-                last_select_palette = 0
-                lockPaletteStroke(last_select_palette)
-                binding.color.setImageDrawable(drawable)
-                viewModel.rgb.value = Color.parseColor("#cfc1c1")
-            }
-            binding.color1.id -> {
-                val drawable: GradientDrawable =
-                    ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-                drawable.setColor(Color.parseColor("#eca5a5"))
-                last_select_palette = 1
-                lockPaletteStroke(last_select_palette)
-                binding.color1.setImageDrawable(drawable)
-                viewModel.rgb.value = Color.parseColor("#eca5a5")
-            }
-            binding.color2.id -> {
-                val drawable: GradientDrawable =
-                    ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-                drawable.setColor(Color.parseColor("#fbe1b5"))
-                last_select_palette = 2
-                lockPaletteStroke(last_select_palette)
-                binding.color2.setImageDrawable(drawable)
-                viewModel.rgb.value = Color.parseColor("#fbe1b5")
-            }
-            binding.color3.id -> {
-                val drawable: GradientDrawable =
-                    ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-                drawable.setColor(Color.parseColor("#e3e5a8"))
-                last_select_palette = 3
-                lockPaletteStroke(last_select_palette)
-                binding.color3.setImageDrawable(drawable)
-                viewModel.rgb.value = Color.parseColor("#e3e5a8")
-            }
-            binding.color4.id -> {
-                val drawable: GradientDrawable =
-                    ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-                drawable.setColor(Color.parseColor("#c6d9bf"))
-                last_select_palette = 4
-                lockPaletteStroke(last_select_palette)
-                binding.color4.setImageDrawable(drawable)
-                viewModel.rgb.value = Color.parseColor("#c6d9bf")
-            }
-            binding.color5.id -> {
-                val drawable: GradientDrawable =
-                    ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-                drawable.setColor(Color.parseColor("#c2e6e3"))
-                last_select_palette = 5
-                lockPaletteStroke(last_select_palette)
-                binding.color5.setImageDrawable(drawable)
-                viewModel.rgb.value = Color.parseColor("#c2e6e3")
-            }
-            binding.color6.id -> {
-                val drawable: GradientDrawable =
-                    ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-                drawable.setColor(Color.parseColor("#bcd6e8"))
-                last_select_palette = 6
-                lockPaletteStroke(last_select_palette)
-                binding.color6.setImageDrawable(drawable)
-                viewModel.rgb.value = Color.parseColor("#bcd6e8")
-            }
-            binding.color7.id -> {
-                val drawable: GradientDrawable =
-                    ContextCompat.getDrawable(this, R.drawable.circle_rgb_input) as GradientDrawable
-                drawable.setColor(Color.parseColor("#d5d3ef"))
-                last_select_palette = 7
-                lockPaletteStroke(last_select_palette)
-                binding.color7.setImageDrawable(drawable)
-                viewModel.rgb.value = Color.parseColor("#d5d3ef")
-            }
-        }
-    }
-
-    private fun initPaletteStroke() {
-        color_list.forEachIndexed { index, it ->
-            if (it == viewModel.rgb.value) {
-                (palette_list[index].drawable as GradientDrawable).setStroke(5, Color.parseColor("#0d82eb"))
-            } else {
-                (palette_list[index].drawable as GradientDrawable).setStroke(2, Color.parseColor("#000000"))
-            }
-        }
-    }
-
-    private fun lockPaletteStroke(index: Int) {
-        palette_list.forEach {
-            (it.drawable as GradientDrawable).setStroke(2, Color.parseColor("#000000"))
-        }
-        (palette_list[index].drawable as GradientDrawable).setStroke(5, Color.parseColor("#0d82eb"))
     }
 }

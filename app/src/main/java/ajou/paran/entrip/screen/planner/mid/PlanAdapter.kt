@@ -132,10 +132,6 @@ class PlanAdapter(val listener: RowClickListener) : ListAdapter<PlanEntity, Recy
 
             binding.tvItemTodo.text = planEntity.todo
 
-            val drawable: GradientDrawable = ContextCompat.getDrawable(this.itemView.context, R.drawable.circle_rgb) as GradientDrawable
-            drawable.setColor(planEntity.rgb)
-            binding.ivRgb.setImageDrawable(drawable)
-
             if(planEntity.isExistComments){
                 binding.imgItemComment.setImageResource(R.drawable.comment_event)
             } else{

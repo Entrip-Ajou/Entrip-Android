@@ -74,9 +74,9 @@ constructor(
         return if (deletePlanner is BaseResult.Success) {
             planDao.deletePlanner(plannerId)
             userDao.deleteWaitWithPlannerId(plannerId)
-            return BaseResult.Success(deletePlanner.data)
+            BaseResult.Success(deletePlanner.data)
         } else {
-            return BaseResult.Error(
+            BaseResult.Error(
                 Failure(
                     (deletePlanner as BaseResult.Error).err.code,
                     deletePlanner.err.message
@@ -111,7 +111,9 @@ constructor(
                 savePlanToLocal(res.data, planner_id)
                 return BaseResult.Success(Unit)
             }
-            is BaseResult.Error -> return BaseResult.Error(Failure(res.err.code, res.err.message))
+            is BaseResult.Error -> {
+                return BaseResult.Error(Failure(res.err.code, res.err.message))
+            }
         }
     }
 
