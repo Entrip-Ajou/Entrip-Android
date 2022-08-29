@@ -166,7 +166,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
      * @Made: Jeon
      * **/
     private fun initDateRecyclerView(date : String) = binding.plannerActRv1.apply {
-        dateRecyclerViewAdapter = DateRecyclerViewAdapter(midFragment, date)
+        dateRecyclerViewAdapter = DateRecyclerViewAdapter(midFragment)
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         adapter = dateRecyclerViewAdapter
     }

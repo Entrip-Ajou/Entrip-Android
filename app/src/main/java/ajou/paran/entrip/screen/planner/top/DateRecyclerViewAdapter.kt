@@ -20,33 +20,20 @@ import androidx.recyclerview.widget.RecyclerView
 class DateRecyclerViewAdapter
 constructor(
     private val midFragment: MidFragment,
-    private val _date : String
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var selectedItemPos = -1
+    private var selectedItemPos = 0
     private var lastItemSelectedPos = 0
     private var dateItemList: List<PlannerDate>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
-    = DateItemViewHolder(
+            = DateItemViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.item_layout_date, parent, false)
     )
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val selectedDate = PlannerDate(_date)
-
-        if (dateItemList!!.get(position) == selectedDate && selectedItemPos == -1){
-            (holder as DateItemViewHolder).selected()
-            selectedItemPos = holder.adapterPosition
-            lastItemSelectedPos = holder.adapterPosition
-        }
-        else if(selectedItemPos != -1 && position == selectedItemPos){
-            (holder as DateItemViewHolder).selected()
-        }
-        else{
-            (holder as DateItemViewHolder).defaultSelected()
-        }
-
+        if(position == selectedItemPos) (holder as DateItemViewHolder).selected()
+        else (holder as DateItemViewHolder).defaultSelected()
         dateItemList?.let { holder.bind(it[position]) }
     }
 
@@ -55,6 +42,7 @@ constructor(
     @SuppressLint("NotifyDataSetChanged")
     fun submitList(list: List<PlannerDate>?){
         dateItemList = list
+        selectedItemPos = 0
         notifyDataSetChanged()
     }
 
@@ -66,22 +54,14 @@ constructor(
             itemView.findViewById<TextView>(R.id.itemLayout_tv_month).text = "${month.toInt()}월"
             itemView.findViewById<TextView>(R.id.itemLayout_tv_day).text = day
             itemView.setOnClickListener {
-                Log.d("DateRecyclerViewAdapter", "Click Case: $month 월 $day 일")
-                // 해당 부분에서 플래너 날짜별 세부 내용과 연동 필요
+                lastItemSelectedPos = selectedItemPos
                 selectedItemPos = adapterPosition
 
-                lastItemSelectedPos = when(lastItemSelectedPos) {
-                    -1 -> {
-                        selectedItemPos
-                    }
-                    else -> {
-                        notifyItemChanged(lastItemSelectedPos)
-                        selectedItemPos
-                    }
+                if(lastItemSelectedPos != selectedItemPos){
+                    notifyItemChanged(lastItemSelectedPos)
+                    notifyItemChanged(selectedItemPos)
+                    midFragment.setAdapter(date = plannerDate.date)
                 }
-
-                notifyItemChanged(selectedItemPos)
-                midFragment.setAdapter(date = plannerDate.date)
             }
         }
 
