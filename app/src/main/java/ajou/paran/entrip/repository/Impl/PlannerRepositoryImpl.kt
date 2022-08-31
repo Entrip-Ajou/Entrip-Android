@@ -165,6 +165,9 @@ constructor(
         planDao.insertAllPlan(plans)
     }
 
+    fun updateIsExistComments(isExistComments : Boolean, plan_id : Long){
+        planDao.updateIsExistComments(isExistComments, plan_id)
+    }
 }
 
 

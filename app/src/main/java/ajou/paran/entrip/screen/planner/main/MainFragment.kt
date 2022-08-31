@@ -118,6 +118,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main),
         val intent = Intent(activity, PlannerActivity::class.java)
         intent.putExtra("PlannerEntity", plannerEntity)
         startActivity(intent)
+        activity!!.finish()
     }
 
     override fun onPlannerAddClickListener() {

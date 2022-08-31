@@ -12,7 +12,8 @@ import com.bumptech.glide.Glide
 
 class CommentAdapter
 constructor(
-    val listener: CommentItemClickListener
+    val listener: CommentItemClickListener,
+    val plan_id: Long
 ) : ListAdapter<CommentResponse, RecyclerView.ViewHolder>(CommentDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -34,7 +35,7 @@ constructor(
                 commentLayout.setOnLongClickListener {
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
-                        listener.onCommentLongClickListener(getItem(position))
+                        listener.onCommentLongClickListener(getItem(position), plan_id)
                     }
                     true
                 }
@@ -51,7 +52,7 @@ constructor(
     }
 
     interface CommentItemClickListener {
-        fun onCommentLongClickListener(commentResponse: CommentResponse)
+        fun onCommentLongClickListener(commentResponse: CommentResponse, plan_id : Long)
     }
 }
 

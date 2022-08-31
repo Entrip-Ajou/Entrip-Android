@@ -55,9 +55,9 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
         binding = ActivityCommentBinding.inflate(layoutInflater)
         val view = binding.root
         observeState()
-        setContentView(view)
-        setUpRecyclerView()
         init()
+        setContentView(view)
+        setUpRecyclerView(selectedPlan.id)
     }
 
     fun init() {
@@ -114,8 +114,8 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
         }
     }
 
-    private fun setUpRecyclerView() {
-        val commentAdapter = CommentAdapter(this)
+    private fun setUpRecyclerView(plan_id : Long) {
+        val commentAdapter = CommentAdapter(this, plan_id)
         binding.rvComment.apply{
             adapter = commentAdapter
             addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
@@ -173,6 +173,18 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
                 builder.show()
             }
 
+
+            202 -> {
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("다른 사용자에 의해 삭제된 플랜입니다.")
+                    .setPositiveButton("돌아가기",
+                        DialogInterface.OnClickListener { dialog, which ->
+                            dialog.dismiss()
+                            onBackPressed()
+                        })
+                builder.show()
+            }
+
             -1 -> {
                 Log.e(TAG, "최상위 Exception class에서 예외 발생 -> 코드 로직 오류")
             }
@@ -206,13 +218,14 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
         }
     }
 
-    override fun onCommentLongClickListener(commentResponse: CommentResponse) {
-        if (sharedPreferences.getString("user_id", null).toString() == commentResponse.user_id) {
+    override fun onCommentLongClickListener(commentResponse: CommentResponse, plan_id : Long) {
+        val user_id = sharedPreferences.getString("user_id", null)?.toString()
+        if (user_id == commentResponse.user_id) {
             val builder = AlertDialog.Builder(this)
             builder.setMessage("삭제하시겠습니까?")
                 .setPositiveButton("확인",
                     DialogInterface.OnClickListener { dialog, which ->
-                        viewModel.deleteComment(commentResponse.comment_id)
+                        viewModel.deleteComment(user_id ,commentResponse.comment_id, plan_id)
                     })
                 .setNegativeButton("취소",
                     DialogInterface.OnClickListener { dialog, which -> }

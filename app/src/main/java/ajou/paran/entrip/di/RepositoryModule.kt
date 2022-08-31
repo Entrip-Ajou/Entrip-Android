@@ -118,4 +118,10 @@ object RepositoryModule {
     fun provideRecommendRepository() : RecommendRepository{
         return RecommendRepositoryImpl()
     }
+
+    @Provides
+    @Singleton
+    fun provideCommentRepository(commentRemoteSource: CommentRemoteSource, planDao : PlanDao) : CommentRepository{
+        return CommentRepositoryImpl(commentRemoteSource, planDao)
+    }
 }

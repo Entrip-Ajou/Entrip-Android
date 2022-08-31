@@ -125,11 +125,15 @@ class InputViewModel @Inject constructor(
 
     fun sendPlanChangeMessage(sender : String, content : Int, planner_id : Long, date: String){
         val data = JSONObject()
-        data.put("type", "CHAT")
-        data.put("content", content)
-        data.put("sender", sender)
-        data.put("planner_id", planner_id)
-        data.put("date", date)
+        data.apply {
+            put("type", "CHAT")
+            put("content", content)
+            put("sender", sender)
+            put("planner_id", planner_id)
+            put("date", date)
+            put("plan_id", null)
+            put("isExistComments", null)
+        }
         stompClient.send("/app/chat.sendMessage", data.toString()).subscribe()
 
         Log.e("[WebSocket]", "<Plan update>  + Planner_id : "+planner_id)

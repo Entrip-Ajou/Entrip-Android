@@ -5,17 +5,21 @@ import ajou.paran.entrip.model.WebSocketMessage
 import ajou.paran.entrip.repository.Impl.PlannerRepositoryImpl
 import ajou.paran.entrip.repository.network.dto.PlannerUpdateRequest
 import ajou.paran.entrip.util.network.BaseResult
+import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
-import androidx.annotation.NonNull
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.json.JSONObject
 import ua.naiksoftware.stomp.StompClient
+import ua.naiksoftware.stomp.dto.LifecycleEvent
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,13 +28,15 @@ class PlannerActivityViewModel
 constructor(
     private val plannerRepository: PlannerRepositoryImpl,
     val stompClient: StompClient,
-    private val sharedPreferences: SharedPreferences
-) : ViewModel() {
+    private val sharedPreferences: SharedPreferences,
+    application : Application
+) : AndroidViewModel(application) {
     companion object {
         private const val TAG = "[PlannerActViewModel]"
     }
 
     private val gson = Gson()
+    private val context = getApplication<Application>().applicationContext
 
     val userId: String
     get() = sharedPreferences.getString("user_id", null) ?: ""
@@ -110,7 +116,7 @@ constructor(
         }
     }
 
-    fun runStomp(planner_id: Long) {
+    @Synchronized fun runStomp(planner_id: Long) {
         stompClient.topic("/topic/public/" + planner_id).subscribe { topicMessage ->
             Log.i("[WebSocket]", "message Receive" + topicMessage.payload)
             val messageDto = gson.fromJson(topicMessage.payload, WebSocketMessage::class.java)
@@ -125,10 +131,86 @@ constructor(
                         val date = messageDto.date.substring(0, 4) + messageDto.date.substring(5, 7) + messageDto.date.substring(8, 10)
                         fetchPlan(planner_id, date)
                     }
+
+                    2 -> {
+                        plannerRepository.updateIsExistComments(messageDto.isExistComments, messageDto.plan_id)
+                    }
                 }
             }
         }
         stompClient.connect()
+
+        stompClient.lifecycle().subscribe{ lifecycleEvent ->
+            when(lifecycleEvent.type){
+                LifecycleEvent.Type.OPENED -> {
+                    Log.i(TAG, "OPEND!!")
+                }
+                LifecycleEvent.Type.CLOSED -> {
+                    Log.i(TAG, "CLOSED!!")
+//                    CoroutineScope(Dispatchers.Default).launch{
+//                        while(true){
+//                            if(isConnected()) {
+//                                //reconnectStomp(planner_id)
+//                                break;
+//                            }else delay(1000)
+//                        }
+//                    }
+                }
+                LifecycleEvent.Type.ERROR -> {
+                    Log.i(TAG, "ERROR!!")
+                    Log.e(TAG, "CONNECT ERROR "+lifecycleEvent.exception.toString())
+                }
+
+                LifecycleEvent.Type.FAILED_SERVER_HEARTBEAT -> {
+                    Log.i(TAG, "FAILED_SERVER_HEARTBEAT")
+                }
+
+                else ->{
+                    Log.i(TAG, "ELSE "+lifecycleEvent.message)
+                }
+            }
+        }
+    }
+
+    @Synchronized fun reconnectStomp(planner_id : Long){
+        stompClient.topic("/topic/public/" + planner_id).subscribe { topicMessage ->
+            Log.i("[WebSocket]", "message Receive" + topicMessage.payload)
+            val messageDto = gson.fromJson(topicMessage.payload, WebSocketMessage::class.java)
+
+            if (userId != messageDto.sender) {
+                when (messageDto.content) {
+                    0 -> {
+                        fetchPlanner(planner_id)
+                    }
+
+                    1 -> {
+                        val date = messageDto.date.substring(0, 4) + messageDto.date.substring(5, 7) + messageDto.date.substring(8, 10)
+                        fetchPlan(planner_id, date)
+                    }
+
+                    2 -> {
+                        plannerRepository.updateIsExistComments(messageDto.isExistComments, messageDto.plan_id)
+                    }
+                }
+            }
+        }
+        stompClient.connect()
+    }
+
+    private fun isConnected() : Boolean{
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            val network = connectivityManager.activeNetwork ?: return false
+            val actNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+            return when{
+                actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                else -> false
+            }
+        }else{
+            val nwInfo = connectivityManager.activeNetworkInfo ?: return false
+            return nwInfo.isConnected
+        }
     }
 
     fun fetchPlanner(planner_id: Long) {
@@ -159,11 +241,15 @@ constructor(
 
     fun sendPlannerChangeMessage(sender: String, content: Int, planner_id: Long) {
         val data = JSONObject()
-        data.put("type", "CHAT")
-        data.put("content", content)
-        data.put("sender", sender)
-        data.put("planner_id", planner_id)
-        data.put("date", null)
+        data.apply {
+            put("type", "CHAT")
+            put("content", content)
+            put("sender", sender)
+            put("planner_id", planner_id)
+            put("date", null)
+            put("plan_id", null)
+            put("isExistComments", null)
+        }
         stompClient.send("/app/chat.sendMessage", data.toString()).subscribe()
         Log.i("[WebSocket]", "<Planner update> + Planner_id : " + planner_id)
     }
@@ -187,7 +273,6 @@ constructor(
             delay(500)
             hideLoading()
         }
-
     }
 }
 

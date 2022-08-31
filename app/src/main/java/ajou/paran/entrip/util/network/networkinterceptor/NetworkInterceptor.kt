@@ -16,18 +16,18 @@ class NetworkInterceptor constructor(private val context: Context) : Interceptor
         return chain.proceed(req)
     }
 
-    private fun isConnected() : Boolean{
-        val connectivitymanager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    fun isConnected() : Boolean{
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            val network = connectivitymanager.activeNetwork ?: return false
-            val actNetwork = connectivitymanager.getNetworkCapabilities(network) ?: return false
+            val network = connectivityManager.activeNetwork ?: return false
+            val actNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
             return when{
                 actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
                 actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
                 else -> false
             }
         }else{
-            val nwInfo = connectivitymanager.activeNetworkInfo ?: return false
+            val nwInfo = connectivityManager.activeNetworkInfo ?: return false
             return nwInfo.isConnected
         }
     }

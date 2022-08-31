@@ -45,4 +45,7 @@ interface PlanDao {
 
     @Query("DELETE FROM 'plan' WHERE planner_idFK = :planner_id AND date= :date")
     fun deletePlanWithDate(planner_id : Long, date : String)
+
+    @Query("UPDATE 'plan' SET isExistComments = :isExistComments WHERE id = :plan_id")
+    fun updateIsExistComments(isExistComments : Boolean, plan_id : Long)
 }

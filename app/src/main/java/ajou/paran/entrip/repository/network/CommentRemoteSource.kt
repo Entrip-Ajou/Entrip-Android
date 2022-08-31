@@ -1,6 +1,7 @@
 package ajou.paran.entrip.repository.network
 
 import ajou.paran.entrip.repository.network.api.CommentApi
+import ajou.paran.entrip.repository.network.dto.CommentPlanResponse
 import ajou.paran.entrip.repository.network.dto.CommentRequest
 import ajou.paran.entrip.repository.network.dto.CommentResponse
 import ajou.paran.entrip.util.network.BaseResult
@@ -19,23 +20,11 @@ constructor(
         const val TAG = "[CommentRemote]"
     }
 
-    suspend fun insertComment(commentRequest: CommentRequest): BaseResult<List<CommentResponse>, Failure> {
+    suspend fun insertComment(commentRequest: CommentRequest): BaseResult<CommentPlanResponse, Failure> {
         try {
             val response = commentApi.insertComment(commentRequest)
             return if (response.status == 200) {
-                val comments = mutableListOf<CommentResponse>()
-                response.data?.forEach { t ->
-                    comments.add(
-                        CommentResponse(
-                            comment_id = t.comment_id,
-                            user_id = t.user_id,
-                            content = t.content,
-                            photoUrl = t.photoUrl,
-                            nickname = t.nickname
-                        )
-                    )
-                }
-                BaseResult.Success(comments)
+                BaseResult.Success(response.data)
             } else {
                 Log.e(TAG, "Err code = "+response.status+ " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))
@@ -52,23 +41,11 @@ constructor(
         }
     }
 
-    suspend fun deleteComment(comment_id: Long): BaseResult<List<CommentResponse>, Failure> {
+    suspend fun deleteComment(comment_id: Long): BaseResult<CommentPlanResponse, Failure> {
         try {
             val response = commentApi.deleteComment(comment_id)
             return if (response.status == 200) {
-                val comments = mutableListOf<CommentResponse>()
-                response.data?.forEach { t ->
-                    comments.add(
-                        CommentResponse(
-                            comment_id = t.comment_id,
-                            user_id = t.user_id,
-                            content = t.content,
-                            photoUrl = t.photoUrl,
-                            nickname = t.nickname
-                        )
-                    )
-                }
-                BaseResult.Success(comments)
+                BaseResult.Success(response.data)
             } else {
                 Log.e(TAG, "Err code = "+response.status+ " Err message = " + response.message)
                 BaseResult.Error(Failure(response.status, response.message))

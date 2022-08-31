@@ -378,7 +378,7 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
 
     override fun onDestroy()
     {
-        viewModel.stompClient.disconnect()
         super.onDestroy()
+        viewModel.stompClient.disconnect()
     }
 }
