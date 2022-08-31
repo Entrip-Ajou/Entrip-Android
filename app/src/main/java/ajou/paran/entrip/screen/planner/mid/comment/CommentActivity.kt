@@ -104,7 +104,7 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
                     val user_id = sharedPreferences.getString("user_id", null)!!
                     val content = binding.etComment.text.toString()
                     val plan_id = selectedPlan.id
-                    viewModel.insertComment(user_id, content, plan_id)
+                    viewModel.insertComment(user_id, content, plan_id, selectedPlannner.planner_id)
                     binding.etComment.setText("")
                 }
                 true
@@ -208,7 +208,7 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
                         val user_id = sharedPreferences.getString("user_id", null)!!
                         val content = binding.etComment.text.toString()
                         val plan_id = selectedPlan.id
-                        viewModel.insertComment(user_id, content, plan_id)
+                        viewModel.insertComment(user_id, content, plan_id, selectedPlannner.planner_id)
                         binding.etComment.setText("")
                     }
                 }
@@ -225,7 +225,7 @@ class CommentActivity : AppCompatActivity(), CommentAdapter.CommentItemClickList
             builder.setMessage("삭제하시겠습니까?")
                 .setPositiveButton("확인",
                     DialogInterface.OnClickListener { dialog, which ->
-                        viewModel.deleteComment(user_id ,commentResponse.comment_id, plan_id)
+                        viewModel.deleteComment(user_id ,commentResponse.comment_id, plan_id, selectedPlannner.planner_id)
                     })
                 .setNegativeButton("취소",
                     DialogInterface.OnClickListener { dialog, which -> }

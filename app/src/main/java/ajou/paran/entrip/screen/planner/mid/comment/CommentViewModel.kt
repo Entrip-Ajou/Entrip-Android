@@ -34,14 +34,14 @@ constructor(
         _state.value = ApiState.IsLoading(false)
     }
 
-    fun insertComment(user_id : String, content : String, plan_id : Long){
+    fun insertComment(user_id : String, content : String, plan_id : Long, planner_id : Long){
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
             val res = commentRepository.insertComment(user_id, content, plan_id)
             when(res){
                 is BaseResult.Success -> {
                     _state.value = ApiState.Success(res.data)
-                    sendCommentChangeMessage(user_id, 2, plan_id, true)
+                    sendCommentChangeMessage(user_id, 2, planner_id, plan_id, true)
                 }
                 is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
             }
@@ -50,14 +50,14 @@ constructor(
         }
     }
 
-    fun deleteComment(user_id : String, comment_id : Long, plan_id: Long){
+    fun deleteComment(user_id : String, comment_id : Long, plan_id: Long, planner_id : Long){
         viewModelScope.launch(Dispatchers.IO){
             setLoading()
             val res = commentRepository.deleteComment(comment_id, plan_id)
             when(res){
                 is BaseResult.Success -> {
                     _state.value = ApiState.Success(res.data)
-                    sendCommentChangeMessage(user_id, 2, plan_id, !res.data.isNullOrEmpty())
+                    sendCommentChangeMessage(user_id, 2,planner_id, plan_id, !res.data.isNullOrEmpty())
                 }
                 is BaseResult.Error -> _state.value = ApiState.Failure(res.err.code)
             }
@@ -79,17 +79,18 @@ constructor(
         }
     }
 
-    fun sendCommentChangeMessage(sender : String, content : Int, plan_id : Long, isExistComments : Boolean){
+    fun sendCommentChangeMessage(sender : String, content : Int, planner_id : Long, plan_id : Long, isExistComments : Boolean){
         val data = JSONObject()
         data.apply {
             put("type", "CHAT")
             put("content", content)
             put("sender", sender)
-            put("planner_id", null)
+            put("planner_id", planner_id)
             put("date", null)
             put("plan_id", plan_id)
             put("isExistComments", isExistComments)
         }
+        Log.e("[TEST]", data.toString())
         stompClient.send("/app/chat.sendMessage", data.toString()).subscribe()
 
         Log.e("[WebSocket]", "<Comment update>  + Plan_id : "+plan_id)
