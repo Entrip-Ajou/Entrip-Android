@@ -11,6 +11,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -28,6 +29,10 @@ object RepositoryModule {
     fun provideUserRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : UserApi {
         return retrofit.create(UserApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideCommunityApi(@NetworkModule.Entrip retrofit: Retrofit): CommunityApi = retrofit.create(CommunityApi::class.java)
 
     @Provides
     @Singleton
@@ -64,6 +69,10 @@ object RepositoryModule {
     fun provideUserRemoteSource(userApi: UserApi) : UserRemoteSource {
         return UserRemoteSource(userApi)
     }
+
+    @Provides
+    @Singleton
+    fun provideCommunityRemoteSource(communityApi: CommunityApi): CommunityRemoteSource = CommunityRemoteSource(communityApi)
 
     @Provides
     @Singleton
@@ -118,4 +127,10 @@ object RepositoryModule {
     fun provideRecommendRepository() : RecommendRepository{
         return RecommendRepositoryImpl()
     }
+
+    @Provides
+    @Singleton
+    fun provideCommunityRepository(communityRemoteSource: CommunityRemoteSource): CommunityRepository = CommunityRepositoryImpl(communityRemoteSource)
+
+
 }

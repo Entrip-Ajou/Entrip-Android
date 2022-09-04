@@ -1,0 +1,9 @@
+package ajou.paran.entrip.model
+
+import android.net.Uri
+
+data class Media(
+    val uri: Uri,
+    val isVideo: Boolean,
+    val date: Long,
+)

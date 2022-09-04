@@ -6,17 +6,19 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/image_intro_last">
+        >
+<!--        android:background="@drawable/image_intro_last"-->
 
         <ImageView
             android:id="@+id/introFourAct_text"
             android:layout_width="280dp"
             android:layout_height="106dp"
             android:layout_marginTop="160dp"
-            android:src="@drawable/image_intro_last_text"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+<!--        android:src="@drawable/image_intro_last_text"-->
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/introFourAct_btn_login"

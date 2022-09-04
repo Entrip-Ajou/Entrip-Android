@@ -126,6 +126,7 @@ class MidFragment: Fragment(),PlanAdapter.RowClickListener {
                 }
                 .collect {
                     viewModel.hideLoading()
+                    swipeHelperCallback.removeMyClamp(binding.rvPlan)
                     planAdapter.submitList(it.toList())
                 }
         }

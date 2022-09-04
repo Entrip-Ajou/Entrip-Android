@@ -23,7 +23,7 @@ class IntroThreeFragment: BaseFragment<FragmentIntroThreeBinding>(R.layout.fragm
 
     override fun onResume() {
         super.onResume()
-        animation()
+//        animation()
     }
 
     private fun animation() = CoroutineScope(Dispatchers.Main).launch {

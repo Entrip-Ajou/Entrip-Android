@@ -6,6 +6,7 @@ import ajou.paran.entrip.databinding.ActivityHomeBinding
 import ajou.paran.entrip.model.InviteEntity
 import ajou.paran.entrip.repository.network.dto.NotificationData
 import ajou.paran.entrip.repository.network.dto.PushNotification
+import ajou.paran.entrip.screen.community.main.CommunityFragment
 import ajou.paran.entrip.screen.planner.main.MainFragment
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.util.ApiState
@@ -31,12 +32,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import android.content.pm.PackageManager
-
-import android.content.pm.PackageInfo
-import android.util.Base64
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 
 @AndroidEntryPoint
 class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), InviteAdapter.TextViewClickListner {
@@ -88,25 +83,29 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
         binding.homeActBottomNav.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.nav_home -> {
+                    binding.homeActTop.visibility = View.VISIBLE
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.homeAct_nav_host_container, HomeFragment()).commit()
                     true
                 }
                 R.id.nav_planner -> {
+                    binding.homeActTop.visibility = View.VISIBLE
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.homeAct_nav_host_container, MainFragment()).commit()
                     true
                 }
                 R.id.nav_recommendation -> {
+                    binding.homeActTop.visibility = View.VISIBLE
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.homeAct_nav_host_container, RecommendationFragment()).commit()
                     true
                 }
-//                R.id.nav_board -> {
-//                    supportFragmentManager.beginTransaction()
-//                        .replace(R.id.homeAct_nav_host_container, CommunityFragment()).commit()
-//                    true
-//                }
+                R.id.nav_board -> {
+                    binding.homeActTop.visibility = View.GONE
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.homeAct_nav_host_container, CommunityFragment()).commit()
+                    true
+                }
                 else -> false
             }
         }

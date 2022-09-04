@@ -141,4 +141,8 @@ dependencies {
 
     //okhttp
     implementation 'com.squareup.okhttp3:okhttp:4.9.2'
+
+    //coil
+    implementation("io.coil-kt:coil:1.4.0")
+    implementation("io.coil-kt:coil-video:1.4.0")
 }

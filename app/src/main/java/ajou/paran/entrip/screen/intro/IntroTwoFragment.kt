@@ -23,7 +23,7 @@ class IntroTwoFragment: BaseFragment<FragmentIntroTwoBinding>(R.layout.fragment_
 
     override fun onResume() {
         super.onResume()
-        animating()
+//        animating()
     }
 
     private fun animating() = CoroutineScope(Dispatchers.Main).launch {
