@@ -2,11 +2,17 @@ package ajou.paran.entrip.screen.community
 
 import ajou.paran.entrip.databinding.ItemBoardImageListBinding
 import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 
 class BoardImageAdapter : ListAdapter<ResponseFindByIdPhoto, RecyclerView.ViewHolder>(
     BoardImageDiffCallback()
@@ -38,8 +44,14 @@ class BoardImageAdapter : ListAdapter<ResponseFindByIdPhoto, RecyclerView.ViewHo
     ): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ResponseFindByIdPhoto) {
+            val circularProgressDrawable = CircularProgressDrawable(binding.root.context)
+            circularProgressDrawable.strokeWidth = 5f
+            circularProgressDrawable.centerRadius = 30f
+            circularProgressDrawable.start()
+
             Glide.with(binding.root)
                 .load(item.photoUrl)
+                .placeholder(circularProgressDrawable)
                 .override(300,300)
                 .centerCrop()
                 .into(binding.itemBoardImage)

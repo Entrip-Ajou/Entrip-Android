@@ -3,8 +3,16 @@ package ajou.paran.entrip.screen.community.create
 import ajou.paran.entrip.repository.Impl.CommunityRepositoryImpl
 import ajou.paran.entrip.repository.network.dto.community.RequestPost
 import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
+import ajou.paran.entrip.util.bitmapQualityResize
 import ajou.paran.entrip.util.buildImageBodyPart
+import ajou.paran.entrip.util.convertBitmapToFile
+import android.content.ContentResolver
+import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.*
 import javax.inject.Inject
 
@@ -49,11 +58,37 @@ constructor(
 
     //endregion
 
-    fun postPhoto(file: File, priority: Long = 1L) = CoroutineScope(Dispatchers.IO).launch {
-        val photoId = communityRepositoryImpl.savePhoto(priority, file.buildImageBodyPart())
-        photoMap[priority] = photoId
+    fun postPhoto(
+        uri: Uri,
+        contentResolver: ContentResolver,
+        context: Context,
+        priority: Long = 1L
+    ) = CoroutineScope(Dispatchers.IO).launch {
+        photoMap[priority] = -1L
         _photoIdList.postValue(photoMap.values.toList())
-        Log.d(TAG, "photoID: $photoId, Priority: $priority")
+
+        if (Build.VERSION.SDK_INT < 28) {
+            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            val file = bitmap.convertBitmapToFile(getFileName(), context).bitmapQualityResize()
+
+            withContext(Dispatchers.IO) {
+                val photoId = communityRepositoryImpl.savePhoto(priority, file.buildImageBodyPart())
+                photoMap[priority] = photoId
+                _photoIdList.postValue(photoMap.values.toList())
+                Log.d(TAG, "photoID: $photoId, Priority: $priority")
+            }
+        } else {
+            val source = ImageDecoder.createSource(contentResolver, uri)
+            val bitmap = ImageDecoder.decodeBitmap(source)
+            val file = bitmap.convertBitmapToFile(getFileName(), context).bitmapQualityResize()
+
+            withContext(Dispatchers.IO) {
+                val photoId = communityRepositoryImpl.savePhoto(priority, file.buildImageBodyPart())
+                photoMap[priority] = photoId
+                _photoIdList.postValue(photoMap.values.toList())
+                Log.d(TAG, "photoID: $photoId, Priority: $priority")
+            }
+        }
     }
 
     fun postPost(title: String, context: String) = CoroutineScope(Dispatchers.IO).launch {
@@ -71,13 +106,24 @@ constructor(
     fun findPhotos(list: List<Long>) = CoroutineScope(Dispatchers.IO).launch {
         val mutableList: MutableList<ResponseFindByIdPhoto> = mutableListOf()
         for (photoId in list.sorted()){
-            val photo = communityRepositoryImpl.findByIdPhoto(photoId = photoId)
-            mutableList.add(photo)
+            if (photoId != -1L) {
+                val photo = communityRepositoryImpl.findByIdPhoto(photoId = photoId)
+                mutableList.add(photo)
+            } else {
+                mutableList.add(
+                    ResponseFindByIdPhoto(
+                        photoId = -1,
+                        photoUrl = "",
+                        fileName = "",
+                        priority = -1
+                    )
+                )
+            }
         }
         _photoList.postValue(mutableList.toList())
     }
 
-    fun getFileName() = "${System.currentTimeMillis()}_${userId}_image.png"
+    fun getFileName() = "${System.currentTimeMillis()}_${userId}_image.webp"
 //    fun getFileName() = "${System.currentTimeMillis()}_image.png"
 
     fun mapClear() = photoMap.clear()

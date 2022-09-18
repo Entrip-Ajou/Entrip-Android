@@ -4,6 +4,7 @@ import ajou.paran.entrip.model.Media
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -92,4 +93,42 @@ fun Bitmap.convertBitmapToFile(fileName: String, context: Context): File {
     }
 
     return file
+}
+
+fun File.bitmapQualityResize(): File
+= try {
+    val options = BitmapFactory.Options()
+    options.inJustDecodeBounds = true
+    options.inSampleSize = 6
+
+    var fis = FileInputStream(this)
+    BitmapFactory.decodeStream(fis, null, options)
+    fis.close()
+
+    val REQUSETED_SIZE = 75
+
+    var scale = 1
+    while (
+        options.outWidth / scale / 2 >= REQUSETED_SIZE
+        && options.outHeight / scale / 2 >= REQUSETED_SIZE
+    ) {
+        scale *= 2
+    }
+
+    val secondOptions = BitmapFactory.Options()
+    secondOptions.inSampleSize = scale
+    fis = FileInputStream(this)
+
+    val selectedBitmap = BitmapFactory.decodeStream(fis, null, secondOptions)
+    fis.close()
+
+    this.createNewFile()
+    val fos = FileOutputStream(this)
+
+    selectedBitmap?.compress(Bitmap.CompressFormat.WEBP_LOSSY, 100, fos)
+    fos.close()
+
+    this
+} catch (e: Exception) {
+    this
 }

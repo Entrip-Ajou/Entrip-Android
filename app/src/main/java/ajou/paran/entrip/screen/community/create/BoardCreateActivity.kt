@@ -4,13 +4,9 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityBoardcreateBinding
 import ajou.paran.entrip.screen.community.BoardImageAdapter
-import ajou.paran.entrip.util.convertBitmapToFile
 import ajou.paran.entrip.util.ui.RecyclerViewDecoration
 import android.content.Intent
-import android.graphics.ImageDecoder
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -51,11 +47,10 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
                         //선택한 이미지의 갯수 만큼 반복
                         for (i in 0 until count) {
                             //선택한 이미지의 갯수만큼 이미지의 uri를 추출해서 리스트에 저장
-                            val imageUri = it.data?.clipData!!.getItemAt(i).uri
-                            val source = ImageDecoder.createSource(this.contentResolver, imageUri)
-                            val bitmap = ImageDecoder.decodeBitmap(source)
                             viewModel.postPhoto(
-                                file = bitmap.convertBitmapToFile(viewModel.getFileName(), applicationContext),
+                                uri = it.data?.clipData!!.getItemAt(i).uri,
+                                contentResolver = contentResolver,
+                                context = applicationContext,
                                 priority = (i + 1).toLong()
                             )
                         }
@@ -65,17 +60,11 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
                         val currentImageUri = it.data?.data
                         try {
                             currentImageUri?.let {
-                                if(Build.VERSION.SDK_INT < 28) {
-                                    val bitmap = MediaStore.Images.Media.getBitmap(
-                                        this.contentResolver,
-                                        currentImageUri
-                                    )
-                                    viewModel.postPhoto(bitmap.convertBitmapToFile(viewModel.getFileName(), applicationContext))
-                                } else {
-                                    val source = ImageDecoder.createSource(this.contentResolver, currentImageUri)
-                                    val bitmap = ImageDecoder.decodeBitmap(source)
-                                    viewModel.postPhoto(bitmap.convertBitmapToFile(viewModel.getFileName(), applicationContext))
-                                }
+                                viewModel.postPhoto(
+                                    uri = currentImageUri,
+                                    contentResolver = contentResolver,
+                                    context = applicationContext
+                                )
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()
@@ -92,7 +81,6 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
 
     private fun initOnClick() {
         binding.boardCreateAddImage.setOnClickListener {
-//            startActivity(Intent(this@BoardCreateActivity, ImageSelectActivity::class.java))
             if (this::filterActivityLauncher.isInitialized) {
                 filterActivityLauncher.launch(
                     Intent(Intent.ACTION_PICK).apply {
