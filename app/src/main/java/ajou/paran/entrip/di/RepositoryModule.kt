@@ -49,6 +49,10 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideCommunityApi(@NetworkModule.Entrip retrofit: Retrofit): CommunityApi = retrofit.create(CommunityApi::class.java)
+
+    @Provides
+    @Singleton
     fun providePlanRemoteSource(planApi: PlanApi) : PlanRemoteSource{
         return PlanRemoteSource(planApi)
     }
@@ -76,6 +80,10 @@ object RepositoryModule {
     fun provideCommentRemoteSource(commentApi: CommentApi) : CommentRemoteSource{
         return CommentRemoteSource(commentApi)
     }
+
+    @Provides
+    @Singleton
+    fun provideCommunityRemoteSource(communityApi: CommunityApi): CommunityRemoteSource = CommunityRemoteSource(communityApi)
 
     @Provides
     @Singleton
@@ -124,4 +132,8 @@ object RepositoryModule {
     fun provideCommentRepository(commentRemoteSource: CommentRemoteSource, planDao : PlanDao) : CommentRepository{
         return CommentRepositoryImpl(commentRemoteSource, planDao)
     }
+
+    @Provides
+    @Singleton
+    fun provideCommunityRepository(communityRemoteSource: CommunityRemoteSource): CommunityRepository = CommunityRepositoryImpl(communityRemoteSource)
 }

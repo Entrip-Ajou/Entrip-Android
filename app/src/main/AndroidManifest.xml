@@ -71,7 +71,11 @@
         <activity
             android:name=".screen.planner.top.useradd.PlannerUserAddActivity"
             android:exported="false" />
-        <activity android:name=".screen.trip.TripTestActivity"
+        <activity android:name=".screen.community.create.BoardCreateActivity"
+            android:exported="false"/>
+        <activity android:name=".screen.community.select.ImageSelectActivity"
+            android:exported="false"/>
+        <activity android:name=".screen.community.board.BoardActivity"
             android:exported="false"/>
 
         <service

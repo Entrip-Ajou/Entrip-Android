@@ -6,6 +6,7 @@ import ajou.paran.entrip.databinding.ActivityHomeBinding
 import ajou.paran.entrip.model.InviteEntity
 import ajou.paran.entrip.repository.network.dto.NotificationData
 import ajou.paran.entrip.repository.network.dto.PushNotification
+import ajou.paran.entrip.screen.community.main.CommunityFragment
 import ajou.paran.entrip.screen.planner.main.MainFragment
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.util.ApiState
@@ -102,11 +103,11 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
                         .replace(R.id.homeAct_nav_host_container, RecommendationFragment()).commit()
                     true
                 }
-//                R.id.nav_board -> {
-//                    supportFragmentManager.beginTransaction()
-//                        .replace(R.id.homeAct_nav_host_container, CommunityFragment()).commit()
-//                    true
-//                }
+                R.id.nav_board -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.homeAct_nav_host_container, CommunityFragment()).commit()
+                    true
+                }
                 else -> false
             }
         }
