@@ -11,4 +11,17 @@ data class ResponseFindByIdPhoto(
     val fileName: String,
     @SerializedName("priority")
     val priority: Long
-)
+) {
+    constructor(photoId: Long) : this(
+        photoId = photoId,
+        photoUrl = "",
+        fileName = "",
+        priority = 0L
+    )
+    constructor(photoUrl: String) : this(
+        photoId = -1L,
+        photoUrl = photoUrl,
+        fileName = "",
+        priority = 0L
+    )
+}

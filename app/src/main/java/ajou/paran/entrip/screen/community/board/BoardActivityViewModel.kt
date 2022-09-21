@@ -1,8 +1,10 @@
 package ajou.paran.entrip.screen.community.board
 
 import ajou.paran.entrip.repository.Impl.CommunityRepositoryImpl
+import ajou.paran.entrip.repository.network.dto.community.ResponseComment
 import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
 import ajou.paran.entrip.repository.network.dto.community.ResponsePost
+import ajou.paran.entrip.util.SingleLiveEvent
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,7 +12,9 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,24 +29,28 @@ constructor(
     }
 
     private val _post: MutableLiveData<ResponsePost> = MutableLiveData()
-    private val _photoList: MutableLiveData<List<ResponseFindByIdPhoto>> = MutableLiveData()
+    private val _commentList: SingleLiveEvent<List<ResponseComment>> = SingleLiveEvent()
 
     val post: LiveData<ResponsePost>
         get() = _post
-    val photoList: LiveData<List<ResponseFindByIdPhoto>>
-        get() = _photoList
+    val commentList: LiveData<List<ResponseComment>>
+        get() = _commentList
 
-    fun loadPostData(postId: Long) = CoroutineScope(Dispatchers.IO).launch {
+    fun loadPostData(postId: Long) {
+        _commentList.call()
+        CoroutineScope(Dispatchers.IO).launch {
+            findPost(postId).join()
+            findComment(postId).join()
+        }
+    }
+
+    private fun findPost(postId: Long) = CoroutineScope(Dispatchers.IO).launch {
         val post = communityRepositoryImpl.findByIdPost(postId)
         _post.postValue(post)
     }
 
-    fun findPhotos(list: List<Long>) = CoroutineScope(Dispatchers.IO).launch {
-        val mutableList: MutableList<ResponseFindByIdPhoto> = mutableListOf()
-        for (photoId in list.sorted()){
-            val photo = communityRepositoryImpl.findByIdPhoto(photoId = photoId)
-            mutableList.add(photo)
-        }
-        _photoList.postValue(mutableList.toList())
+    private fun findComment(postId: Long) = CoroutineScope(Dispatchers.IO).launch {
+        val list = communityRepositoryImpl.getAllCommentsWithPostId(postId)
+        _commentList.postValue(list)
     }
 }

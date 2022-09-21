@@ -1,8 +1,6 @@
 package ajou.paran.entrip.repository.Impl
 
-import ajou.paran.entrip.repository.network.dto.community.RequestPost
-import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
-import ajou.paran.entrip.repository.network.dto.community.ResponsePost
+import ajou.paran.entrip.repository.network.dto.community.*
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import android.graphics.Bitmap
@@ -57,5 +55,45 @@ interface CommunityRepository {
         postId: Long,
         user_id: String
     ): BaseResult<Long, Failure>
+
+    suspend fun saveComment(
+        author: String,
+        content: String,
+        postId: Long,
+        attempt: Int = 0
+    ): Long
+
+    suspend fun findByIdComment(
+        commentId: Long
+    ): ResponseComment
+
+    suspend fun deleteComment(
+        commentId: Long
+    ): Long
+
+    suspend fun getAllCommentsWithPostId(
+        postId: Long,
+        attempt: Int = 0
+    ): List<ResponseComment>
+
+    suspend fun saveNestedComment(
+        author: String,
+        content: String,
+        commentId: Long,
+        attempt: Int = 0
+    ): Long
+
+    suspend fun findByIdNestedComment(
+        nestedCommentId: Long
+    ): ResponseNestedComment
+
+    suspend fun deleteNestedComment(
+        nestedCommentId: Long
+    ): Long
+
+    suspend fun getAllNestedCommentsWithPostCommentId(
+        commentId: Long,
+        attempt: Int = 0
+    ): List<ResponseNestedComment>
 
 }

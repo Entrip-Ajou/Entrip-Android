@@ -10,6 +10,7 @@ import ajou.paran.entrip.util.ui.RecyclerViewDecoration
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +28,7 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
     private var postId: Long = -1L
 
     private lateinit var boardImageAdapter: BoardImageAdapter
+    private lateinit var boardCommentAdapter: BoardCommentAdapter
 
     override fun init(savedInstanceState: Bundle?) {
         postId = intent.getLongExtra("postId", -1L)
@@ -42,6 +44,11 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
             layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
             addItemDecoration(RecyclerViewDecoration(30))
         }
+        boardCommentAdapter = BoardCommentAdapter()
+        binding.boardCommentList.run {
+            adapter = boardCommentAdapter
+            layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+        }
     }
 
     private fun subscribeObservers() {
@@ -54,6 +61,7 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                     .setPositiveButton("확인") { _, _ -> finish() }
                     .show()
             } else {
+                Log.d(TAG, "postId: ${post.post_id}")
                 binding.run {
                     boardTitle.text = post.title
                     boardAuthor.text = post.author
@@ -64,19 +72,29 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                 }
             }
         }
+        viewModel.commentList.observe(this) {
+            when (it) {
+                null -> {
+                    binding.run {
+                        boardCommentList.visibility = View.GONE
+                        commentProgress.visibility = View.VISIBLE
+                    }
+                }
+                else -> {
+                    binding.run {
+                        boardCommentList.visibility = View.VISIBLE
+                        commentProgress.visibility = View.GONE
+                    }
+                    boardCommentAdapter.setList(it)
+                }
+            }
+        }
     }
 
     private fun List<String>.toListResponseFindByIdPhoto(): List<ResponseFindByIdPhoto> {
         val mutableList = mutableListOf<ResponseFindByIdPhoto>()
         for (photoUrl in this) {
-            mutableList.add(
-                ResponseFindByIdPhoto(
-                    photoId = -1L,
-                    photoUrl = photoUrl,
-                    fileName = "",
-                    priority = -1L
-                )
-            )
+            mutableList.add(ResponseFindByIdPhoto(photoUrl = photoUrl))
         }
         return mutableList.toList()
     }

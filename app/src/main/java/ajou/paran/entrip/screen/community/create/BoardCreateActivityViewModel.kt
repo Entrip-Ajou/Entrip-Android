@@ -106,19 +106,8 @@ constructor(
     fun findPhotos(list: List<Long>) = CoroutineScope(Dispatchers.IO).launch {
         val mutableList: MutableList<ResponseFindByIdPhoto> = mutableListOf()
         for (photoId in list.sorted()){
-            if (photoId != -1L) {
-                val photo = communityRepositoryImpl.findByIdPhoto(photoId = photoId)
-                mutableList.add(photo)
-            } else {
-                mutableList.add(
-                    ResponseFindByIdPhoto(
-                        photoId = -1,
-                        photoUrl = "",
-                        fileName = "",
-                        priority = -1
-                    )
-                )
-            }
+            val photo = communityRepositoryImpl.findByIdPhoto(photoId = photoId)
+            mutableList.add(photo)
         }
         _photoList.postValue(mutableList.toList())
     }
