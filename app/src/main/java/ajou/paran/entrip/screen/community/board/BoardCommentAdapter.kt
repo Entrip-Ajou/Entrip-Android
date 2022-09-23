@@ -2,6 +2,7 @@ package ajou.paran.entrip.screen.community.board
 
 import ajou.paran.entrip.databinding.ItemLayoutBoardCommentBinding
 import ajou.paran.entrip.repository.network.dto.community.ResponseComment
+import ajou.paran.entrip.repository.network.dto.community.ResponseNestedComment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -23,11 +24,15 @@ class BoardCommentAdapter : ListAdapter<ResponseComment, RecyclerView.ViewHolder
         )
     )
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int)
-    = (holder as BoardCommentViewHolder).bind(getItem(position))
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val boardCommentViewHolder = holder as BoardCommentViewHolder
+        boardCommentViewHolder.bind(getItem(position))
+    }
 
     fun setList(list: List<ResponseComment>) {
-        submitList(list)
+        _commentList.clear()
+        _commentList.addAll(list)
+        submitList(_commentList)
         notifyDataSetChanged()
     }
 
@@ -40,6 +45,9 @@ class BoardCommentAdapter : ListAdapter<ResponseComment, RecyclerView.ViewHolder
                 tvNickname.text = item.nickname
                 tvComment.text = item.content
             }
+        }
+
+        fun setChildAdapter(item: ResponseComment, childList: List<ResponseNestedComment>) {
 
         }
     }
