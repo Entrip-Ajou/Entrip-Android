@@ -8,7 +8,7 @@ import retrofit2.http.*
 
 interface PlanApi {
     companion object{
-        const val BASE_URL = "http://2ntrip.com/"
+        const val BASE_URL = "https://2ntrip.com/"
     }
 
     // Planner 추가를 눌렀을 때
