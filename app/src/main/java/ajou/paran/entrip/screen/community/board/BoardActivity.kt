@@ -31,9 +31,17 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
     private lateinit var boardCommentAdapter: BoardCommentAdapter
 
     override fun init(savedInstanceState: Bundle?) {
-        postId = intent.getLongExtra("postId", -1L)
-        setUpRecyclerView()
         subscribeObservers()
+        setUpPost()
+        setUpRecyclerView()
+        setOnClickListener()
+    }
+
+    private fun setUpPost() {
+        postId = intent.getLongExtra("postId", -1L)
+        if (postId == -1L) {
+            viewEscapeDialog("오류", "네트워크 상태를 확인해주세요.")
+        }
         viewModel.loadPostData(postId)
     }
 
@@ -51,15 +59,27 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
         }
     }
 
-    private fun subscribeObservers() {
-        viewModel.post.observe(this) { post ->
+    private fun setOnClickListener() = binding.run {
+        rangePostComment.setOnClickListener {
+            when (etCommentContent.text.isNullOrEmpty()) {
+                true -> {
+                    // text is null or empty
+                    viewDialog("필요", "텍스트는 최소 한 글자 이상 작성하셔야 합니다.")
+                }
+                false -> {
+                    // text is exist
+                    viewModel.postComment(postId, etCommentContent.text.toString())
+                    etCommentContent.setText("")
+                }
+            }
+        }
+        boardBack.setOnClickListener { onBackPressed() }
+    }
+
+    private fun subscribeObservers() = viewModel.run {
+        post.observe(this@BoardActivity) { post ->
             if (post.post_id != postId) {
-                AlertDialog.Builder(this)
-                    .setTitle("오류")
-                    .setMessage("네트워크 오류가 발생하였습니다.")
-                    .setCancelable(false)
-                    .setPositiveButton("확인") { _, _ -> finish() }
-                    .show()
+                viewEscapeDialog("오류", "네트워크 오류가 발생하였습니다.")
             } else {
                 Log.d(TAG, "postId: ${post.post_id}")
                 binding.run {
@@ -72,7 +92,7 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                 }
             }
         }
-        viewModel.commentList.observe(this) {
+        commentList.observe(this@BoardActivity) {
             when (it) {
                 null -> {
                     binding.run {
@@ -89,6 +109,18 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                 }
             }
         }
+        postComment.observe(this@BoardActivity) {
+            when (it) {
+                -1L -> {
+                    // post comment fail
+                    viewDialog("오류", "네트워크 상태를 체크해주세요.")
+                }
+                else -> {
+                    // post comment success & refresh data
+                    viewModel.loadPostData(postId)
+                }
+            }
+        }
     }
 
     private fun List<String>.toListResponseFindByIdPhoto(): List<ResponseFindByIdPhoto> {
@@ -98,4 +130,23 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
         }
         return mutableList.toList()
     }
+
+    private fun viewDialog(title: String, msg: String) = AlertDialog.Builder(this)
+        .setTitle(title)
+        .setMessage(msg)
+        .setCancelable(false)
+        .setPositiveButton("확인") { dialog, _ ->
+            dialog.dismiss()
+        }
+        .show()
+
+    private fun viewEscapeDialog(title: String, msg: String) = AlertDialog.Builder(this)
+        .setTitle(title)
+        .setMessage(msg)
+        .setCancelable(false)
+        .setPositiveButton("확인") { _, _ ->
+            onBackPressed()
+            finish()
+        }
+        .show()
 }

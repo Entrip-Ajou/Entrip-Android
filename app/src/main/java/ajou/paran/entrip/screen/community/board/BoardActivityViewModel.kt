@@ -28,14 +28,25 @@ constructor(
         private const val TAG = "[BoardActVM]"
     }
 
+    //region private val field
     private val _post: MutableLiveData<ResponsePost> = MutableLiveData()
     private val _commentList: SingleLiveEvent<List<ResponseComment>> = SingleLiveEvent()
+    private val _postComment: MutableLiveData<Long> = SingleLiveEvent()
 
+    private val userId: String
+        get() = sharedPreferences.getString("user_id", "") ?: ""
+    //endregion
+
+    //region public val field
     val post: LiveData<ResponsePost>
         get() = _post
     val commentList: LiveData<List<ResponseComment>>
         get() = _commentList
+    val postComment: LiveData<Long>
+        get() = _postComment
+    //endregion
 
+    //region public function
     fun loadPostData(postId: Long) {
         _commentList.call()
         CoroutineScope(Dispatchers.IO).launch {
@@ -44,6 +55,17 @@ constructor(
         }
     }
 
+    fun postComment(postId: Long, content: String) = CoroutineScope(Dispatchers.IO).launch {
+        val post = communityRepositoryImpl.saveComment(
+            author = userId,
+            content = content,
+            postId = postId
+        )
+        _postComment.postValue(post)
+    }
+    //endregion
+
+    //region private function
     private fun findPost(postId: Long) = CoroutineScope(Dispatchers.IO).launch {
         val post = communityRepositoryImpl.findByIdPost(postId)
         _post.postValue(post)
@@ -53,4 +75,5 @@ constructor(
         val list = communityRepositoryImpl.getAllCommentsWithPostId(postId)
         _commentList.postValue(list)
     }
+    //endregion
 }
