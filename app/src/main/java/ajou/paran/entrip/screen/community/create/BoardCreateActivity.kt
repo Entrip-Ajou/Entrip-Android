@@ -12,13 +12,16 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 
 @AndroidEntryPoint
 class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.activity_boardcreate) {
 
     private val viewModel: BoardCreateActivityViewModel by viewModels()
+    private val jobList: MutableList<Job> = mutableListOf()
 
     private lateinit var filterActivityLauncher: ActivityResultLauncher<Intent>
     private lateinit var boardImageAdapter: BoardImageAdapter
@@ -47,11 +50,13 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
                         //선택한 이미지의 갯수 만큼 반복
                         for (i in 0 until count) {
                             //선택한 이미지의 갯수만큼 이미지의 uri를 추출해서 리스트에 저장
-                            viewModel.postPhoto(
-                                uri = it.data?.clipData!!.getItemAt(i).uri,
-                                contentResolver = contentResolver,
-                                context = applicationContext,
-                                priority = (i + 1).toLong()
+                            jobList.add(
+                                viewModel.postPhoto(
+                                    uri = it.data?.clipData!!.getItemAt(i).uri,
+                                    contentResolver = contentResolver,
+                                    context = applicationContext,
+                                    priority = (i + 1).toLong()
+                                )
                             )
                         }
                     }
@@ -60,10 +65,12 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
                         val currentImageUri = it.data?.data
                         try {
                             currentImageUri?.let {
-                                viewModel.postPhoto(
-                                    uri = currentImageUri,
-                                    contentResolver = contentResolver,
-                                    context = applicationContext
+                                jobList.add(
+                                    viewModel.postPhoto(
+                                        uri = currentImageUri,
+                                        contentResolver = contentResolver,
+                                        context = applicationContext
+                                    )
                                 )
                             }
                         } catch (e: Exception) {
@@ -92,10 +99,38 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
         }
         binding.boardCreateCompletion.setOnClickListener {
             if (binding.boardCreateTitle.text.isNotEmpty() && binding.boardCreateContent.text.isNotEmpty()) {
-                viewModel.postPost(
-                    title = binding.boardCreateTitle.text.toString(),
-                    context = binding.boardCreateContent.text.toString()
-                )
+                when (jobList.isEmpty()) {
+                    true -> {
+                        viewModel.postPost(
+                            title = binding.boardCreateTitle.text.toString(),
+                            context = binding.boardCreateContent.text.toString()
+                        )
+                    }
+                    false -> {
+                        var result = true
+                        for (job in jobList) {
+                            if (!job.isCompleted) {
+                                result = false
+                                break
+                            }
+                        }
+                        if (result) {
+                            viewModel.postPost(
+                                title = binding.boardCreateTitle.text.toString(),
+                                context = binding.boardCreateContent.text.toString()
+                            )
+                        } else {
+                            AlertDialog.Builder(this)
+                                .setTitle("오류")
+                                .setMessage("이미지 업로드 중 입니다.")
+                                .setCancelable(false)
+                                .setPositiveButton("확인") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .show()
+                        }
+                    }
+                }
             }
         }
     }

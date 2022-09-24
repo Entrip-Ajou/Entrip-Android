@@ -35,6 +35,12 @@ class RawBoardAdapter : ListAdapter<ResponsePost, RecyclerView.ViewHolder>(RawBo
         notifyDataSetChanged()
     }
 
+    fun clearList() {
+        _itemList.clear()
+        submitList(_itemList)
+        notifyDataSetChanged()
+    }
+
     inner class RawBoardViewHolder
     constructor(
         private val binding: ItemLayoutRawCommunityBinding

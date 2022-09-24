@@ -41,4 +41,11 @@ constructor(
         _boardItemList.postValue(list)
     }
 
+    fun refreshPageData() = CoroutineScope(Dispatchers.IO).launch {
+        for (i in 1 .. pageNum) {
+            val list = communityRepositoryImpl.getPostsListWithPageNum(i)
+            _boardItemList.postValue(list)
+        }
+    }
+
 }
