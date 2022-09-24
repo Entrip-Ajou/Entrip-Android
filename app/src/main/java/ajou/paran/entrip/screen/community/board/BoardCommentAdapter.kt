@@ -1,18 +1,22 @@
 package ajou.paran.entrip.screen.community.board
 
 import ajou.paran.entrip.databinding.ItemLayoutBoardCommentBinding
+import ajou.paran.entrip.model.Comment
 import ajou.paran.entrip.repository.network.dto.community.ResponseComment
 import ajou.paran.entrip.repository.network.dto.community.ResponseNestedComment
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-class BoardCommentAdapter : ListAdapter<ResponseComment, RecyclerView.ViewHolder>(BoardCommentDiffCallback()) {
+class BoardCommentAdapter : ListAdapter<Comment, RecyclerView.ViewHolder>(BoardCommentDiffCallback()) {
 
-    private val _commentList: MutableList<ResponseComment> = mutableListOf()
+    private val _commentList: MutableList<Comment> = mutableListOf()
 
-    val commentList: List<ResponseComment>
+    private lateinit var boardNestedCommentAdapter: BoardNestedCommentAdapter
+
+    val commentList: List<Comment>
         get() = _commentList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
@@ -24,12 +28,10 @@ class BoardCommentAdapter : ListAdapter<ResponseComment, RecyclerView.ViewHolder
         )
     )
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val boardCommentViewHolder = holder as BoardCommentViewHolder
-        boardCommentViewHolder.bind(getItem(position))
-    }
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int)
+    = (holder as BoardCommentViewHolder).bind(getItem(position))
 
-    fun setList(list: List<ResponseComment>) {
+    fun setList(list: List<Comment>) {
         _commentList.clear()
         _commentList.addAll(list)
         submitList(_commentList)
@@ -40,15 +42,18 @@ class BoardCommentAdapter : ListAdapter<ResponseComment, RecyclerView.ViewHolder
     constructor(
         private val binding: ItemLayoutBoardCommentBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ResponseComment) {
+        fun bind(item: Comment) {
             binding.run {
-                tvNickname.text = item.nickname
-                tvComment.text = item.content
+                tvNickname.text = item.comment.nickname
+                tvComment.text = item.comment.content
+
+                boardNestedCommentAdapter = BoardNestedCommentAdapter()
+                nestedComment.run {
+                    adapter = boardNestedCommentAdapter
+                    layoutManager = LinearLayoutManager(binding.root.context, LinearLayoutManager.VERTICAL, false)
+                }
+                boardNestedCommentAdapter.setList(item.listNestedComment)
             }
-        }
-
-        fun setChildAdapter(item: ResponseComment, childList: List<ResponseNestedComment>) {
-
         }
     }
 }

@@ -1,13 +1,13 @@
 package ajou.paran.entrip.screen.community.board
 
-import ajou.paran.entrip.repository.network.dto.community.ResponseComment
+import ajou.paran.entrip.model.Comment
 import androidx.recyclerview.widget.DiffUtil
 
-class BoardCommentDiffCallback : DiffUtil.ItemCallback<ResponseComment>() {
+class BoardCommentDiffCallback : DiffUtil.ItemCallback<Comment>() {
 
-    override fun areItemsTheSame(oldItem: ResponseComment, newItem: ResponseComment): Boolean
-    = oldItem.commentId == newItem.commentId
+    override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean
+    = oldItem.comment.commentId == newItem.comment.commentId
 
-    override fun areContentsTheSame(oldItem: ResponseComment, newItem: ResponseComment): Boolean
+    override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean
     = oldItem == newItem
 }

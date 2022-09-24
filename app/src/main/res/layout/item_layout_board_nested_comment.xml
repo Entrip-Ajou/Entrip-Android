@@ -34,24 +34,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:textColor="#565656"
         android:textSize="16sp"
         android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_profile"
         tools:text="내 안에 빼곡하게 피어나 블루" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/nested_comment"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tv_comment"
-        app:layout_constraintTop_toBottomOf="@+id/tv_comment" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

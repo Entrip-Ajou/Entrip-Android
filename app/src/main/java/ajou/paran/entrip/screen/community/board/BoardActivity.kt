@@ -3,9 +3,11 @@ package ajou.paran.entrip.screen.community.board
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityBoardBinding
+import ajou.paran.entrip.model.Comment
 import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
 import ajou.paran.entrip.repository.network.dto.community.ResponsePost
 import ajou.paran.entrip.screen.community.BoardImageAdapter
+import ajou.paran.entrip.util.toCommentList
 import ajou.paran.entrip.util.ui.RecyclerViewDecoration
 import android.content.Intent
 import android.os.Bundle
@@ -27,6 +29,7 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
 
     private var postId: Long = -1L
 
+
     private lateinit var boardImageAdapter: BoardImageAdapter
     private lateinit var boardCommentAdapter: BoardCommentAdapter
 
@@ -40,7 +43,7 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
     private fun setUpPost() {
         postId = intent.getLongExtra("postId", -1L)
         if (postId == -1L) {
-            viewEscapeDialog("오류", "네트워크 상태를 확인해주세요.")
+            viewEscapeDialog("네트워크 상태를 확인해주세요.")
         }
         viewModel.loadPostData(postId)
     }
@@ -79,7 +82,7 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
     private fun subscribeObservers() = viewModel.run {
         post.observe(this@BoardActivity) { post ->
             if (post.post_id != postId) {
-                viewEscapeDialog("오류", "네트워크 오류가 발생하였습니다.")
+                viewEscapeDialog("네트워크 오류가 발생하였습니다.")
             } else {
                 Log.d(TAG, "postId: ${post.post_id}")
                 binding.run {
@@ -105,7 +108,8 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                         boardCommentList.visibility = View.VISIBLE
                         commentProgress.visibility = View.GONE
                     }
-                    boardCommentAdapter.setList(it)
+                    testCommentList.addAll(it.toCommentList())
+                    loadNestedComment(testCommentList)
                 }
             }
         }
@@ -119,6 +123,11 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                     // post comment success & refresh data
                     viewModel.loadPostData(postId)
                 }
+            }
+        }
+        isSuccessNestedComment.observe(this@BoardActivity) {
+            if (it) {
+                boardCommentAdapter.setList(testCommentList)
             }
         }
     }
@@ -140,8 +149,8 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
         }
         .show()
 
-    private fun viewEscapeDialog(title: String, msg: String) = AlertDialog.Builder(this)
-        .setTitle(title)
+    private fun viewEscapeDialog(msg: String) = AlertDialog.Builder(this)
+        .setTitle("오류")
         .setMessage(msg)
         .setCancelable(false)
         .setPositiveButton("확인") { _, _ ->
@@ -149,4 +158,5 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
             finish()
         }
         .show()
+
 }
