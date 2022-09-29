@@ -4,6 +4,7 @@ import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityBoardBinding
 import ajou.paran.entrip.model.Comment
+import ajou.paran.entrip.model.CommentType
 import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
 import ajou.paran.entrip.repository.network.dto.community.ResponsePost
 import ajou.paran.entrip.screen.community.BoardImageAdapter
@@ -28,15 +29,19 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
     private val viewModel: BoardActivityViewModel by viewModels()
 
     private var postId: Long = -1L
+    private var commentId: Long = -1L
 
+    private var commentType: CommentType = CommentType.Default
+    private val commentWrite: Pair<CommentType, Long>
+        get() = if (commentType == CommentType.Default) Pair(commentType, postId) else Pair(commentType, commentId)
 
     private lateinit var boardImageAdapter: BoardImageAdapter
     private lateinit var boardCommentAdapter: BoardCommentAdapter
 
     override fun init(savedInstanceState: Bundle?) {
+        setUpRecyclerView()
         subscribeObservers()
         setUpPost()
-        setUpRecyclerView()
         setOnClickListener()
     }
 
@@ -71,8 +76,16 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                 }
                 false -> {
                     // text is exist
-                    viewModel.postComment(postId, etCommentContent.text.toString())
-                    etCommentContent.setText("")
+                    when (commentWrite.first) {
+                        CommentType.Default -> {
+                            viewModel.postComment(commentWrite.second, etCommentContent.text.toString())
+                            etCommentContent.setText("")
+                        }
+                        CommentType.Nested -> {
+                            viewModel.postNestedComment(commentWrite.second, etCommentContent.text.toString())
+                            etCommentContent.setText("")
+                        }
+                    }
                 }
             }
         }
@@ -125,9 +138,33 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                 }
             }
         }
+        postNestedComment.observe(this@BoardActivity) {
+            when (it) {
+                -1L -> {
+                    // post comment fail
+                    viewDialog("오류", "네트워크 상태를 체크해주세요.")
+                }
+                else -> {
+                    // post comment success & refresh data
+                    viewModel.loadPostData(postId)
+                }
+            }
+        }
         isSuccessNestedComment.observe(this@BoardActivity) {
             if (it) {
                 boardCommentAdapter.setList(testCommentList)
+            }
+        }
+        boardCommentAdapter.commentLiveData.observe(this@BoardActivity) {
+            when (it.comment.commentId) {
+                -1L -> {
+                    commentType = CommentType.Default
+                    commentId = -1L
+                }
+                else -> {
+                    commentType = CommentType.Nested
+                    commentId = it.comment.commentId
+                }
             }
         }
     }

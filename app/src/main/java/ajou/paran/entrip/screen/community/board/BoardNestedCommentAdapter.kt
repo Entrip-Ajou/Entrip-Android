@@ -2,8 +2,10 @@ package ajou.paran.entrip.screen.community.board
 
 import ajou.paran.entrip.databinding.ItemLayoutBoardNestedCommentBinding
 import ajou.paran.entrip.repository.network.dto.community.ResponseNestedComment
+import ajou.paran.entrip.util.SingleLiveEvent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 

@@ -34,7 +34,8 @@ constructor(
     private val _post: MutableLiveData<ResponsePost> = MutableLiveData()
     private val _commentList: SingleLiveEvent<List<ResponseComment>> = SingleLiveEvent()
     private val _isSuccessNestedComment: SingleLiveEvent<Boolean> = SingleLiveEvent()
-    private val _postComment: MutableLiveData<Long> = SingleLiveEvent()
+    private val _postComment: SingleLiveEvent<Long> = SingleLiveEvent()
+    private val _postNestedComment: SingleLiveEvent<Long> = SingleLiveEvent()
 
     private val userId: String
         get() = sharedPreferences.getString("user_id", "") ?: ""
@@ -49,6 +50,8 @@ constructor(
         get() = _isSuccessNestedComment
     val postComment: LiveData<Long>
         get() = _postComment
+    val postNestedComment: LiveData<Long>
+        get() = _postNestedComment
     val testCommentList: MutableList<Comment> = mutableListOf()
     //endregion
 
@@ -76,6 +79,15 @@ constructor(
             it.listNestedComment.addAll(communityRepositoryImpl.getAllNestedCommentsWithPostCommentId(it.comment.commentId))
         }
         _isSuccessNestedComment.postValue(true)
+    }
+
+    fun postNestedComment(commentId: Long, content: String) = CoroutineScope(Dispatchers.IO).launch {
+        val post = communityRepositoryImpl.saveNestedComment(
+            author = userId,
+            content = content,
+            commentId = commentId
+        )
+        _postNestedComment.postValue(post)
     }
     //endregion
 
