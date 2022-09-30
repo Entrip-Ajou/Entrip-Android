@@ -1,6 +1,7 @@
 package ajou.paran.entrip.screen.community.board
 
 import ajou.paran.entrip.databinding.ItemLayoutBoardNestedCommentBinding
+import ajou.paran.entrip.model.Comment
 import ajou.paran.entrip.repository.network.dto.community.ResponseNestedComment
 import ajou.paran.entrip.util.SingleLiveEvent
 import android.view.LayoutInflater
@@ -15,6 +16,8 @@ class BoardNestedCommentAdapter : ListAdapter<ResponseNestedComment, RecyclerVie
 
     val nestedCommentList: List<ResponseNestedComment>
         get() = _nestedCommentList
+
+    var onItemClick: ((ResponseNestedComment) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
     = BoardNestedCommentViewHolder(
@@ -39,6 +42,12 @@ class BoardNestedCommentAdapter : ListAdapter<ResponseNestedComment, RecyclerVie
     constructor(
         val binding: ItemLayoutBoardNestedCommentBinding
     ) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            itemView.setOnClickListener {
+                onItemClick?.invoke(getItem(adapterPosition))
+            }
+        }
+
         fun bind(item: ResponseNestedComment) {
             binding.run {
                 tvNickname.text = item.nickname

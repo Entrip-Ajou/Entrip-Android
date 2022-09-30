@@ -34,7 +34,13 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>(R.layout.fragme
         setUpRecyclerView()
         setListener()
         subscribeObservers()
-        viewModel.getNextPage()
+//        viewModel.getNextPage()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        rawBoardAdapter.clearList()
+        viewModel.refreshPageData()
     }
 
     private fun setActivityLauncher() {
