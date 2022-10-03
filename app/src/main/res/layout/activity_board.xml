@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="activity"
+            type="ajou.paran.entrip.screen.community.board.BoardActivity"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +31,8 @@
                 android:background="@drawable/ic_baseline_arrow_back_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="@{() -> activity.onBackPressed()}"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -49,7 +52,8 @@
             app:layout_constraintBottom_toTopOf="@+id/board_bottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/board_top">
+            app:layout_constraintTop_toBottomOf="@+id/board_top"
+            android:onClick="@{() -> activity.defaultWriteSetting() }">
 
             <TextView
                 android:id="@+id/board_title"
@@ -150,7 +154,8 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/board_iv_like" />
+                app:layout_constraintTop_toBottomOf="@+id/board_iv_like"
+                android:onClick="@{ () -> activity.defaultWriteSetting() }"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/board_commentList"
@@ -221,7 +226,8 @@
                 android:background="#00000000"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="@{ () -> activity.sendComment() }"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

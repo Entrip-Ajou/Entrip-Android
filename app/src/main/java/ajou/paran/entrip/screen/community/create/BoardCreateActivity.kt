@@ -27,10 +27,10 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
     private lateinit var boardImageAdapter: BoardImageAdapter
 
     override fun init(savedInstanceState: Bundle?) {
+        binding.activity = this
         launchInit()
         setUpRecyclerView()
         subscribeObservers()
-        initOnClick()
     }
 
     private fun launchInit() {
@@ -86,55 +86,6 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
         }
     }
 
-    private fun initOnClick() {
-        binding.boardCreateAddImage.setOnClickListener {
-            if (this::filterActivityLauncher.isInitialized) {
-                filterActivityLauncher.launch(
-                    Intent(Intent.ACTION_PICK).apply {
-                        type = "image/*"
-                        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                    }
-                )
-            }
-        }
-        binding.boardCreateCompletion.setOnClickListener {
-            if (binding.boardCreateTitle.text.isNotEmpty() && binding.boardCreateContent.text.isNotEmpty()) {
-                when (jobList.isEmpty()) {
-                    true -> {
-                        viewModel.postPost(
-                            title = binding.boardCreateTitle.text.toString(),
-                            context = binding.boardCreateContent.text.toString()
-                        )
-                    }
-                    false -> {
-                        var result = true
-                        for (job in jobList) {
-                            if (!job.isCompleted) {
-                                result = false
-                                break
-                            }
-                        }
-                        if (result) {
-                            viewModel.postPost(
-                                title = binding.boardCreateTitle.text.toString(),
-                                context = binding.boardCreateContent.text.toString()
-                            )
-                        } else {
-                            AlertDialog.Builder(this)
-                                .setTitle("오류")
-                                .setMessage("이미지 업로드 중 입니다.")
-                                .setCancelable(false)
-                                .setPositiveButton("확인") { dialog, _ ->
-                                    dialog.dismiss()
-                                }
-                                .show()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private fun setUpRecyclerView() {
         boardImageAdapter = BoardImageAdapter()
         binding.boardCreateImageList.run {
@@ -144,14 +95,23 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
         }
     }
 
-    private fun subscribeObservers() {
-        viewModel.photoIdList.observe(this) {
+    private fun subscribeObservers() = viewModel.run {
+        if (photoIdList.hasActiveObservers()) {
+            photoIdList.removeObservers(this@BoardCreateActivity)
+        }
+        photoIdList.observe(this@BoardCreateActivity) {
             viewModel.findPhotos(it)
         }
-        viewModel.photoList.observe(this) {
+        if (photoList.hasActiveObservers()) {
+            photoList.removeObservers(this@BoardCreateActivity)
+        }
+        photoList.observe(this@BoardCreateActivity) {
             boardImageAdapter.setList(it)
         }
-        viewModel.postId.observe(this) {
+        if (postId.hasActiveObservers()) {
+            postId.removeObservers(this@BoardCreateActivity)
+        }
+        postId.observe(this@BoardCreateActivity) {
             Log.d("Test", "Success Save Post $it")
             when {
                 it > 0 -> {
@@ -171,4 +131,62 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
         }
     }
 
+    fun moveToAddImage(): Unit = when (this::filterActivityLauncher.isInitialized) {
+        true -> {
+            filterActivityLauncher.launch(
+                Intent(Intent.ACTION_PICK).apply {
+                    type = "image/*"
+                    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                }
+            )
+        }
+        false -> {  }
+    }
+
+    fun postBoard(): Any = when (binding.boardCreateTitle.text.isNotEmpty() && binding.boardCreateContent.text.isNotEmpty()) {
+        true -> {
+            when (jobList.isEmpty()) {
+                true -> {
+                    viewModel.postPost(
+                        title = binding.boardCreateTitle.text.toString(),
+                        context = binding.boardCreateContent.text.toString()
+                    )
+                }
+                false -> {
+                    var result = true
+                    for (job in jobList) {
+                        if (!job.isCompleted) {
+                            result = false
+                            break
+                        }
+                    }
+                    if (result) {
+                        viewModel.postPost(
+                            title = binding.boardCreateTitle.text.toString(),
+                            context = binding.boardCreateContent.text.toString()
+                        )
+                    } else {
+                        AlertDialog.Builder(this)
+                            .setTitle("오류")
+                            .setMessage("이미지 업로드 중 입니다.")
+                            .setCancelable(false)
+                            .setPositiveButton("확인") { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                    }
+                }
+            }
+        }
+        false -> {
+            AlertDialog.Builder(this)
+                .setTitle("오류")
+                .setMessage("제목과 내용을 다시 확인해주세요.")
+                .setCancelable(false)
+                .setPositiveButton("확인") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
+    }
 }

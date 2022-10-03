@@ -3,7 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-
+        <variable
+            name="activity"
+            type="ajou.paran.entrip.screen.community.create.BoardCreateActivity"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,7 +42,8 @@
                 android:text="완료"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="@{ () -> activity.postBoard() }"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -129,7 +132,8 @@
                 android:background="@drawable/ic_baseline_add_a_photo_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="@{ () -> activity.moveToAddImage() }"/>
 
             <CheckBox
                 android:id="@+id/board_create_anonymous"

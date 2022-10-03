@@ -3,15 +3,12 @@ package ajou.paran.entrip.screen.community.board
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityBoardBinding
-import ajou.paran.entrip.model.Comment
 import ajou.paran.entrip.model.CommentType
 import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
-import ajou.paran.entrip.repository.network.dto.community.ResponsePost
 import ajou.paran.entrip.screen.community.BoardImageAdapter
 import ajou.paran.entrip.util.toCommentList
 import ajou.paran.entrip.util.ui.RecyclerViewDecoration
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -19,7 +16,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.gson.annotations.SerializedName
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -43,12 +39,13 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
     private lateinit var boardCommentAdapter: BoardCommentAdapter
 
     override fun init(savedInstanceState: Bundle?) {
+        binding.activity = this
         setUpRecyclerView()
         subscribeObservers()
         setUpPost()
-        setOnClickListener()
     }
 
+    //region private function
     private fun setUpPost() {
         postId = intent.getLongExtra("postId", -1L)
         if (postId == -1L) {
@@ -64,45 +61,20 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
             layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
             addItemDecoration(RecyclerViewDecoration(30))
         }
-        boardCommentAdapter = BoardCommentAdapter()
-        boardCommentAdapter.onItemClick = { defaultWriteSetting() }
-        boardCommentAdapter.onChildItemClick = { defaultWriteSetting() }
+        boardCommentAdapter = BoardCommentAdapter(
+            onItemClick = { defaultWriteSetting() },
+            onChildItemClick = { defaultWriteSetting() }
+        )
         binding.boardCommentList.run {
             adapter = boardCommentAdapter
             layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         }
     }
 
-    private fun setOnClickListener() = binding.run {
-        boardParent.setOnClickListener { defaultWriteSetting() }
-        boardImageList.setOnClickListener { defaultWriteSetting() }
-        rangePostComment.setOnClickListener {
-            when (etCommentContent.text.isNullOrEmpty()) {
-                true -> {
-                    // text is null or empty
-                    viewDialog("필요", "텍스트는 최소 한 글자 이상 작성하셔야 합니다.")
-                }
-                false -> {
-                    // text is exist
-                    when (commentWrite.first) {
-                        CommentType.Default -> {
-                            viewModel.postComment(commentWrite.second, etCommentContent.text.toString())
-                            etCommentContent.setText("")
-                            defaultWriteSetting()
-                        }
-                        CommentType.Nested -> {
-                            viewModel.postNestedComment(commentWrite.second, etCommentContent.text.toString())
-                            etCommentContent.setText("")
-                            defaultWriteSetting()
-                        }
-                    }
-                }
-            }
-        }
-        boardBack.setOnClickListener { onBackPressed() }
-    }
-
     private fun subscribeObservers() = viewModel.run {
+        if (post.hasActiveObservers()) {
+            post.removeObservers(this@BoardActivity)
+        }
         post.observe(this@BoardActivity) { post ->
             if (post.post_id != postId) {
                 viewEscapeDialog("네트워크 오류가 발생하였습니다.")
@@ -117,6 +89,9 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                     boardImageAdapter.setList(post.photoList.toListResponseFindByIdPhoto())
                 }
             }
+        }
+        if (commentList.hasActiveObservers()) {
+            commentList.removeObservers(this@BoardActivity)
         }
         commentList.observe(this@BoardActivity) {
             when (it) {
@@ -136,6 +111,9 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                 }
             }
         }
+        if (postComment.hasActiveObservers()) {
+            postComment.removeObservers(this@BoardActivity)
+        }
         postComment.observe(this@BoardActivity) {
             when (it) {
                 -1L -> {
@@ -147,6 +125,9 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                     viewModel.loadPostData(postId)
                 }
             }
+        }
+        if (postNestedComment.hasActiveObservers()) {
+            postNestedComment.removeObservers(this@BoardActivity)
         }
         postNestedComment.observe(this@BoardActivity) {
             when (it) {
@@ -160,10 +141,16 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                 }
             }
         }
+        if (isSuccessNestedComment.hasActiveObservers()) {
+            isSuccessNestedComment.removeObservers(this@BoardActivity)
+        }
         isSuccessNestedComment.observe(this@BoardActivity) {
             if (it) {
                 boardCommentAdapter.setList(testCommentList)
             }
+        }
+        if (boardCommentAdapter.commentLiveData.hasActiveObservers()) {
+            boardCommentAdapter.commentLiveData.removeObservers(this@BoardActivity)
         }
         boardCommentAdapter.commentLiveData.observe(this@BoardActivity) {
             when (it.comment.commentId) {
@@ -178,12 +165,6 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                 }
             }
         }
-    }
-
-    private fun defaultWriteSetting() {
-        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
-        commentType = CommentType.Default
-        commentId = -1L
     }
 
     private fun List<String>.toListResponseFindByIdPhoto(): List<ResponseFindByIdPhoto> {
@@ -212,5 +193,37 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
             finish()
         }
         .show()
+    //endregion
 
+    //region public function
+    fun sendComment(): Unit = binding.run {
+        when (etCommentContent.text.isNullOrEmpty()) {
+            true -> {
+                // text is null or empty
+                viewDialog("필요", "텍스트는 최소 한 글자 이상 작성하셔야 합니다.")
+            }
+            false -> {
+                // text is exist
+                when (commentWrite.first) {
+                    CommentType.Default -> {
+                        viewModel.postComment(commentWrite.second, etCommentContent.text.toString())
+                        etCommentContent.setText("")
+                        defaultWriteSetting()
+                    }
+                    CommentType.Nested -> {
+                        viewModel.postNestedComment(commentWrite.second, etCommentContent.text.toString())
+                        etCommentContent.setText("")
+                        defaultWriteSetting()
+                    }
+                }
+            }
+        }
+    }
+
+    fun defaultWriteSetting() {
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        commentType = CommentType.Default
+        commentId = -1L
+    }
+    //endregion
 }

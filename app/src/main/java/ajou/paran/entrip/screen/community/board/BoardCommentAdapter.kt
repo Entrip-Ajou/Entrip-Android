@@ -13,7 +13,10 @@ import javax.inject.Inject
 
 class BoardCommentAdapter
 @Inject
-constructor() : ListAdapter<Comment, RecyclerView.ViewHolder>(BoardCommentDiffCallback()) {
+constructor(
+    val onItemClick: ((Comment) -> Unit),
+    val onChildItemClick: ((ResponseNestedComment) -> Unit)
+) : ListAdapter<Comment, RecyclerView.ViewHolder>(BoardCommentDiffCallback()) {
 
     private val _commentList: MutableList<Comment> = mutableListOf()
     private val _commentLiveData: SingleLiveEvent<Comment> = SingleLiveEvent()
@@ -27,8 +30,6 @@ constructor() : ListAdapter<Comment, RecyclerView.ViewHolder>(BoardCommentDiffCa
     val commentLiveData
         get() = _commentLiveData
 
-    var onItemClick: ((Comment) -> Unit)? = null
-    var onChildItemClick: ((ResponseNestedComment) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
     = BoardCommentViewHolder(
@@ -55,7 +56,7 @@ constructor() : ListAdapter<Comment, RecyclerView.ViewHolder>(BoardCommentDiffCa
     ) : RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.setOnClickListener {
-                onItemClick?.invoke(getItem(adapterPosition))
+                onItemClick.invoke(getItem(adapterPosition))
             }
         }
 
@@ -76,8 +77,6 @@ constructor() : ListAdapter<Comment, RecyclerView.ViewHolder>(BoardCommentDiffCa
                 boardNestedCommentAdapter.setList(item.listNestedComment)
             }
         }
-
-
 
     }
 }
