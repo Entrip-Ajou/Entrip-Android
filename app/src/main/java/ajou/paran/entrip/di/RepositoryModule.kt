@@ -60,6 +60,9 @@ object RepositoryModule {
         return retrofit.create(VoteApi::class.java)
     }
 
+    fun provideCommunityApi(@NetworkModule.Entrip retrofit: Retrofit): CommunityApi = retrofit.create(CommunityApi::class.java)
+
+
     @Provides
     @Singleton
     fun providePlanRemoteSource(planApi: PlanApi) : PlanRemoteSource{
@@ -101,6 +104,8 @@ object RepositoryModule {
     fun provideVoteRemoteSource(voteApi: VoteApi) : VoteRemoteSource {
         return VoteRemoteSource(voteApi)
     }
+
+    fun provideCommunityRemoteSource(communityApi: CommunityApi): CommunityRemoteSource = CommunityRemoteSource(communityApi)
 
     @Provides
     @Singleton
@@ -161,4 +166,7 @@ object RepositoryModule {
     fun provideVoteRepository(voteRemoteSource: VoteRemoteSource) : VoteRepository {
         return VoteRepositoryImpl(voteRemoteSource)
     }
+
+    fun provideCommunityRepository(communityRemoteSource: CommunityRemoteSource): CommunityRepository = CommunityRepositoryImpl(communityRemoteSource)
+
 }
