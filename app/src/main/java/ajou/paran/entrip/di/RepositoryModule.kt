@@ -3,6 +3,7 @@ package ajou.paran.entrip.di
 import ajou.paran.entrip.repository.Impl.*
 import ajou.paran.entrip.repository.network.*
 import ajou.paran.entrip.repository.network.api.*
+import ajou.paran.entrip.repository.network.VoteRemoteSource
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.repository.room.AppDatabase
 import ajou.paran.entrip.repository.room.plan.dao.UserDao
@@ -49,7 +50,18 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideNoticeRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : NoticeApi {
+        return retrofit.create(NoticeApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVoteRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : VoteApi {
+        return retrofit.create(VoteApi::class.java)
+    }
+
     fun provideCommunityApi(@NetworkModule.Entrip retrofit: Retrofit): CommunityApi = retrofit.create(CommunityApi::class.java)
+
 
     @Provides
     @Singleton
@@ -83,6 +95,16 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideNoticeRemoteSource(noticeApi: NoticeApi) : NoticeRemoteSource {
+        return NoticeRemoteSource(noticeApi)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVoteRemoteSource(voteApi: VoteApi) : VoteRemoteSource {
+        return VoteRemoteSource(voteApi)
+    }
+
     fun provideCommunityRemoteSource(communityApi: CommunityApi): CommunityRemoteSource = CommunityRemoteSource(communityApi)
 
     @Provides
@@ -135,5 +157,16 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideNoticeRepository(noticeRemoteSource: NoticeRemoteSource) : NoticeRepository {
+        return NoticeRepositoryImpl(noticeRemoteSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVoteRepository(voteRemoteSource: VoteRemoteSource) : VoteRepository {
+        return VoteRepositoryImpl(voteRemoteSource)
+    }
+
     fun provideCommunityRepository(communityRemoteSource: CommunityRemoteSource): CommunityRepository = CommunityRepositoryImpl(communityRemoteSource)
+
 }

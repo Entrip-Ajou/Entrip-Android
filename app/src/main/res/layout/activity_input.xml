@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="inputViewModel"
             type="ajou.paran.entrip.screen.planner.mid.input.InputViewModel" />
@@ -79,9 +78,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/et_round_style"
-                android:maxLength="15"
                 android:hint="할 일"
                 android:inputType="text"
+                android:maxLength="15"
                 android:paddingLeft="48dp"
                 android:paddingBottom="55dp"
                 android:text="@={inputViewModel.todo}"
