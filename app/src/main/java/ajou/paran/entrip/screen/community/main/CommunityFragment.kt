@@ -34,7 +34,13 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>(R.layout.fragme
         setUpRecyclerView()
         setListener()
         subscribeObservers()
-        viewModel.getNextPage()
+//        viewModel.getNextPage()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        rawBoardAdapter.clearList()
+        viewModel.refreshPageData()
     }
 
     private fun setActivityLauncher() {
@@ -42,6 +48,8 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>(R.layout.fragme
             when (it.resultCode) {
                 AppCompatActivity.RESULT_OK -> {
                     Log.d(TAG, "postId: ${it.data!!.getLongExtra("postId", -1L)}")
+//                    rawBoardAdapter.clearList()
+//                    viewModel.refreshPageData()
                     startActivity(
                         Intent(activity, BoardActivity::class.java).apply {
                             putExtra("postId", it.data!!.getLongExtra("postId", -1L))
@@ -50,6 +58,8 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>(R.layout.fragme
                 }
                 else -> {
                     Toast.makeText(context, "게시글 생성 취소", Toast.LENGTH_SHORT).show()
+//                    rawBoardAdapter.clearList()
+//                    viewModel.refreshPageData()
                 }
             }
         }

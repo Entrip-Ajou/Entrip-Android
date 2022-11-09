@@ -1,9 +1,7 @@
 package ajou.paran.entrip.repository.network.api
 
 import ajou.paran.entrip.repository.network.dto.BaseResponse
-import ajou.paran.entrip.repository.network.dto.community.RequestPost
-import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
-import ajou.paran.entrip.repository.network.dto.community.ResponsePost
+import ajou.paran.entrip.repository.network.dto.community.*
 import okhttp3.MultipartBody
 import retrofit2.http.*
 
@@ -63,4 +61,44 @@ interface CommunityApi {
         @Path("post_id") postId: Long,
         @Path("user_id") user_id: String
     ): BaseResponse<Long>
+
+    @POST("api/v1/postsComments")
+    suspend fun saveComment(
+        @Body requestComment: RequestComment
+    ): BaseResponse<Long>
+
+    @GET("api/v1/postsComments/{postComment_id}")
+    suspend fun findByIdComment(
+        @Path("postComment_id") commentId: Long
+    ): BaseResponse<ResponseComment>
+
+    @DELETE("api/v1/postsComments/{postComment_id}")
+    suspend fun deleteComment(
+        @Path("postComment_id") commentId: Long
+    ): BaseResponse<Long>
+
+    @GET("api/v1/postsComments/{post_id}/all")
+    suspend fun getAllCommentsWithPostId(
+        @Path("post_id") postId: Long
+    ): BaseResponse<List<ResponseComment>>
+
+    @POST("api/v1/postsNestedComments")
+    suspend fun saveNestedComment(
+        @Body requestComment: RequestNestedComment
+    ): BaseResponse<Long>
+
+    @GET("api/v1/postsNestedComments/{postNestedComment_id}")
+    suspend fun findByIdNestedComment(
+        @Path("postNestedComment_id") nestedCommentId: Long
+    ): BaseResponse<ResponseNestedComment>
+
+    @DELETE("api/v1/postsNestedComments/{postNestedComment_id}")
+    suspend fun deleteNestedComment(
+        @Path("postNestedComment_id") nestedCommentId: Long
+    ): BaseResponse<Long>
+
+    @GET("api/v1/postsNestedComments/{postComment_id}/all")
+    suspend fun getAllNestedCommentsWithPostCommentId(
+        @Path("postComment_id") commentId: Long
+    ): BaseResponse<List<ResponseNestedComment>>
 }

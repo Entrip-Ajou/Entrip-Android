@@ -18,6 +18,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowInsetsCompat
+import coil.load
 import java.io.File
 
 class ImageSelectActivity : BaseActivity<ActivityImageselectBinding>(R.layout.activity_imageselect) {
@@ -65,16 +66,17 @@ class ImageSelectActivity : BaseActivity<ActivityImageselectBinding>(R.layout.ac
         adjustInsets()
 
         // Check for the permissions and show files
-        if (allPermissionsGranted()) {
-            binding.pagerPhotos.apply {
-                adapter = mediaAdapter.apply { submitList(getMedia()) }
-                onPageSelected { page -> currentPage = page }
-            }
-        }
+//        if (allPermissionsGranted()) {
+//            binding.pagerPhotos.apply {
+//                adapter = mediaAdapter.apply { submitList(getMedia()) }
+//                onPageSelected { page -> currentPage = page }
+//            }
+//        }
+        binding.imagePreview.load(intent.getStringExtra("photoUrl"))
 
         binding.btnBack.setOnClickListener { onBackPressed() }
         binding.btnShare.setOnClickListener { shareImage() }
-        binding.btnDelete.setOnClickListener { deleteImage() }
+//        binding.btnDelete.setOnClickListener { deleteImage() }
     }
 
     private fun adjustInsets() {

@@ -1,10 +1,7 @@
 package ajou.paran.entrip.repository.network
 
 import ajou.paran.entrip.repository.network.api.CommunityApi
-import ajou.paran.entrip.repository.network.dto.community.RequestPost
-import ajou.paran.entrip.repository.network.dto.community.RequestSavePhoto
-import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
-import ajou.paran.entrip.repository.network.dto.community.ResponsePost
+import ajou.paran.entrip.repository.network.dto.community.*
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
@@ -268,6 +265,206 @@ constructor(
     ): BaseResult<Long, Failure>
     = try {
         val response = communityApi.decreaseLikeWithPostId(postId, user_id)
+        when (response.status) {
+            200 -> {
+                BaseResult.Success(data = response.data)
+            }
+            else -> {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        }
+    } catch (e: NoInternetException) {
+        Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(0, e.message))
+    } catch (e: HttpException) {
+        Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(e.code(), e.message()))
+    } catch (e: Exception) {
+        Log.e(TAG, "Exception Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(-1, e.message.toString()))
+    }
+
+    suspend fun saveComment(
+        requestComment: RequestComment
+    ): BaseResult<Long, Failure>
+    = try {
+        val response = communityApi.saveComment(requestComment)
+        when (response.status) {
+            200 -> {
+                BaseResult.Success(data = response.data)
+            }
+            else -> {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        }
+    } catch (e: NoInternetException) {
+        Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(0, e.message))
+    } catch (e: HttpException) {
+        Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(e.code(), e.message()))
+    } catch (e: Exception) {
+        Log.e(TAG, "Exception Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(-1, e.message.toString()))
+    }
+
+    suspend fun findByIdComment(
+        commentId: Long
+    ): BaseResult<ResponseComment, Failure>
+    = try {
+        val response = communityApi.findByIdComment(commentId)
+        when (response.status) {
+            200 -> {
+                BaseResult.Success(data = response.data)
+            }
+            else -> {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        }
+    } catch (e: NoInternetException) {
+        Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(0, e.message))
+    } catch (e: HttpException) {
+        Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(e.code(), e.message()))
+    } catch (e: Exception) {
+        Log.e(TAG, "Exception Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(-1, e.message.toString()))
+    }
+
+    suspend fun deleteComment(
+        commentId: Long
+    ): BaseResult<Long, Failure>
+    = try {
+        val response = communityApi.deleteComment(commentId)
+        when (response.status) {
+            200 -> {
+                BaseResult.Success(data = response.data)
+            }
+            else -> {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        }
+    } catch (e: NoInternetException) {
+        Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(0, e.message))
+    } catch (e: HttpException) {
+        Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(e.code(), e.message()))
+    } catch (e: Exception) {
+        Log.e(TAG, "Exception Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(-1, e.message.toString()))
+    }
+
+    suspend fun getAllCommentsWithPostId(
+        postId: Long
+    ): BaseResult<List<ResponseComment>, Failure>
+    = try {
+        val response = communityApi.getAllCommentsWithPostId(postId)
+        when (response.status) {
+            200 -> {
+                BaseResult.Success(data = response.data)
+            }
+            else -> {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        }
+    } catch (e: NoInternetException) {
+        Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(0, e.message))
+    } catch (e: HttpException) {
+        Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(e.code(), e.message()))
+    } catch (e: Exception) {
+        Log.e(TAG, "Exception Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(-1, e.message.toString()))
+    }
+
+    suspend fun saveNestedComment(
+        requestNestedComment: RequestNestedComment
+    ): BaseResult<Long, Failure>
+    = try {
+        val response = communityApi.saveNestedComment(requestNestedComment)
+        when (response.status) {
+            200 -> {
+                BaseResult.Success(data = response.data)
+            }
+            else -> {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        }
+    } catch (e: NoInternetException) {
+        Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(0, e.message))
+    } catch (e: HttpException) {
+        Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(e.code(), e.message()))
+    } catch (e: Exception) {
+        Log.e(TAG, "Exception Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(-1, e.message.toString()))
+    }
+
+    suspend fun findByIdNestedComment(
+        nestedCommentId: Long
+    ): BaseResult<ResponseNestedComment, Failure>
+    = try {
+        val response = communityApi.findByIdNestedComment(nestedCommentId)
+        when (response.status) {
+            200 -> {
+                BaseResult.Success(data = response.data)
+            }
+            else -> {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        }
+    } catch (e: NoInternetException) {
+        Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(0, e.message))
+    } catch (e: HttpException) {
+        Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(e.code(), e.message()))
+    } catch (e: Exception) {
+        Log.e(TAG, "Exception Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(-1, e.message.toString()))
+    }
+
+    suspend fun deleteNestedComment(
+        nestedCommentId: Long
+    ): BaseResult<Long, Failure>
+    = try {
+        val response = communityApi.deleteNestedComment(nestedCommentId)
+        when (response.status) {
+            200 -> {
+                BaseResult.Success(data = response.data)
+            }
+            else -> {
+                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        }
+    } catch (e: NoInternetException) {
+        Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(0, e.message))
+    } catch (e: HttpException) {
+        Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(e.code(), e.message()))
+    } catch (e: Exception) {
+        Log.e(TAG, "Exception Message = " + e.localizedMessage)
+        BaseResult.Error(Failure(-1, e.message.toString()))
+    }
+
+    suspend fun getAllNestedCommentsWithPostCommentId(
+        commentId: Long
+    ): BaseResult<List<ResponseNestedComment>, Failure>
+    = try {
+        val response = communityApi.getAllNestedCommentsWithPostCommentId(commentId)
         when (response.status) {
             200 -> {
                 BaseResult.Success(data = response.data)

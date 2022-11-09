@@ -1,6 +1,8 @@
 package ajou.paran.entrip.util
 
+import ajou.paran.entrip.model.Comment
 import ajou.paran.entrip.model.Media
+import ajou.paran.entrip.repository.network.dto.community.ResponseComment
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -131,4 +133,12 @@ fun File.bitmapQualityResize(): File
     this
 } catch (e: Exception) {
     this
+}
+
+fun List<ResponseComment>.toCommentList(): List<Comment> {
+    val mutableList = mutableListOf<Comment>()
+    this.forEach {
+        mutableList.add(Comment(it))
+    }
+    return mutableList.toList()
 }

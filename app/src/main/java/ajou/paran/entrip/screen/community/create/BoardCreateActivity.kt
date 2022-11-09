@@ -12,22 +12,25 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 
 @AndroidEntryPoint
 class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.activity_boardcreate) {
 
     private val viewModel: BoardCreateActivityViewModel by viewModels()
+    private val jobList: MutableList<Job> = mutableListOf()
 
     private lateinit var filterActivityLauncher: ActivityResultLauncher<Intent>
     private lateinit var boardImageAdapter: BoardImageAdapter
 
     override fun init(savedInstanceState: Bundle?) {
+        binding.activity = this
         launchInit()
         setUpRecyclerView()
         subscribeObservers()
-        initOnClick()
     }
 
     private fun launchInit() {
@@ -47,11 +50,13 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
                         //선택한 이미지의 갯수 만큼 반복
                         for (i in 0 until count) {
                             //선택한 이미지의 갯수만큼 이미지의 uri를 추출해서 리스트에 저장
-                            viewModel.postPhoto(
-                                uri = it.data?.clipData!!.getItemAt(i).uri,
-                                contentResolver = contentResolver,
-                                context = applicationContext,
-                                priority = (i + 1).toLong()
+                            jobList.add(
+                                viewModel.postPhoto(
+                                    uri = it.data?.clipData!!.getItemAt(i).uri,
+                                    contentResolver = contentResolver,
+                                    context = applicationContext,
+                                    priority = (i + 1).toLong()
+                                )
                             )
                         }
                     }
@@ -60,10 +65,12 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
                         val currentImageUri = it.data?.data
                         try {
                             currentImageUri?.let {
-                                viewModel.postPhoto(
-                                    uri = currentImageUri,
-                                    contentResolver = contentResolver,
-                                    context = applicationContext
+                                jobList.add(
+                                    viewModel.postPhoto(
+                                        uri = currentImageUri,
+                                        contentResolver = contentResolver,
+                                        context = applicationContext
+                                    )
                                 )
                             }
                         } catch (e: Exception) {
@@ -79,27 +86,6 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
         }
     }
 
-    private fun initOnClick() {
-        binding.boardCreateAddImage.setOnClickListener {
-            if (this::filterActivityLauncher.isInitialized) {
-                filterActivityLauncher.launch(
-                    Intent(Intent.ACTION_PICK).apply {
-                        type = "image/*"
-                        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                    }
-                )
-            }
-        }
-        binding.boardCreateCompletion.setOnClickListener {
-            if (binding.boardCreateTitle.text.isNotEmpty() && binding.boardCreateContent.text.isNotEmpty()) {
-                viewModel.postPost(
-                    title = binding.boardCreateTitle.text.toString(),
-                    context = binding.boardCreateContent.text.toString()
-                )
-            }
-        }
-    }
-
     private fun setUpRecyclerView() {
         boardImageAdapter = BoardImageAdapter()
         binding.boardCreateImageList.run {
@@ -109,14 +95,23 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
         }
     }
 
-    private fun subscribeObservers() {
-        viewModel.photoIdList.observe(this) {
+    private fun subscribeObservers() = viewModel.run {
+        if (photoIdList.hasActiveObservers()) {
+            photoIdList.removeObservers(this@BoardCreateActivity)
+        }
+        photoIdList.observe(this@BoardCreateActivity) {
             viewModel.findPhotos(it)
         }
-        viewModel.photoList.observe(this) {
+        if (photoList.hasActiveObservers()) {
+            photoList.removeObservers(this@BoardCreateActivity)
+        }
+        photoList.observe(this@BoardCreateActivity) {
             boardImageAdapter.setList(it)
         }
-        viewModel.postId.observe(this) {
+        if (postId.hasActiveObservers()) {
+            postId.removeObservers(this@BoardCreateActivity)
+        }
+        postId.observe(this@BoardCreateActivity) {
             Log.d("Test", "Success Save Post $it")
             when {
                 it > 0 -> {
@@ -136,4 +131,62 @@ class BoardCreateActivity : BaseActivity<ActivityBoardcreateBinding>(R.layout.ac
         }
     }
 
+    fun moveToAddImage(): Unit = when (this::filterActivityLauncher.isInitialized) {
+        true -> {
+            filterActivityLauncher.launch(
+                Intent(Intent.ACTION_PICK).apply {
+                    type = "image/*"
+                    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                }
+            )
+        }
+        false -> {  }
+    }
+
+    fun postBoard(): Any = when (binding.boardCreateTitle.text.isNotEmpty() && binding.boardCreateContent.text.isNotEmpty()) {
+        true -> {
+            when (jobList.isEmpty()) {
+                true -> {
+                    viewModel.postPost(
+                        title = binding.boardCreateTitle.text.toString(),
+                        context = binding.boardCreateContent.text.toString()
+                    )
+                }
+                false -> {
+                    var result = true
+                    for (job in jobList) {
+                        if (!job.isCompleted) {
+                            result = false
+                            break
+                        }
+                    }
+                    if (result) {
+                        viewModel.postPost(
+                            title = binding.boardCreateTitle.text.toString(),
+                            context = binding.boardCreateContent.text.toString()
+                        )
+                    } else {
+                        AlertDialog.Builder(this)
+                            .setTitle("오류")
+                            .setMessage("이미지 업로드 중 입니다.")
+                            .setCancelable(false)
+                            .setPositiveButton("확인") { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                    }
+                }
+            }
+        }
+        false -> {
+            AlertDialog.Builder(this)
+                .setTitle("오류")
+                .setMessage("제목과 내용을 다시 확인해주세요.")
+                .setCancelable(false)
+                .setPositiveButton("확인") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
+    }
 }

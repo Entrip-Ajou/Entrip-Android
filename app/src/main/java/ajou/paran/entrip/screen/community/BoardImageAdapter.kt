@@ -2,7 +2,11 @@ package ajou.paran.entrip.screen.community
 
 import ajou.paran.entrip.databinding.ItemBoardImageListBinding
 import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
+import ajou.paran.entrip.screen.community.board.BoardActivity
+import ajou.paran.entrip.screen.community.select.ImageSelectActivity
+import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -55,6 +59,18 @@ class BoardImageAdapter : ListAdapter<ResponseFindByIdPhoto, RecyclerView.ViewHo
                 .override(300,300)
                 .centerCrop()
                 .into(binding.itemBoardImage)
+
+            binding.itemBoardImage.setOnClickListener {
+                Log.d(TAG, "TODO: Image Click Event")
+                binding.root.context.startActivity(
+                    Intent(
+                        binding.root.context,
+                        ImageSelectActivity::class.java
+                    ).apply {
+                        putExtra("photoUrl", item.photoUrl)
+                    }
+                )
+            }
         }
 
     }
