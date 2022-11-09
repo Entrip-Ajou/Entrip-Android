@@ -3,6 +3,7 @@ package ajou.paran.entrip.di
 import ajou.paran.entrip.repository.Impl.*
 import ajou.paran.entrip.repository.network.*
 import ajou.paran.entrip.repository.network.api.*
+import ajou.paran.entrip.repository.network.VoteRemoteSource
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.repository.room.AppDatabase
 import ajou.paran.entrip.repository.room.plan.dao.UserDao
@@ -49,6 +50,18 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideNoticeRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : NoticeApi {
+        return retrofit.create(NoticeApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVoteRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : VoteApi {
+        return retrofit.create(VoteApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun providePlanRemoteSource(planApi: PlanApi) : PlanRemoteSource{
         return PlanRemoteSource(planApi)
     }
@@ -75,6 +88,18 @@ object RepositoryModule {
     @Singleton
     fun provideCommentRemoteSource(commentApi: CommentApi) : CommentRemoteSource{
         return CommentRemoteSource(commentApi)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNoticeRemoteSource(noticeApi: NoticeApi) : NoticeRemoteSource {
+        return NoticeRemoteSource(noticeApi)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVoteRemoteSource(voteApi: VoteApi) : VoteRemoteSource {
+        return VoteRemoteSource(voteApi)
     }
 
     @Provides
@@ -123,5 +148,17 @@ object RepositoryModule {
     @Singleton
     fun provideCommentRepository(commentRemoteSource: CommentRemoteSource, planDao : PlanDao) : CommentRepository{
         return CommentRepositoryImpl(commentRemoteSource, planDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNoticeRepository(noticeRemoteSource: NoticeRemoteSource) : NoticeRepository {
+        return NoticeRepositoryImpl(noticeRemoteSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVoteRepository(voteRemoteSource: VoteRemoteSource) : VoteRepository {
+        return VoteRepositoryImpl(voteRemoteSource)
     }
 }

@@ -6,7 +6,9 @@ import ajou.paran.entrip.databinding.ActivityPlannerBinding
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.planner.mid.MidFragment
+import ajou.paran.entrip.screen.planner.top.notice.NoticeActivity
 import ajou.paran.entrip.screen.planner.top.useradd.PlannerUserAddActivity
+import ajou.paran.entrip.screen.planner.top.vote.VoteActivity
 import ajou.paran.entrip.util.ui.hideKeyboard
 import android.annotation.SuppressLint
 import android.content.DialogInterface
@@ -16,7 +18,10 @@ import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.PopupMenu
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.util.Pair
@@ -100,19 +105,6 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
         viewModel.runStomp(selectedPlanner.planner_id)
     }
 
-    /**
-     * @funcName: onClick
-     * @func: View Click Event
-     * @Case
-     *  - Close
-     *  - Click planner title button
-     *  - Change planner title text
-     *  - Edit planner Date
-     *  - Add planner
-     *  - Add user
-     * @Date: 2022.03.08
-     * @Made: Jeon
-     * **/
     override fun onClick(view: View?) {
         view?.let {
             when(it.id){
@@ -146,12 +138,34 @@ class PlannerActivity: BaseActivity<ActivityPlannerBinding>(
                     builder.show()
                 }
 
-                binding.plannerActPersonAdd.id -> {
-                    Log.d(TAG, "Case: Add user")
-                    val intent = Intent(this, PlannerUserAddActivity::class.java)
-                    intent.putExtra("PlannerEntity", selectedPlanner)
-                    startActivity(intent)
+                binding.plannerActMenu.id -> {
+                    val popup = PopupMenu(this, binding.plannerActMenu)
+                    menuInflater.inflate(R.menu.navigation_menu, popup.menu)
+
+                    popup.setOnMenuItemClickListener { item ->
+                        when(item.itemId){
+                            R.id.gallery -> Log.e(TAG, "Gallery 선택")
+                            R.id.info -> {
+                                val intent = Intent(this, NoticeActivity::class.java)
+                                intent.putExtra("PlannerEntity", selectedPlanner)
+                                startActivity(intent)
+                            }
+                            R.id.vote -> {
+                                val intent = Intent(this, VoteActivity::class.java)
+                                intent.putExtra("PlannerEntity", selectedPlanner)
+                                startActivity(intent)
+                            }
+                            R.id.invite -> {
+                                val intent = Intent(this, PlannerUserAddActivity::class.java)
+                                intent.putExtra("PlannerEntity", selectedPlanner)
+                                startActivity(intent)
+                            }
+                        }
+                        false
+                    }
+                    popup.show()
                 }
+
                 else -> {
                     return
                 }

@@ -18,9 +18,27 @@
         android:theme="@style/Theme.Entrip"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".screen.planner.mid.comment.CommentActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:name=".screen.planner.top.vote.find.VoteFindActivity"
             android:exported="false" />
+        <activity
+            android:name=".screen.planner.top.vote.post.VotePostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screen.planner.top.vote.VoteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screen.planner.top.notice.find.NoticeFindActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screen.planner.top.notice.NoticeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screen.planner.top.notice.post.NoticePostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screen.planner.mid.comment.CommentActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".screen.planner.mid.map.SearchActivity"
             android:exported="false" />
@@ -54,25 +72,23 @@
             android:name=".screen.intro.register.RegisterActivity"
             android:exported="false" />
         <activity
-            android:launchMode="singleTop"
             android:name=".screen.planner.mid.map.MapActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop" />
         <activity
-            android:launchMode="singleTop"
             android:name=".screen.planner.mid.input.InputActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop" />
         <activity
             android:name=".screen.home.HomeActivity"
             android:exported="false" />
         <activity
-            android:launchMode="singleTop"
             android:name=".screen.planner.top.PlannerActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop" />
         <activity
             android:name=".screen.planner.top.useradd.PlannerUserAddActivity"
             android:exported="false" />
-        <activity android:name=".screen.trip.TripTestActivity"
-            android:exported="false"/>
 
         <service
             android:name=".util.network.fcm.MyFirebaseMessaingService"
