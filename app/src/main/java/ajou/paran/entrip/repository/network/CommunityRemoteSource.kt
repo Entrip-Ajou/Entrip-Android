@@ -61,14 +61,21 @@ constructor(
         photoId: Long
     ): BaseResult<ResponseFindByIdPhoto, Failure>
     = try {
-        val response = communityApi.findByIdPhoto(photoId)
-        when (response.status) {
-            200 -> {
-                BaseResult.Success(data = response.data)
+        when (photoId) {
+            -1L -> {
+                BaseResult.Success(data = ResponseFindByIdPhoto(-1L))
             }
             else -> {
-                Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
-                BaseResult.Error(Failure(response.status, response.message))
+                val response = communityApi.findByIdPhoto(photoId)
+                when (response.status) {
+                    200 -> {
+                        BaseResult.Success(data = response.data)
+                    }
+                    else -> {
+                        Log.e(TAG, "Err code = " + response.status + " Err message = " + response.message)
+                        BaseResult.Error(Failure(response.status, response.message))
+                    }
+                }
             }
         }
     } catch (e: NoInternetException) {
