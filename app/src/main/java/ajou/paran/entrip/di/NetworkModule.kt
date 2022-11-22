@@ -1,9 +1,13 @@
 package ajou.paran.entrip.di
 
 import ajou.paran.entrip.R
+import ajou.paran.entrip.base.BaseUrl
 import ajou.paran.entrip.repository.network.api.FcmApi.Companion.FCM_URL
 import ajou.paran.entrip.repository.network.api.MapApi.Companion.Kakao_URL
-import ajou.paran.entrip.repository.network.api.PlanApi
+import ajou.paran.entrip.util.Entrip
+import ajou.paran.entrip.util.EntripV2
+import ajou.paran.entrip.util.FCM
+import ajou.paran.entrip.util.KakaoMap
 import ajou.paran.entrip.util.network.fcm.FcmInterceptor
 import ajou.paran.entrip.util.network.kakao.KakaoInterceptor
 import ajou.paran.entrip.util.network.networkinterceptor.NetworkInterceptor
@@ -21,35 +25,33 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class Entrip
-
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class FCM
-
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class KakaoMap
-
     @Provides
     @Singleton
     @Entrip
     fun provideRetrofit(@Entrip client: OkHttpClient) : Retrofit {
         return Retrofit.Builder().apply {
-            baseUrl(PlanApi.BASE_URL)
+            baseUrl(BaseUrl.MAIN_URL)
             addConverterFactory(GsonConverterFactory.create())
             client(client)
         }.build()
     }
+
+    @Provides
+    @Singleton
+    @EntripV2
+    fun provideV2Retrofit(
+        @EntripV2 client: OkHttpClient
+    ) : Retrofit = Retrofit.Builder().apply {
+        baseUrl(BaseUrl.MAIN_URL)
+        addConverterFactory(GsonConverterFactory.create())
+        client(client)
+    }.build()
 
     @Provides
     @Singleton
@@ -76,6 +78,18 @@ object NetworkModule {
     @Provides
     @Singleton
     @Entrip
+    fun provideV2HttpClient(
+        networkInterceptor: NetworkInterceptor
+    ) : OkHttpClient = OkHttpClient.Builder().apply {
+        readTimeout(10, TimeUnit.SECONDS)
+        connectTimeout(10, TimeUnit.SECONDS)
+        writeTimeout(10, TimeUnit.SECONDS)
+        addInterceptor(networkInterceptor)
+    }.build()
+
+    @Provides
+    @Singleton
+    @EntripV2
     fun provideHttpClient(networkInterceptor: NetworkInterceptor) : OkHttpClient {
         return OkHttpClient.Builder().apply {
             readTimeout(10, TimeUnit.SECONDS)
@@ -148,4 +162,5 @@ object NetworkModule {
     fun provideFirebase(): FirebaseAuth {
         return FirebaseAuth.getInstance()
     }
+
 }

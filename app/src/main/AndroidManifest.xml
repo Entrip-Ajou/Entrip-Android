@@ -15,34 +15,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Entrip">
-<!--        android:usesCleartextTraffic="true"-->
+        android:theme="@style/Theme.Entrip"
+        android:usesCleartextTraffic="true">
 
-        <activity
-            android:name=".screen.planner.top.vote.find.VoteFindActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screen.planner.top.vote.post.VotePostActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screen.planner.top.vote.VoteActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screen.planner.top.notice.find.NoticeFindActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screen.planner.top.notice.NoticeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screen.planner.top.notice.post.NoticePostActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screen.planner.mid.comment.CommentActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".screen.planner.mid.map.SearchActivity"
-            android:exported="false" />
         <!--
     Set custom default icon. This is used when no icon is set for incoming notification messages.
     See README(https://goo.gl/l4GJaQ) for more.
@@ -73,29 +48,8 @@
             android:name=".screen.intro.register.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".screen.planner.mid.map.MapActivity"
-            android:exported="false"
-            android:launchMode="singleTop" />
-        <activity
-            android:name=".screen.planner.mid.input.InputActivity"
-            android:exported="false"
-            android:launchMode="singleTop" />
-        <activity
             android:name=".screen.home.HomeActivity"
             android:exported="false" />
-        <activity
-            android:name=".screen.planner.top.PlannerActivity"
-            android:exported="false"
-            android:launchMode="singleTop" />
-        <activity
-            android:name=".screen.planner.top.useradd.PlannerUserAddActivity"
-            android:exported="false" />
-        <activity android:name=".screen.community.create.BoardCreateActivity"
-            android:exported="false"/>
-        <activity android:name=".screen.community.select.ImageSelectActivity"
-            android:exported="false"/>
-        <activity android:name=".screen.community.board.BoardActivity"
-            android:exported="false"/>
         <service
             android:name=".util.network.fcm.MyFirebaseMessaingService"
             android:exported="false"

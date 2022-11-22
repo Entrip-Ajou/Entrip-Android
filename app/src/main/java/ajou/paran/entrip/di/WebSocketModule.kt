@@ -1,6 +1,6 @@
 package ajou.paran.entrip.di
 
-import ajou.paran.entrip.screen.planner.top.PlannerActivityViewModel
+//import ajou.paran.entrip.screen.planner.top.PlannerActivityViewModel
 import ajou.paran.entrip.util.network.networkinterceptor.NetworkInterceptor
 import android.util.Log
 import dagger.Module

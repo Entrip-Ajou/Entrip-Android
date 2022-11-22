@@ -21,13 +21,13 @@ constructor(
     }
 
     val userID: String
-    get() = sharedPreferences.getString("user_id", null) ?: ""
+        get() = sharedPreferences.getString("user_id", null) ?: ""
 
     val token: String
-    get() = sharedPreferences.getString("token", null) ?: ""
+        get() = sharedPreferences.getString("token", null) ?: ""
 
     suspend fun patchToken(): Boolean
-    = when(val res = userRemoteSource.updateUserToken(userID, token)) {
+            = when(val res = userRemoteSource.updateUserToken(userID, token)) {
         is BaseResult.Success -> {
             Log.d(TAG, "사용자 Token update 완료")
             true

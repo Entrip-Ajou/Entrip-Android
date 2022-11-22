@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragment_intro_four) {
+class IntroFourFragment : BaseFragment<FragmentIntroFourBinding>(R.layout.fragment_intro_four) {
     companion object{
         const val TAG = "[IntroFourFragment]"
     }
@@ -50,6 +50,8 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
     private lateinit var user_id: String
 
     override fun init() {
+        binding.viewModel = viewModel
+        binding.fragment = this
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             when(it.resultCode) {
                 AppCompatActivity.RESULT_OK -> {
@@ -65,122 +67,157 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
             }
         }
 
-        animating()
+//        animating()
 
-        binding.introFourActBtnLogin.setOnClickListener{
-            Log.d(IntroThreeFragment.TAG, "Case: Click Login")
-            if(!viewModel.isTokenNull()) getResult.launch(googleSignInClient.signInIntent)
-            else{
-                val builder = AlertDialog.Builder(activity!!)
-                builder.setMessage("앱을 재시작 해주세요.")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which ->
-                            activity!!.finishAffinity()
-                            System.runFinalization()
-                            System.exit(0)
-                        })
-                builder.show()
-            }
-        }
+//        binding.introFourActBtnLogin.setOnClickListener{
+//            Log.d(IntroThreeFragment.TAG, "Case: Click Login")
+//            if(!viewModel.isTokenNull()) getResult.launch(googleSignInClient.signInIntent)
+//            else{
+//                val builder = AlertDialog.Builder(activity!!)
+//                builder.setMessage("앱을 재시작 해주세요.")
+//                    .setPositiveButton("확인",
+//                        DialogInterface.OnClickListener{ dialog, which ->
+//                            activity!!.finishAffinity()
+//                            System.runFinalization()
+//                            System.exit(0)
+//                        })
+//                builder.show()
+//            }
+//        }
+
+        subscribeObservers()
     }
 
-    override fun onResume() {
-        super.onResume()
-        animating()
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        animating()
+//    }
 
-    private fun animating() = CoroutineScope(Dispatchers.Main).launch {
-        binding.introFourActBtnLogin.visibility = View.INVISIBLE
-        val animation = TranslateAnimation(0f, 0f, 200f, 0f)
-        animation.duration = 1000
-        animation.setAnimationListener(object: Animation.AnimationListener{
-            override fun onAnimationStart(p0: Animation?) {
-            }
-            override fun onAnimationEnd(p0: Animation?) {
-                binding.introFourActBtnLogin.visibility = View.VISIBLE
-            }
-            override fun onAnimationRepeat(p0: Animation?) {}
-        })
-        binding.introFourActText.startAnimation(animation)
-    }
+//    private fun animating() = CoroutineScope(Dispatchers.Main).launch {
+//        binding.introFourActBtnLogin.visibility = View.INVISIBLE
+//        val animation = TranslateAnimation(0f, 0f, 200f, 0f)
+//        animation.duration = 1000
+//        animation.setAnimationListener(object: Animation.AnimationListener{
+//            override fun onAnimationStart(p0: Animation?) {
+//            }
+//            override fun onAnimationEnd(p0: Animation?) {
+//                binding.introFourActBtnLogin.visibility = View.VISIBLE
+//            }
+//            override fun onAnimationRepeat(p0: Animation?) {}
+//        })
+//        binding.introFourActText.startAnimation(animation)
+//    }
+
+//    private fun subscribeObservers() {
+//        viewModel.result(user_id)
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.isExistUserResult.collect {
+//                when(it) {
+//                    is ApiState.Success -> {
+//                        // 존재하지 않는 아이디
+//                        val intent = Intent(context, RegisterActivity::class.java)
+//                        intent.putExtra("user_id", user_id)
+//                        startActivity(intent)
+//                    }
+//                    is ApiState.Failure -> {
+//                        when(it.code) {
+//                            999 -> {
+//                                // 이미 존재하는 아이디
+//                                viewModel.findById(user_id)
+//                                viewModel.getUserPlanners(user_id)
+//                            }
+//                            else -> { Log.e(TAG, "code: ${it.code}") }
+//                        }
+//                    }
+//                    is ApiState.Init -> { Log.d(TAG, "observe 시작") }
+//                    else -> { Log.e(TAG, "예상 못한 에러") }
+//                }
+//            }
+//        }
+//        lifecycleScope.launchWhenResumed {
+//            viewModel.getUserPlannersResult.collect { res ->
+//                when (res) {
+//                    is ApiState.Success -> {
+//                        Log.d(TAG, "성공")
+//                        startActivity(Intent(context, HomeActivity::class.java))
+//                    }
+//                    is ApiState.Init -> {
+//                        Log.d(TAG, "planners observe 시작")
+//                    }
+//                    is ApiState.Failure -> {
+//                        Log.e(
+//                            TAG,
+//                            "code: ${res.code}"
+//                        )
+//                        startActivity(Intent(context, HomeActivity::class.java))
+//                    }
+//                    else -> {
+//                        Log.e(
+//                            TAG,
+//                            "예상 못한 에러"
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//        lifecycleScope.launchWhenResumed {
+//            viewModel.findByIdResult.collect{ res ->
+//                when(res){
+//                    is ApiState.Success ->{
+//                        when(res.data){
+//                            is BaseResult.Success<*> ->{
+//                                val user_id = (res.data.data as UserResponse).userId
+//                                val photo_url = res.data.data.photoUrl
+//                                val nickname = res.data.data.nickname
+//                                viewModel.commitShared(
+//                                    user_id = user_id,
+//                                    photo_url = photo_url,
+//                                    nickname = nickname
+//                                )
+//                                Log.d(TAG, "기존 회원 sharedPreference 복구 완료")
+//                            }
+//                            is BaseResult.Error<*> -> { Log.e(TAG, res.data.err.toString()) }
+//                            else -> {  }
+//                        }
+//                    }
+//                    is ApiState.Failure -> { Log.e(TAG, "code: ${res.code}") }
+//                    else -> { }
+//                }
+//            }
+//        }
+//    }
 
     private fun subscribeObservers() {
-        viewModel.result(user_id)
-        lifecycleScope.launchWhenStarted {
-            viewModel.isExistUserResult.collect {
-                when(it) {
-                    is ApiState.Success -> {
-                        // 존재하지 않는 아이디
-                        val intent = Intent(context, RegisterActivity::class.java)
-                        intent.putExtra("user_id", user_id)
-                        startActivity(intent)
-                    }
-                    is ApiState.Failure -> {
-                        when(it.code) {
-                            999 -> {
-                                // 이미 존재하는 아이디
-                                viewModel.findById(user_id)
-                                viewModel.getUserPlanners(user_id)
-                            }
-                            else -> { Log.e(TAG, "code: ${it.code}") }
-                        }
-                    }
-                    is ApiState.Init -> { Log.d(TAG, "observe 시작") }
-                    else -> { Log.e(TAG, "예상 못한 에러") }
+        viewModel.loginState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is LoginState.Loading -> {
+                    loadingView()
+                }
+                is LoginState.Success -> {
+                    viewingView()
+                    binding.tvError.visibility = View.GONE
+                }
+                is LoginState.Error -> {
+                    viewingView()
+                    binding.tvError.visibility = View.VISIBLE
                 }
             }
         }
-        lifecycleScope.launchWhenResumed {
-            viewModel.getUserPlannersResult.collect { res ->
-                when (res) {
-                    is ApiState.Success -> {
-                        Log.d(TAG, "성공")
-                        startActivity(Intent(context, HomeActivity::class.java))
-                    }
-                    is ApiState.Init -> {
-                        Log.d(TAG, "planners observe 시작")
-                    }
-                    is ApiState.Failure -> {
-                        Log.e(
-                            TAG,
-                            "code: ${res.code}"
-                        )
-                        startActivity(Intent(context, HomeActivity::class.java))
-                    }
-                    else -> {
-                        Log.e(
-                            TAG,
-                            "예상 못한 에러"
-                        )
-                    }
-                }
-            }
-        }
-        lifecycleScope.launchWhenResumed {
-            viewModel.findByIdResult.collect{ res ->
-                when(res){
-                    is ApiState.Success ->{
-                        when(res.data){
-                            is BaseResult.Success<*> ->{
-                                val user_id = (res.data.data as UserResponse).userId
-                                val photo_url = res.data.data.photoUrl
-                                val nickname = res.data.data.nickname
-                                viewModel.commitShared(
-                                    user_id = user_id,
-                                    photo_url = photo_url,
-                                    nickname = nickname
-                                )
-                                Log.d(TAG, "기존 회원 sharedPreference 복구 완료")
-                            }
-                            is BaseResult.Error<*> -> { Log.e(TAG, res.data.err.toString()) }
-                            else -> {  }
-                        }
-                    }
-                    is ApiState.Failure -> { Log.e(TAG, "code: ${res.code}") }
-                    else -> { }
-                }
-            }
-        }
+    }
+
+    private fun loadingView() {
+        binding.layoutProgress.visibility = View.VISIBLE
+        binding.layoutContent.visibility = View.GONE
+    }
+
+    private fun viewingView() {
+        binding.layoutProgress.visibility = View.GONE
+        binding.layoutContent.visibility = View.VISIBLE
+    }
+
+    fun moveRegister() {
+        val intent = Intent(context, RegisterActivity::class.java)
+        startActivity(intent)
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
@@ -188,7 +225,7 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
             val account  = completedTask.getResult(ApiException::class.java)
             Log.d(TAG, account.email.toString())
             user_id = account.email.toString()
-            subscribeObservers()
+//            subscribeObservers()
             googleSignInClient.signOut()
         } catch (e: ApiException){
             Log.e(TAG, "signInResult:failed code=" + e.statusCode)
