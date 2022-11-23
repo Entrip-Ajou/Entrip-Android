@@ -1,7 +1,6 @@
 package ajou.paran.entrip.screen.splash
 
 import ajou.paran.entrip.repository.network.UserRemoteSource
-import ajou.paran.entrip.repository.usecase.GetUserPlannersUseCase
 import ajou.paran.entrip.util.network.BaseResult
 import android.content.SharedPreferences
 import android.util.Log

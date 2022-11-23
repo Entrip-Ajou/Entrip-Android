@@ -3,36 +3,21 @@ package ajou.paran.entrip.screen.intro
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseFragment
 import ajou.paran.entrip.databinding.FragmentIntroFourBinding
-import ajou.paran.entrip.repository.network.dto.PlannerResponse
-import ajou.paran.entrip.repository.network.dto.UserResponse
-import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.intro.register.RegisterActivity
-import ajou.paran.entrip.util.ApiState
-import ajou.paran.entrip.util.network.BaseResult
-import ajou.paran.entrip.util.network.Failure
-import android.content.DialogInterface
 import android.content.Intent
 import android.util.Log
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.TranslateAnimation
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.common.api.Api
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -40,16 +25,16 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
     companion object{
         const val TAG = "[IntroFourFragment]"
     }
-
     private val viewModel: IntroFragmentViewModel by viewModels()
 
     @Inject
     lateinit var googleSignInClient: GoogleSignInClient
 
     lateinit var getResult: ActivityResultLauncher<Intent>
-    private lateinit var user_id: String
 
     override fun init() {
+        binding.fragment = this
+        binding.viewModel = viewModel
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             when(it.resultCode) {
                 AppCompatActivity.RESULT_OK -> {
@@ -64,47 +49,14 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
                 }
             }
         }
-
-        animating()
-
-        binding.introFourActBtnLogin.setOnClickListener{
-            Log.d(IntroThreeFragment.TAG, "Case: Click Login")
-            if(!viewModel.isTokenNull()) getResult.launch(googleSignInClient.signInIntent)
-            else{
-                val builder = AlertDialog.Builder(activity!!)
-                builder.setMessage("앱을 재시작 해주세요.")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener{ dialog, which ->
-                            activity!!.finishAffinity()
-                            System.runFinalization()
-                            System.exit(0)
-                        })
-                builder.show()
-            }
+        binding.btnSocialLogin.setOnClickListener {
+            socialLogin()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        animating()
-    }
-
-    private fun animating() = CoroutineScope(Dispatchers.Main).launch {
-        binding.introFourActBtnLogin.visibility = View.INVISIBLE
-        val animation = TranslateAnimation(0f, 0f, 200f, 0f)
-        animation.duration = 1000
-        animation.setAnimationListener(object: Animation.AnimationListener{
-            override fun onAnimationStart(p0: Animation?) {
-            }
-            override fun onAnimationEnd(p0: Animation?) {
-                binding.introFourActBtnLogin.visibility = View.VISIBLE
-            }
-            override fun onAnimationRepeat(p0: Animation?) {}
-        })
-        binding.introFourActText.startAnimation(animation)
+        subscribeObservers()
     }
 
     private fun subscribeObservers() {
+        /*
         viewModel.result(user_id)
         lifecycleScope.launchWhenStarted {
             viewModel.isExistUserResult.collect {
@@ -181,14 +133,63 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
                 }
             }
         }
+        */
+        viewModel.loginState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is LoginState.Loading -> {
+                    loadingView()
+                }
+                is LoginState.Success -> {
+                    Log.d(TAG, "Login Success")
+                    viewingView()
+                    binding.tvError.visibility = View.GONE
+                }
+                is LoginState.Error -> {
+                    viewingView()
+                    binding.tvError.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    private fun loadingView() {
+        binding.layoutProgress.visibility = View.VISIBLE
+        binding.layoutContent.visibility = View.GONE
+    }
+
+    private fun viewingView() {
+        binding.layoutProgress.visibility = View.GONE
+        binding.layoutContent.visibility = View.VISIBLE
+    }
+
+    fun moveRegister() {
+        val intent = Intent(context, RegisterActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun socialLogin() {
+        Log.d(IntroThreeFragment.TAG, "Case: Click Login")
+        if(!viewModel.isTokenNull()) {
+            getResult.launch(googleSignInClient.signInIntent)
+        } else {
+            val builder = AlertDialog.Builder(activity!!)
+                .setMessage("앱을 재시작 해주세요.")
+                .setPositiveButton("확인") { dialog, which ->
+                    activity!!.finishAffinity()
+                    System.runFinalization()
+                    System.exit(0)
+                }
+            builder.show()
+        }
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account  = completedTask.getResult(ApiException::class.java)
             Log.d(TAG, account.email.toString())
-            user_id = account.email.toString()
-            subscribeObservers()
+            viewModel.userId.value = account.email.toString()
+            viewModel.userPassword.value = "${account.email.toString()}_2ntrip.com"
+            viewModel.loginUserAccount()
             googleSignInClient.signOut()
         } catch (e: ApiException){
             Log.e(TAG, "signInResult:failed code=" + e.statusCode)
