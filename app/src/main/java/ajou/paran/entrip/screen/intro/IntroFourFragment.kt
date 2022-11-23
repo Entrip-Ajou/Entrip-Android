@@ -3,6 +3,7 @@ package ajou.paran.entrip.screen.intro
 import ajou.paran.entrip.R
 import ajou.paran.entrip.base.BaseFragment
 import ajou.paran.entrip.databinding.FragmentIntroFourBinding
+import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.intro.register.RegisterActivity
 import android.content.Intent
 import android.util.Log
@@ -23,7 +24,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragment_intro_four) {
     companion object{
-        const val TAG = "[IntroFourFragment]"
+        private const val TAG = "[IntroFourFragment]"
     }
     private val viewModel: IntroFragmentViewModel by viewModels()
 
@@ -49,91 +50,29 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
                 }
             }
         }
+        tokenCheck()
         binding.btnSocialLogin.setOnClickListener {
             socialLogin()
         }
         subscribeObservers()
     }
 
+    private fun tokenCheck() {
+        when (viewModel.isTokenNull()) {
+            true -> {
+                AlertDialog.Builder(activity!!)
+                    .setMessage("앱을 재시작 해주세요.")
+                    .setPositiveButton("확인") { dialog, which ->
+                        activity!!.finishAffinity()
+                        System.runFinalization()
+                        System.exit(0)
+                    }.show()
+            }
+            false -> { }
+        }
+    }
+
     private fun subscribeObservers() {
-        /*
-        viewModel.result(user_id)
-        lifecycleScope.launchWhenStarted {
-            viewModel.isExistUserResult.collect {
-                when(it) {
-                    is ApiState.Success -> {
-                        // 존재하지 않는 아이디
-                        val intent = Intent(context, RegisterActivity::class.java)
-                        intent.putExtra("user_id", user_id)
-                        startActivity(intent)
-                    }
-                    is ApiState.Failure -> {
-                        when(it.code) {
-                            999 -> {
-                                // 이미 존재하는 아이디
-                                viewModel.findById(user_id)
-                                viewModel.getUserPlanners(user_id)
-                            }
-                            else -> { Log.e(TAG, "code: ${it.code}") }
-                        }
-                    }
-                    is ApiState.Init -> { Log.d(TAG, "observe 시작") }
-                    else -> { Log.e(TAG, "예상 못한 에러") }
-                }
-            }
-        }
-        lifecycleScope.launchWhenResumed {
-            viewModel.getUserPlannersResult.collect { res ->
-                when (res) {
-                    is ApiState.Success -> {
-                        Log.d(TAG, "성공")
-                        startActivity(Intent(context, HomeActivity::class.java))
-                    }
-                    is ApiState.Init -> {
-                        Log.d(TAG, "planners observe 시작")
-                    }
-                    is ApiState.Failure -> {
-                        Log.e(
-                            TAG,
-                            "code: ${res.code}"
-                        )
-                        startActivity(Intent(context, HomeActivity::class.java))
-                    }
-                    else -> {
-                        Log.e(
-                            TAG,
-                            "예상 못한 에러"
-                        )
-                    }
-                }
-            }
-        }
-        lifecycleScope.launchWhenResumed {
-            viewModel.findByIdResult.collect{ res ->
-                when(res){
-                    is ApiState.Success ->{
-                        when(res.data){
-                            is BaseResult.Success<*> ->{
-                                val user_id = (res.data.data as UserResponse).userId
-                                val photo_url = res.data.data.photoUrl
-                                val nickname = res.data.data.nickname
-                                viewModel.commitShared(
-                                    user_id = user_id,
-                                    photo_url = photo_url,
-                                    nickname = nickname
-                                )
-                                Log.d(TAG, "기존 회원 sharedPreference 복구 완료")
-                            }
-                            is BaseResult.Error<*> -> { Log.e(TAG, res.data.err.toString()) }
-                            else -> {  }
-                        }
-                    }
-                    is ApiState.Failure -> { Log.e(TAG, "code: ${res.code}") }
-                    else -> { }
-                }
-            }
-        }
-        */
         viewModel.loginState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is LoginState.Loading -> {
@@ -143,6 +82,7 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
                     Log.d(TAG, "Login Success")
                     viewingView()
                     binding.tvError.visibility = View.GONE
+                    startActivity(Intent(context, HomeActivity::class.java))
                 }
                 is LoginState.Error -> {
                     viewingView()
@@ -168,19 +108,8 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
     }
 
     private fun socialLogin() {
-        Log.d(IntroThreeFragment.TAG, "Case: Click Login")
-        if(!viewModel.isTokenNull()) {
-            getResult.launch(googleSignInClient.signInIntent)
-        } else {
-            val builder = AlertDialog.Builder(activity!!)
-                .setMessage("앱을 재시작 해주세요.")
-                .setPositiveButton("확인") { dialog, which ->
-                    activity!!.finishAffinity()
-                    System.runFinalization()
-                    System.exit(0)
-                }
-            builder.show()
-        }
+        Log.d(TAG, "Case: Click Login")
+        getResult.launch(googleSignInClient.signInIntent)
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {

@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class IntroOneFragment: BaseFragment<FragmentIntroOneBinding>(R.layout.fragment_intro_one) {
-    companion object{
-        const val TAG = "[IntroOneFragment]"
+    companion object {
+        private const val TAG = "[IntroOneFragment]"
     }
 
     override fun init() {

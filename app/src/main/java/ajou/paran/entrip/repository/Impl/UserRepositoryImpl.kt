@@ -225,17 +225,16 @@ constructor(
         gender: Long,
         password: String,
         attempt: Long
-    ): UserSaveResponseDto
-            = when (val response = userRemoteSource.saveUserAccount(
-        userSaveRequest = UserSaveRequestDto(
-            userId = userId,
-            nickname = nickname,
-            photoUrl = photoUrl,
-            token = token,
-            gender = gender,
-            password = password
+    ): UserSaveResponseDto = when (val response = userRemoteSource.saveUserAccount(
+            userSaveRequest = UserSaveRequestDto(
+                userId = userId,
+                nickname = nickname,
+                photoUrl = photoUrl,
+                token = token,
+                gender = gender,
+                password = password
+            )
         )
-    )
     ) {
         is BaseResult.Success -> {
             response.data
@@ -244,16 +243,20 @@ constructor(
             when(response.err.code) {
                 0 -> {
                     Log.d(TAG, "Internet Error")
-                    if (attempt < 3)
-                        saveUserAccount(userId, nickname, photoUrl, token, gender, password)
-                    else
-                        UserSaveResponseDto(
-                            userId = userId,
-                            nickname = nickname,
-                            gender = gender,
-                            photoUrl = photoUrl,
-                            token = token
-                        )
+                    when (attempt) {
+                        in 0 .. 2 -> {
+                            saveUserAccount(userId, nickname, photoUrl, token, gender, password)
+                        }
+                        else -> {
+                            UserSaveResponseDto(
+                                userId = userId,
+                                nickname = nickname,
+                                gender = gender,
+                                photoUrl = photoUrl,
+                                token = token
+                            )
+                        }
+                    }
                 }
                 else -> {
                     Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")
@@ -274,17 +277,10 @@ constructor(
         userId: String,
         password: String,
         attempt: Long
-    ): Boolean
-            = when (val response = userRemoteSource.loginUserAccount(
-        loginRequest = UserLoginRequestDto(
-            userId = userId,
-            password = password
-        )
-    )
-    ) {
+    ): Boolean = when (val response = userRemoteSource.loginUserAccount(loginRequest = UserLoginRequestDto(userId = userId, password = password))) {
         is BaseResult.Success -> {
             sharedPreferences.edit().putString("user_id", response.data.userId).commit()
-            sharedPreferences.edit().putString("user_id", response.data.nickname).commit()
+            sharedPreferences.edit().putString("nickname", response.data.nickname).commit()
             sharedPreferences.edit().putString("accessToken", response.data.accessToken).commit()
             sharedPreferences.edit().putString("refreshToken", response.data.refreshToken).commit()
             true
@@ -293,10 +289,14 @@ constructor(
             when(response.err.code) {
                 0 -> {
                     Log.d(TAG, "Internet Error")
-                    if (attempt < 3)
-                        loginUserAccount(userId, password, attempt + 1)
-                    else
-                        false
+                    when (attempt) {
+                        in 0 .. 2 -> {
+                            loginUserAccount(userId, password, attempt + 1)
+                        }
+                        else -> {
+                            false
+                        }
+                    }
                 }
                 else -> {
                     Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")
@@ -309,20 +309,23 @@ constructor(
     override suspend fun reissueUserAccessToken(
         refreshToken: String,
         attempt: Long
-    ): Boolean
-            = when (val response = userRemoteSource.reissueUserAccessToken(refreshToken = refreshToken)) {
+    ): Boolean = when (val response = userRemoteSource.reissueUserAccessToken(refreshToken = refreshToken)) {
         is BaseResult.Success -> {
-            response.data
+            sharedPreferences.edit().putString("accessToken", response.data.accessToken).commit()
             true
         }
         is BaseResult.Error -> {
             when(response.err.code) {
                 0 -> {
                     Log.d(TAG, "Internet Error")
-                    if (attempt < 3)
-                        reissueUserAccessToken(refreshToken, attempt + 1)
-                    else
-                        false
+                    when (attempt) {
+                        in 0 .. 2 -> {
+                            reissueUserAccessToken(refreshToken, attempt + 1)
+                        }
+                        else -> {
+                            false
+                        }
+                    }
                 }
                 else -> {
                     Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")
@@ -343,10 +346,14 @@ constructor(
             when(response.err.code) {
                 0 -> {
                     Log.d(TAG, "Internet Error")
-                    if (attempt < 3)
-                        isExistUserId(userId, attempt + 1)
-                    else
-                        false
+                    when (attempt) {
+                        in 0 .. 2 -> {
+                            isExistUserId(userId, attempt + 1)
+                        }
+                        else -> {
+                            false
+                        }
+                    }
                 }
                 else -> {
                     Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")
@@ -367,10 +374,14 @@ constructor(
             when(response.err.code) {
                 0 -> {
                     Log.d(TAG, "Internet Error")
-                    if (attempt < 3)
-                        isExistNickname(nickname, attempt + 1)
-                    else
-                        true
+                    when (attempt) {
+                        in 0 .. 2 -> {
+                            isExistNickname(nickname, attempt + 1)
+                        }
+                        else -> {
+                            true
+                        }
+                    }
                 }
                 else -> {
                     Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")

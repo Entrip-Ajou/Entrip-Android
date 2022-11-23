@@ -19,8 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class RegisterActivity
-    : BaseActivity<ActivityRegisterBinding>(R.layout.activity_register) {
+class RegisterActivity : BaseActivity<ActivityRegisterBinding>(R.layout.activity_register) {
     companion object{
         const val TAG = "[RegisterActivity]"
     }

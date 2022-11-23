@@ -37,7 +37,7 @@ object NetworkModule {
     @EntripV1
     fun provideRetrofit(@EntripV1 client: OkHttpClient) : Retrofit {
         return Retrofit.Builder().apply {
-            baseUrl(PlanApi.BASE_URL)
+            baseUrl(BaseUrl.MAIN_URL)
             addConverterFactory(GsonConverterFactory.create())
             client(client)
         }.build()

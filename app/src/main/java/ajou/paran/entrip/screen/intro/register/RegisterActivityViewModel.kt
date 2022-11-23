@@ -20,7 +20,7 @@ constructor(
     private val sharedPreferences: SharedPreferences,
     private val userRepository: UserRepository,
     private val userRemoteSource: UserRemoteSource
-): ViewModel() {
+) : ViewModel() {
     companion object{
         const val TAG = "[RegisterViewModel]"
     }
@@ -138,7 +138,6 @@ constructor(
         when (userRepository.loginUserAccount(userId = userId, password = password)) {
             true -> {
                 _loginState.postValue(LoginState.Success(isSuccess = true))
-                sharedPreferences.edit().putString("nickname", nickname.value).commit()
                 sharedPreferences.edit().putString("gender", gender.toString()).commit()
                 sharedPreferences.edit().putString("photo_url","https://user-images.githubusercontent.com/77181865/169517449-f000a59d-5659-4957-9cb4-c6e5d3f4b197.png").commit()
             }

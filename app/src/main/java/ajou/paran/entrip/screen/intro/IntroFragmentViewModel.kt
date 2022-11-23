@@ -15,8 +15,7 @@ class IntroFragmentViewModel
 constructor(
     private val userRepository: UserRepository,
     private val sharedPreferences: SharedPreferences
-): ViewModel()
-{
+) : ViewModel() {
     companion object{
         const val TAG = "[IntroFragmentVM]"
     }
@@ -57,7 +56,5 @@ constructor(
         }
     }
 
-    fun isTokenNull() : Boolean{
-        return sharedPreferences.getString("token", null).isNullOrEmpty()
-    }
+    fun isTokenNull() : Boolean =  sharedPreferences.getString("token", null).isNullOrEmpty()
 }
