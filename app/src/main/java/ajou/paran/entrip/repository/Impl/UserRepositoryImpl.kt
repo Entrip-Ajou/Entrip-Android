@@ -258,6 +258,16 @@ constructor(
                         }
                     }
                 }
+                202 -> {
+                    Log.d(TAG, "An account that already exists")
+                    UserSaveResponseDto(
+                        userId = "",
+                        nickname = "",
+                        gender = -1L,
+                        photoUrl = "",
+                        token = ""
+                    )
+                }
                 else -> {
                     Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")
                     UserSaveResponseDto(

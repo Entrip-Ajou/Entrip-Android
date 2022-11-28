@@ -8,7 +8,8 @@ sealed class RegisterState {
     ) : RegisterState()
 
     data class Error(
-        val isSuccess: Boolean
+        val isSuccess: Boolean,
+        val reason: String = ""
     ) : RegisterState()
 
     object Loading : RegisterState()

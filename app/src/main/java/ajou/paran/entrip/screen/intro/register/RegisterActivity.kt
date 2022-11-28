@@ -44,7 +44,15 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding>(R.layout.activity
                 }
                 is RegisterState.Error -> {
                     registerViewingView()
-                    binding.tvError.text = viewModel.registerErrorCheck()
+                    when(it.reason) {
+                        "existAccount" -> {
+                            binding.tvError.text = "이미 존재하는 계정입니다."
+
+                        }
+                        else -> {
+                            binding.tvError.text = viewModel.registerErrorCheck()
+                        }
+                    }
                 }
             }
         }
@@ -55,6 +63,7 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding>(R.layout.activity
                 }
                 is LoginState.Success -> {
                     viewModel.updateUserToken()
+                    startActivity(Intent(this, HomeActivity::class.java))
                 }
                 is LoginState.Error -> {
                     loginErrorView()

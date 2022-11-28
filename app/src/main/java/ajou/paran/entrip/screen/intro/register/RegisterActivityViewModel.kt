@@ -112,6 +112,9 @@ constructor(
                     )
                 )
             }
+            "" -> {
+                _registerState.postValue(RegisterState.Error(isSuccess = false, reason = "existAccount"))
+            }
             else -> {
                 _registerState.postValue(RegisterState.Error(isSuccess = false))
             }

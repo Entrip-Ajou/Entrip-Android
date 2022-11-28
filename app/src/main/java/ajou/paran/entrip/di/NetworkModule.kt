@@ -9,10 +9,12 @@ import ajou.paran.entrip.util.EntripV1
 import ajou.paran.entrip.util.EntripV2
 import ajou.paran.entrip.util.FCM
 import ajou.paran.entrip.util.KakaoMap
+import ajou.paran.entrip.util.network.auth.AuthInterceptor
 import ajou.paran.entrip.util.network.fcm.FcmInterceptor
 import ajou.paran.entrip.util.network.kakao.KakaoInterceptor
 import ajou.paran.entrip.util.network.networkinterceptor.NetworkInterceptor
 import android.content.Context
+import android.content.SharedPreferences
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -79,12 +81,16 @@ object NetworkModule {
     @Provides
     @Singleton
     @EntripV1
-    fun provideHttpClient(networkInterceptor: NetworkInterceptor) : OkHttpClient {
+    fun provideHttpClient(
+        networkInterceptor: NetworkInterceptor,
+        authInterceptor: AuthInterceptor
+    ) : OkHttpClient {
         return OkHttpClient.Builder().apply {
             readTimeout(10, TimeUnit.SECONDS)
             connectTimeout(10, TimeUnit.SECONDS)
             writeTimeout(10, TimeUnit.SECONDS)
             addInterceptor(networkInterceptor)
+            addInterceptor(authInterceptor)
         }.build()
     }
 
@@ -146,6 +152,9 @@ object NetworkModule {
     fun provideKakaoInterceptor() : KakaoInterceptor {
         return KakaoInterceptor()
     }
+
+    @Provides
+    fun provideAuthInterceptor(sharedPreferences: SharedPreferences) : AuthInterceptor = AuthInterceptor(sharedPreferences)
 
     @Provides
     @Singleton

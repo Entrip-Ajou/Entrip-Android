@@ -66,8 +66,13 @@ constructor(
             200 -> {
                 BaseResult.Success(data = response.data)
             }
+            202 -> {
+                // exist account
+                Log.d(TAG, "Networking Message = ${response.message}")
+                BaseResult.Error(Failure(response.status, response.message))
+            }
             else -> {
-                Log.e(TAG, "Networking Message = ${response.message}")
+                Log.d(TAG, "Networking Message = ${response.message}")
                 BaseResult.Error(Failure(response.status, response.message))
             }
         }
