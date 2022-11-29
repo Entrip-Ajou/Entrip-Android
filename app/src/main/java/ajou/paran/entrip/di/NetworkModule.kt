@@ -25,6 +25,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -83,7 +84,8 @@ object NetworkModule {
     @EntripV1
     fun provideHttpClient(
         networkInterceptor: NetworkInterceptor,
-        authInterceptor: AuthInterceptor
+        authInterceptor: AuthInterceptor,
+        httpLoggingInterceptor: HttpLoggingInterceptor
     ) : OkHttpClient {
         return OkHttpClient.Builder().apply {
             readTimeout(10, TimeUnit.SECONDS)
@@ -91,6 +93,7 @@ object NetworkModule {
             writeTimeout(10, TimeUnit.SECONDS)
             addInterceptor(networkInterceptor)
             addInterceptor(authInterceptor)
+            addInterceptor(httpLoggingInterceptor)
         }.build()
     }
 
@@ -98,12 +101,14 @@ object NetworkModule {
     @Singleton
     @EntripV2
     fun provideV2HttpClient(
-        networkInterceptor: NetworkInterceptor
+        networkInterceptor: NetworkInterceptor,
+        httpLoggingInterceptor: HttpLoggingInterceptor
     ) : OkHttpClient = OkHttpClient.Builder().apply {
         readTimeout(10, TimeUnit.SECONDS)
         connectTimeout(10, TimeUnit.SECONDS)
         writeTimeout(10, TimeUnit.SECONDS)
         addInterceptor(networkInterceptor)
+        addInterceptor(httpLoggingInterceptor)
     }.build()
 
     @Provides
@@ -155,6 +160,11 @@ object NetworkModule {
 
     @Provides
     fun provideAuthInterceptor(sharedPreferences: SharedPreferences) : AuthInterceptor = AuthInterceptor(sharedPreferences)
+
+    @Provides
+    fun provideHttpLoggingInterceptor() : HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
+        setLevel(HttpLoggingInterceptor.Level.BODY)
+    }
 
     @Provides
     @Singleton

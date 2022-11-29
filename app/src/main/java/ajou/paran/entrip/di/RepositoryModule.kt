@@ -40,6 +40,11 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideTokenRemoteApi(@EntripV2 retrofit: Retrofit) : TokenApi
+    = retrofit.create(TokenApi::class.java)
+
+    @Provides
+    @Singleton
     fun provideFcmRemoteApi(@FCM retrofit: Retrofit) : FcmApi
     = retrofit.create(FcmApi::class.java)
 
@@ -76,8 +81,16 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePlannerRemoteSource(planApi: PlanApi) : PlannerRemoteSource{
-        return PlannerRemoteSource(planApi)
+    fun providePlannerRemoteSource(
+        planApi: PlanApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : PlannerRemoteSource{
+        return PlannerRemoteSource(
+            planApi = planApi,
+            tokenApi = tokenApi,
+            sharedPreferences = sharedPreferences
+        )
     }
 
     @Provides

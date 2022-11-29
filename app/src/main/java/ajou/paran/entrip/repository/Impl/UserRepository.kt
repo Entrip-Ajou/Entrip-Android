@@ -31,10 +31,10 @@ interface UserRepository {
         attempt: Long = 0L
     ): Boolean
 
-    suspend fun reissueUserAccessToken(
-        refreshToken: String,
-        attempt: Long = 0L
-    ): Boolean
+//    suspend fun reissueUserAccessToken(
+//        refreshToken: String,
+//        attempt: Long = 0L
+//    ): Boolean
 
     suspend fun isExistUserId(
         userId: String,

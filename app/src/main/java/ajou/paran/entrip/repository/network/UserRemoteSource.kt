@@ -114,29 +114,29 @@ constructor(
         BaseResult.Error(Failure(-1, e.message.toString()))
     }
 
-    suspend fun reissueUserAccessToken(
-        refreshToken: String
-    ): BaseResult<UserReissueAccessTokenResponseDto, Failure> = try {
-        val response = userAPIV2.reissueUserAccessToken(refreshToken = refreshToken)
-        when (response.status) {
-            200 -> {
-                BaseResult.Success(data = response.data)
-            }
-            else -> {
-                Log.e(TAG, "Networking Message = ${response.message}")
-                BaseResult.Error(Failure(response.status, response.message))
-            }
-        }
-    } catch (e: NoInternetException) {
-        Log.e(TAG, "NoInternetException Message = ${e.localizedMessage}")
-        BaseResult.Error(Failure(0, e.message))
-    } catch (e: HttpException) {
-        Log.e(TAG, "HttpException Message = ${e.localizedMessage}")
-        BaseResult.Error(Failure(e.code(), e.message()))
-    } catch (e: Exception) {
-        Log.e(TAG, "Exception Message = ${e.localizedMessage}")
-        BaseResult.Error(Failure(-1, e.message.toString()))
-    }
+//    suspend fun reissueUserAccessToken(
+//        refreshToken: String
+//    ): BaseResult<UserReissueAccessTokenResponseDto, Failure> = try {
+//        val response = userAPIV2.reissueUserAccessToken(refreshToken = refreshToken)
+//        when (response.status) {
+//            200 -> {
+//                BaseResult.Success(data = response.data)
+//            }
+//            else -> {
+//                Log.e(TAG, "Networking Message = ${response.message}")
+//                BaseResult.Error(Failure(response.status, response.message))
+//            }
+//        }
+//    } catch (e: NoInternetException) {
+//        Log.e(TAG, "NoInternetException Message = ${e.localizedMessage}")
+//        BaseResult.Error(Failure(0, e.message))
+//    } catch (e: HttpException) {
+//        Log.e(TAG, "HttpException Message = ${e.localizedMessage}")
+//        BaseResult.Error(Failure(e.code(), e.message()))
+//    } catch (e: Exception) {
+//        Log.e(TAG, "Exception Message = ${e.localizedMessage}")
+//        BaseResult.Error(Failure(-1, e.message.toString()))
+//    }
 
     suspend fun isExistUserId(
         userId: String
@@ -188,5 +188,4 @@ constructor(
         Log.e(TAG, "Exception Message = ${e.localizedMessage}")
         BaseResult.Error(Failure(-1, e.message.toString()))
     }
-
 }

@@ -316,34 +316,34 @@ constructor(
         }
     }
 
-    override suspend fun reissueUserAccessToken(
-        refreshToken: String,
-        attempt: Long
-    ): Boolean = when (val response = userRemoteSource.reissueUserAccessToken(refreshToken = refreshToken)) {
-        is BaseResult.Success -> {
-            sharedPreferences.edit().putString("accessToken", response.data.accessToken).commit()
-            true
-        }
-        is BaseResult.Error -> {
-            when(response.err.code) {
-                0 -> {
-                    Log.d(TAG, "Internet Error")
-                    when (attempt) {
-                        in 0 .. 2 -> {
-                            reissueUserAccessToken(refreshToken, attempt + 1)
-                        }
-                        else -> {
-                            false
-                        }
-                    }
-                }
-                else -> {
-                    Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")
-                    false
-                }
-            }
-        }
-    }
+//    override suspend fun reissueUserAccessToken(
+//        refreshToken: String,
+//        attempt: Long
+//    ): Boolean = when (val response = userRemoteSource.reissueUserAccessToken(refreshToken = refreshToken)) {
+//        is BaseResult.Success -> {
+//            sharedPreferences.edit().putString("accessToken", response.data.accessToken).commit()
+//            true
+//        }
+//        is BaseResult.Error -> {
+//            when(response.err.code) {
+//                0 -> {
+//                    Log.d(TAG, "Internet Error")
+//                    when (attempt) {
+//                        in 0 .. 2 -> {
+//                            reissueUserAccessToken(refreshToken, attempt + 1)
+//                        }
+//                        else -> {
+//                            false
+//                        }
+//                    }
+//                }
+//                else -> {
+//                    Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")
+//                    false
+//                }
+//            }
+//        }
+//    }
 
     override suspend fun isExistUserId(
         userId: String,

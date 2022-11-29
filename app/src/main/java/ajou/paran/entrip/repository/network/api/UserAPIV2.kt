@@ -5,7 +5,6 @@ import ajou.paran.entrip.repository.network.dto.BaseResponse
 import ajou.paran.entrip.repository.network.dto.request.UserLoginRequestDto
 import ajou.paran.entrip.repository.network.dto.request.UserSaveRequestDto
 import ajou.paran.entrip.repository.network.dto.response.UserLoginResponseDto
-import ajou.paran.entrip.repository.network.dto.response.UserReissueAccessTokenResponseDto
 import ajou.paran.entrip.repository.network.dto.response.UserSaveResponseDto
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -25,12 +24,6 @@ interface UserAPIV2 {
     suspend fun loginUserAccount(
         @Body loginRequest: UserLoginRequestDto
     ): BaseResponse<UserLoginResponseDto>
-
-    // Reissue User AccessToken using refreshToken
-    @GET(BaseUrl.V2.User.REISSUE_URL)
-    suspend fun reissueUserAccessToken(
-        @Path("refreshToken") refreshToken: String
-    ): BaseResponse<UserReissueAccessTokenResponseDto>
 
     @GET(BaseUrl.V2.User.IS_EXIST_ID_URL)
     suspend fun isExistUserId(
