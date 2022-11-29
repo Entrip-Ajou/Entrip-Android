@@ -6,6 +6,7 @@ import ajou.paran.entrip.repository.Impl.UserAddRepositoryImpl
 import ajou.paran.entrip.repository.network.dto.PushNotification
 import ajou.paran.entrip.util.ApiState
 import ajou.paran.entrip.util.network.BaseResult
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

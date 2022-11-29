@@ -7,6 +7,11 @@ import ajou.paran.entrip.repository.network.VoteRemoteSource
 import ajou.paran.entrip.repository.room.plan.dao.PlanDao
 import ajou.paran.entrip.repository.room.AppDatabase
 import ajou.paran.entrip.repository.room.plan.dao.UserDao
+import ajou.paran.entrip.util.EntripV1
+import ajou.paran.entrip.util.EntripV2
+import ajou.paran.entrip.util.FCM
+import ajou.paran.entrip.util.KakaoMap
+import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,67 +25,91 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePlanRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : PlanApi {
-        return retrofit.create(PlanApi::class.java)
-    }
+    fun providePlanRemoteApi(@EntripV1 retrofit: Retrofit) : PlanApi
+    = retrofit.create(PlanApi::class.java)
 
     @Provides
     @Singleton
-    fun provideUserRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : UserApi {
-        return retrofit.create(UserApi::class.java)
-    }
+    fun provideUserRemoteApi(@EntripV1 retrofit: Retrofit) : UserApi
+    = retrofit.create(UserApi::class.java)
 
     @Provides
     @Singleton
-    fun provideFcmRemoteApi(@NetworkModule.FCM retrofit: Retrofit) : FcmApi {
-        return retrofit.create(FcmApi::class.java)
-    }
+    fun provideUserV2RemoteApi(@EntripV2 retrofit: Retrofit) : UserAPIV2
+    = retrofit.create(UserAPIV2::class.java)
 
     @Provides
     @Singleton
-    fun provideKakaoRemoteApi(@NetworkModule.KakaoMap retrofit: Retrofit) : MapApi {
-        return retrofit.create(MapApi::class.java)
-    }
+    fun provideTokenRemoteApi(@EntripV2 retrofit: Retrofit) : TokenApi
+    = retrofit.create(TokenApi::class.java)
 
     @Provides
     @Singleton
-    fun provideCommentRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : CommentApi {
-        return retrofit.create(CommentApi::class.java)
-    }
+    fun provideFcmRemoteApi(@FCM retrofit: Retrofit) : FcmApi
+    = retrofit.create(FcmApi::class.java)
 
     @Provides
     @Singleton
-    fun provideNoticeRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : NoticeApi {
-        return retrofit.create(NoticeApi::class.java)
-    }
+    fun provideKakaoRemoteApi(@KakaoMap retrofit: Retrofit) : MapApi
+    = retrofit.create(MapApi::class.java)
 
     @Provides
     @Singleton
-    fun provideVoteRemoteApi(@NetworkModule.Entrip retrofit: Retrofit) : VoteApi {
-        return retrofit.create(VoteApi::class.java)
-    }
+    fun provideCommentRemoteApi(@EntripV1 retrofit: Retrofit) : CommentApi
+    = retrofit.create(CommentApi::class.java)
 
     @Provides
     @Singleton
-    fun provideCommunityApi(@NetworkModule.Entrip retrofit: Retrofit): CommunityApi = retrofit.create(CommunityApi::class.java)
+    fun provideNoticeRemoteApi(@EntripV1 retrofit: Retrofit) : NoticeApi
+    = retrofit.create(NoticeApi::class.java)
 
     @Provides
     @Singleton
-    fun providePlanRemoteSource(planApi: PlanApi) : PlanRemoteSource{
-        return PlanRemoteSource(planApi)
-    }
+    fun provideVoteRemoteApi(@EntripV1 retrofit: Retrofit) : VoteApi
+    = retrofit.create(VoteApi::class.java)
 
     @Provides
     @Singleton
-    fun providePlannerRemoteSource(planApi: PlanApi) : PlannerRemoteSource{
-        return PlannerRemoteSource(planApi)
-    }
+    fun provideCommunityApi(@EntripV1 retrofit: Retrofit): CommunityApi
+    = retrofit.create(CommunityApi::class.java)
 
     @Provides
     @Singleton
-    fun provideUserRemoteSource(userApi: UserApi) : UserRemoteSource {
-        return UserRemoteSource(userApi)
-    }
+    fun providePlanRemoteSource(
+        planApi: PlanApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : PlanRemoteSource = PlanRemoteSource(
+        planApi = planApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
+
+    @Provides
+    @Singleton
+    fun providePlannerRemoteSource(
+        planApi: PlanApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : PlannerRemoteSource = PlannerRemoteSource(
+        planApi = planApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
+
+    @Provides
+    @Singleton
+    fun provideUserRemoteSource(
+        userApi: UserApi,
+        userAPIV2: UserAPIV2,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : UserRemoteSource = UserRemoteSource(
+        userApi = userApi,
+        userAPIV2 = userAPIV2,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
     @Provides
     @Singleton
@@ -90,23 +119,51 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideCommentRemoteSource(commentApi: CommentApi) : CommentRemoteSource{
-        return CommentRemoteSource(commentApi)
-    }
+    fun provideCommentRemoteSource(
+        commentApi: CommentApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : CommentRemoteSource = CommentRemoteSource(
+        commentApi = commentApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
     @Provides
     @Singleton
-    fun provideNoticeRemoteSource(noticeApi: NoticeApi) : NoticeRemoteSource {
-        return NoticeRemoteSource(noticeApi)
-    }
+    fun provideNoticeRemoteSource(
+        noticeApi: NoticeApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : NoticeRemoteSource = NoticeRemoteSource(
+        noticeApi = noticeApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
     @Provides
     @Singleton
-    fun provideVoteRemoteSource(voteApi: VoteApi) : VoteRemoteSource {
-        return VoteRemoteSource(voteApi)
-    }
+    fun provideVoteRemoteSource(
+        voteApi: VoteApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : VoteRemoteSource = VoteRemoteSource(
+        voteApi = voteApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
-    fun provideCommunityRemoteSource(communityApi: CommunityApi): CommunityRemoteSource = CommunityRemoteSource(communityApi)
+    @Provides
+    @Singleton
+    fun provideCommunityRemoteSource(
+        communityApi: CommunityApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ): CommunityRemoteSource = CommunityRemoteSource(
+        communityApi = communityApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
     @Provides
     @Singleton
@@ -134,9 +191,10 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(userRemoteSource: UserRemoteSource, plannerRemoteSource: PlannerRemoteSource ,  planDao: PlanDao) : UserRepository{
-        return UserRepositoryImpl(userRemoteSource, plannerRemoteSource, planDao)
-    }
+    fun provideUserRepository(
+        userRemoteSource: UserRemoteSource,
+        sharedPreferences: SharedPreferences
+    ) : UserRepository = UserRepositoryImpl(userRemoteSource, sharedPreferences)
 
     @Provides
     @Singleton
