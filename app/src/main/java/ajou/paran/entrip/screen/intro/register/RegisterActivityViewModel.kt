@@ -3,6 +3,7 @@ package ajou.paran.entrip.screen.intro.register
 import ajou.paran.entrip.repository.Impl.UserRepository
 import ajou.paran.entrip.repository.network.UserRemoteSource
 import ajou.paran.entrip.screen.intro.LoginState
+import ajou.paran.entrip.screen.intro.NicknameState
 import ajou.paran.entrip.screen.intro.RegisterState
 import ajou.paran.entrip.util.network.BaseResult
 import android.content.SharedPreferences
@@ -33,6 +34,10 @@ constructor(
     val loginState: LiveData<LoginState>
         get() = _loginState
 
+    private val _nicknameState = MutableLiveData<NicknameState>()
+    val nicknameState: LiveData<NicknameState>
+        get() = _nicknameState
+
     val userId: MutableLiveData<String> by lazy {
         MutableLiveData<String>("")
     }
@@ -42,29 +47,33 @@ constructor(
     val nickname: MutableLiveData<String> by lazy {
         MutableLiveData<String>("")
     }
-    val isCheckNickname: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>(false)
-    }
     val gender: MutableLiveData<Long> by lazy {
         MutableLiveData<Long>(-1L)
     }
 
     fun duplicationCheck() {
-        if (nickname.value!!.toString().isNotEmpty())
-            checkNickname(nickname = nickname.value!!.toString())
+        _nicknameState.value = NicknameState.Loading
+        when (nickname.value!!.toString().isNotEmpty()) {
+            true -> {
+                checkNickname(nickname = nickname.value!!.toString())
+            }
+            false -> {
+                _nicknameState.value = NicknameState.Error(isSuccess = false, reason = NicknameState.Error.EMPTY)
+            }
+        }
     }
 
     fun repeatedAttempt() {
-        isCheckNickname.value = false
+        _nicknameState.value = NicknameState.Init
     }
 
     private fun checkNickname(nickname: String) = viewModelScope.launch(Dispatchers.IO) {
         when (userRepository.isExistNickname(nickname)) {
             true -> {
-                isCheckNickname.postValue(false)
+                _nicknameState.postValue(NicknameState.Error(isSuccess = false, reason = NicknameState.Error.EXIST))
             }
             false -> {
-                isCheckNickname.postValue(true)
+                _nicknameState.postValue(NicknameState.Success(isSuccess = true))
             }
         }
     }
@@ -72,21 +81,26 @@ constructor(
     fun register() {
         _registerState.value = RegisterState.Loading
 
-        if (userId.value!!.toString().isNotEmpty()
-            && password.value!!.toString().isNotEmpty()
-            && nickname.value!!.toString().isNotEmpty()
-            && gender.value!! != -1L
-        ) {
-            saveUser(
-                userId = userId.value.toString(),
-                nickname = nickname.value.toString(),
-                password =  password.value.toString(),
-                gender = gender.value!!
-            )
-        } else {
-            _registerState.value = RegisterState.Error(isSuccess = false)
+        when (checkRegisterConditions()) {
+            true -> {
+                saveUser(
+                    userId = userId.value.toString(),
+                    nickname = nickname.value.toString(),
+                    password =  password.value.toString(),
+                    gender = gender.value!!
+                )
+            }
+            false -> {
+                _registerState.value = RegisterState.Error(isSuccess = false)
+            }
         }
     }
+
+    private fun checkRegisterConditions(): Boolean
+    = userId.value!!.toString().isNotEmpty() && password.value!!.toString().isNotEmpty()
+            && nickname.value!!.toString().isNotEmpty()
+            && gender.value!! != -1L
+            && _nicknameState.value is NicknameState.Success
 
     private fun saveUser(
         userId: String,
@@ -113,7 +127,7 @@ constructor(
                 )
             }
             "" -> {
-                _registerState.postValue(RegisterState.Error(isSuccess = false, reason = "existAccount"))
+                _registerState.postValue(RegisterState.Error(isSuccess = false, reason = RegisterState.Error.EXIST))
             }
             else -> {
                 _registerState.postValue(RegisterState.Error(isSuccess = false))
@@ -160,6 +174,9 @@ constructor(
         }
         gender.value == -1L -> {
             "성별을 선택해주세요"
+        }
+        _nicknameState.value !is NicknameState.Success -> {
+            "중복 검사를 해주세요"
         }
         else -> {
             "네트워크를 확인해주세요"

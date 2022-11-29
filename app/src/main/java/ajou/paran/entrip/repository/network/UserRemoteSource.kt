@@ -170,6 +170,9 @@ constructor(
             200 -> {
                 BaseResult.Success(response.data)
             }
+            202 -> {
+                BaseResult.Success(response.data)
+            }
             else -> {
                 Log.e(TAG, "Networking Message = ${response.message}")
                 BaseResult.Error(Failure(response.status, response.message))

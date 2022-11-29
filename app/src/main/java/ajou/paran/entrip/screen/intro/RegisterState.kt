@@ -10,7 +10,11 @@ sealed class RegisterState {
     data class Error(
         val isSuccess: Boolean,
         val reason: String = ""
-    ) : RegisterState()
+    ) : RegisterState() {
+        companion object {
+            const val EXIST = "existAccount"
+        }
+    }
 
     object Loading : RegisterState()
 }

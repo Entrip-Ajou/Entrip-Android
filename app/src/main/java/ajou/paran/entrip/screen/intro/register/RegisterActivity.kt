@@ -5,6 +5,7 @@ import ajou.paran.entrip.base.BaseActivity
 import ajou.paran.entrip.databinding.ActivityRegisterBinding
 import ajou.paran.entrip.screen.home.HomeActivity
 import ajou.paran.entrip.screen.intro.LoginState
+import ajou.paran.entrip.screen.intro.NicknameState
 import ajou.paran.entrip.screen.intro.RegisterState
 import ajou.paran.entrip.util.ApiState
 import android.content.Intent
@@ -16,7 +17,9 @@ import android.widget.RadioGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_planner.*
 
 @AndroidEntryPoint
 class RegisterActivity : BaseActivity<ActivityRegisterBinding>(R.layout.activity_register) {
@@ -45,12 +48,13 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding>(R.layout.activity
                 is RegisterState.Error -> {
                     registerViewingView()
                     when(it.reason) {
-                        "existAccount" -> {
-                            binding.tvError.text = "이미 존재하는 계정입니다."
-
+                        RegisterState.Error.EXIST -> {
+//                            binding.tvError.text = "이미 존재하는 계정입니다."
+                            snackBar("이미 존재하는 계정입니다.")
                         }
                         else -> {
-                            binding.tvError.text = viewModel.registerErrorCheck()
+//                            binding.tvError.text = viewModel.registerErrorCheck()
+                            snackBar(viewModel.registerErrorCheck())
                         }
                     }
                 }
@@ -70,13 +74,33 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding>(R.layout.activity
                 }
             }
         }
-        viewModel.isCheckNickname.observe(this) { duplicated ->
-            when(duplicated) {
-                true -> {
+        viewModel.nicknameState.observe(this) {
+            when(it) {
+                is NicknameState.Success -> {
+                    registerViewingView()
                     checkSuccessView()
+                    binding.tvError.text = ""
                 }
-                false -> {
+                is NicknameState.Error -> {
+                    registerViewingView()
                     checkFailView()
+                    when (it.reason) {
+                        NicknameState.Error.EMPTY -> {
+//                            binding.tvError.text = "닉네임을 확인해주세요."
+                            snackBar("닉네임을 확인해주세요.")
+                        }
+                        NicknameState.Error.EXIST -> {
+//                            binding.tvError.text = "이미 존재하는 닉네임입니다."
+                            snackBar("이미 존재하는 닉네임입니다.")
+                        }
+                    }
+                }
+                is NicknameState.Init -> {
+                    registerViewingView()
+                    checkFailView()
+                }
+                is NicknameState.Loading -> {
+                    registerLoadingView()
                 }
             }
         }
@@ -149,5 +173,10 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding>(R.layout.activity
             }
         }
     }
+
+    private fun snackBar(msg: String) = Snackbar
+        .make(binding.layoutContent, msg, Snackbar.LENGTH_INDEFINITE)
+        .setAction("확인") {}
+        .show()
 
 }
