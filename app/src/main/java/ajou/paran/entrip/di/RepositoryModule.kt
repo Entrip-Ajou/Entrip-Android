@@ -193,10 +193,8 @@ object RepositoryModule {
     @Singleton
     fun provideUserRepository(
         userRemoteSource: UserRemoteSource,
-        plannerRemoteSource: PlannerRemoteSource,
-        planDao: PlanDao,
         sharedPreferences: SharedPreferences
-    ) : UserRepository = UserRepositoryImpl(userRemoteSource, plannerRemoteSource, planDao, sharedPreferences)
+    ) : UserRepository = UserRepositoryImpl(userRemoteSource, sharedPreferences)
 
     @Provides
     @Singleton

@@ -29,38 +29,44 @@ constructor(
         private const val TAG = "[UserRemote]"
     }
 
-    suspend fun saveUser(user: UserTemp): BaseResponse<UserRequest>
-    = userApi.saveUser(user)
-
-    suspend fun updateUserToken(user_id: String, token: String): BaseResult<Unit, Failure>
-    = try {
+    suspend fun updateUserToken(
+        user_id: String,
+        token: String
+    ): BaseResult<Unit, Failure> = try {
         val res = userApi.updateToken(user_id, token)
         when(res.status) {
-            200 -> { BaseResult.Success(Unit) }
+            200 -> {
+                BaseResult.Success(Unit)
+            }
             else -> {
                 Log.e(TAG, "Err code = ${res.status}, Err message = ${res.message}")
                 BaseResult.Error(Failure(res.status, res.message))
             }
         }
     } catch (e: NoInternetException) {
-        Log.e(TAG, "NoInternetException Message = ${e.localizedMessage}")
+        Log.e(TAG, "NoInternetException Message = " + e.localizedMessage)
         BaseResult.Error(Failure(0, e.message))
     } catch (e: HttpException) {
-        Log.e(TAG, "HttpException Message = ${e.localizedMessage}")
-        BaseResult.Error(Failure(e.code(), e.message.toString()))
+        Log.e(TAG, "HttpException Message = " + e.localizedMessage)
+        when (e.code()) {
+            400 -> {
+                when (val response = reissueUserAccessToken()) {
+                    is BaseResult.Success -> {
+                        updateUserToken(user_id, token)
+                    }
+                    is BaseResult.Error -> {
+                        BaseResult.Error(response.err)
+                    }
+                }
+            }
+            else -> {
+                BaseResult.Error(Failure(e.code(), e.message()))
+            }
+        }
     } catch (e: Exception) {
-        Log.e(TAG, "Exception Message = ${e.localizedMessage}")
+        Log.e(TAG, "Exception Message = " + e.localizedMessage)
         BaseResult.Error(Failure(-1, e.message.toString()))
     }
-
-    suspend fun getUserPlanners(user_id: String): BaseResponse<List<PlannerResponse>>
-    = userApi.findAllPlanners(user_id)
-
-    suspend fun findById(user_id: String): BaseResponse<UserResponse>
-    = userApi.findById(user_id)
-
-    suspend fun findByUserId(user_id: String): BaseResponse<UserResponse>
-    = userApi.findByUserId(user_id)
 
     suspend fun saveUserAccount(
         userSaveRequest: UserSaveRequestDto
@@ -118,30 +124,6 @@ constructor(
         BaseResult.Error(Failure(-1, e.message.toString()))
     }
 
-//    suspend fun reissueUserAccessToken(
-//        refreshToken: String
-//    ): BaseResult<UserReissueAccessTokenResponseDto, Failure> = try {
-//        val response = userAPIV2.reissueUserAccessToken(refreshToken = refreshToken)
-//        when (response.status) {
-//            200 -> {
-//                BaseResult.Success(data = response.data)
-//            }
-//            else -> {
-//                Log.e(TAG, "Networking Message = ${response.message}")
-//                BaseResult.Error(Failure(response.status, response.message))
-//            }
-//        }
-//    } catch (e: NoInternetException) {
-//        Log.e(TAG, "NoInternetException Message = ${e.localizedMessage}")
-//        BaseResult.Error(Failure(0, e.message))
-//    } catch (e: HttpException) {
-//        Log.e(TAG, "HttpException Message = ${e.localizedMessage}")
-//        BaseResult.Error(Failure(e.code(), e.message()))
-//    } catch (e: Exception) {
-//        Log.e(TAG, "Exception Message = ${e.localizedMessage}")
-//        BaseResult.Error(Failure(-1, e.message.toString()))
-//    }
-
     suspend fun isExistUserId(
         userId: String
     ): BaseResult<Boolean, Failure> = try {
@@ -175,6 +157,31 @@ constructor(
                 BaseResult.Success(response.data)
             }
             202 -> {
+                BaseResult.Success(response.data)
+            }
+            else -> {
+                Log.e(TAG, "Networking Message = ${response.message}")
+                BaseResult.Error(Failure(response.status, response.message))
+            }
+        }
+    } catch (e: NoInternetException) {
+        Log.e(TAG, "NoInternetException Message = ${e.localizedMessage}")
+        BaseResult.Error(Failure(0, e.message))
+    } catch (e: HttpException) {
+        Log.e(TAG, "HttpException Message = ${e.localizedMessage}")
+        BaseResult.Error(Failure(e.code(), e.message()))
+    } catch (e: Exception) {
+        Log.e(TAG, "Exception Message = ${e.localizedMessage}")
+        BaseResult.Error(Failure(-1, e.message.toString()))
+    }
+
+    private suspend fun reissueUserAccessToken(
+        refreshToken: String = sharedPreferences.getString("refreshToken", "").toString()
+    ): BaseResult<UserReissueAccessTokenResponseDto, Failure> = try {
+        val response = tokenApi.reissueUserAccessToken(refreshToken = refreshToken)
+        when (response.status) {
+            200 -> {
+                sharedPreferences.edit().putString("accessToken", response.data.accessToken).commit()
                 BaseResult.Success(response.data)
             }
             else -> {
