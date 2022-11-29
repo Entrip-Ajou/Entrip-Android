@@ -1,12 +1,14 @@
 package ajou.paran.entrip.repository.network
 
 import ajou.paran.entrip.repository.network.api.CommentApi
+import ajou.paran.entrip.repository.network.api.TokenApi
 import ajou.paran.entrip.repository.network.dto.CommentPlanResponse
 import ajou.paran.entrip.repository.network.dto.CommentRequest
 import ajou.paran.entrip.repository.network.dto.CommentResponse
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+import android.content.SharedPreferences
 import android.util.Log
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -14,10 +16,12 @@ import javax.inject.Inject
 class CommentRemoteSource
 @Inject
 constructor(
-    private val commentApi: CommentApi
+    private val commentApi: CommentApi,
+    private val tokenApi: TokenApi,
+    private val sharedPreferences: SharedPreferences
 ) {
     companion object {
-        const val TAG = "[CommentRemote]"
+        private const val TAG = "[CommentRemote]"
     }
 
     suspend fun insertComment(commentRequest: CommentRequest): BaseResult<CommentPlanResponse, Failure> {

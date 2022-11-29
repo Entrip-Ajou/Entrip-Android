@@ -1,6 +1,7 @@
 package ajou.paran.entrip.repository.network
 
 import ajou.paran.entrip.repository.network.api.FcmApi
+import ajou.paran.entrip.repository.network.api.TokenApi
 import ajou.paran.entrip.repository.network.api.UserApi
 import ajou.paran.entrip.repository.network.dto.BaseResponse
 import ajou.paran.entrip.repository.network.dto.PushNotification
@@ -9,6 +10,7 @@ import ajou.paran.entrip.repository.network.dto.UserInformation
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+import android.content.SharedPreferences
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
@@ -20,10 +22,12 @@ class UserAddRemoteSource
 @Inject
 constructor(
     private val fcmApi: FcmApi,
-    private val userApi: UserApi
+    private val userApi: UserApi,
+    private val tokenApi: TokenApi,
+    private val sharedPreferences: SharedPreferences
 ) {
     companion object {
-        const val TAG = "[UserAddRemote]"
+        private const val TAG = "[UserAddRemote]"
     }
 
     suspend fun findAllUsersWithPlannerId(planner_id: Long): BaseResult<List<SharingFriend>, Failure> {

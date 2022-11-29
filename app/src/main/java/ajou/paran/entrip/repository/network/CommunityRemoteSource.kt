@@ -1,10 +1,12 @@
 package ajou.paran.entrip.repository.network
 
 import ajou.paran.entrip.repository.network.api.CommunityApi
+import ajou.paran.entrip.repository.network.api.TokenApi
 import ajou.paran.entrip.repository.network.dto.community.*
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+import android.content.SharedPreferences
 import android.util.Log
 import okhttp3.MultipartBody
 import retrofit2.HttpException
@@ -13,7 +15,9 @@ import javax.inject.Inject
 class CommunityRemoteSource
 @Inject
 constructor(
-    private val communityApi: CommunityApi
+    private val communityApi: CommunityApi,
+    private val tokenApi: TokenApi,
+    private val sharedPreferences: SharedPreferences
 ) {
     companion object {
         private const val TAG = "[CommunityRS]"

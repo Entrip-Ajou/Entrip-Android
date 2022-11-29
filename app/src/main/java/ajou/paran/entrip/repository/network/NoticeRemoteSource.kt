@@ -1,6 +1,7 @@
 package ajou.paran.entrip.repository.network
 
 import ajou.paran.entrip.repository.network.api.NoticeApi
+import ajou.paran.entrip.repository.network.api.TokenApi
 import ajou.paran.entrip.repository.network.dto.BaseResponse
 import ajou.paran.entrip.repository.network.dto.NoticeResponse
 import ajou.paran.entrip.repository.network.dto.NoticesSaveRequest
@@ -8,6 +9,7 @@ import ajou.paran.entrip.repository.network.dto.NoticesUpdateRequest
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+import android.content.SharedPreferences
 import android.util.Log
 import retrofit2.HttpException
 import retrofit2.http.*
@@ -16,10 +18,12 @@ import javax.inject.Inject
 class NoticeRemoteSource
 @Inject
 constructor(
-    private val noticeApi: NoticeApi
+    private val noticeApi: NoticeApi,
+    private val tokenApi: TokenApi,
+    private val sharedPreferences: SharedPreferences
 ) {
     companion object {
-        const val TAG = "[NoticeRemote]"
+        private const val TAG = "[NoticeRemote]"
     }
 
     suspend fun saveNotice(noticesSaveRequest: NoticesSaveRequest) : BaseResult<NoticeResponse, Failure>
@@ -107,7 +111,7 @@ constructor(
                 BaseResult.Success(notices)
             }
             else -> {
-                Log.e(PlannerRemoteSource.TAG, "Err code = " + res.status + " Err message = " + res.message)
+                Log.e(TAG, "Err code = " + res.status + " Err message = " + res.message)
                 BaseResult.Error(Failure(res.status, res.message))
             }
         }

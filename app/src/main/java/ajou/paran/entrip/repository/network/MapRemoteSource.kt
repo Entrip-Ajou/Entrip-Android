@@ -15,7 +15,7 @@ constructor(
     private val mapApi: MapApi
 ) {
     companion object {
-        const val TAG = "[MapRemote]"
+        private const val TAG = "[MapRemote]"
     }
 
     suspend fun searchKeyword(keyword: String): BaseResult<ResultSearchKeyword, Failure> {

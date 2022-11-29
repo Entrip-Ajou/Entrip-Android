@@ -3,21 +3,25 @@ package ajou.paran.entrip.repository.network
 import ajou.paran.entrip.model.PlanEntity
 import ajou.paran.entrip.model.PlannerEntity
 import ajou.paran.entrip.repository.network.api.PlanApi
+import ajou.paran.entrip.repository.network.api.TokenApi
 import ajou.paran.entrip.repository.network.dto.PlanRequest
 import ajou.paran.entrip.repository.network.dto.PlanUpdateRequest
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+import android.content.SharedPreferences
 import android.util.Log
 import retrofit2.HttpException
 import javax.inject.Inject
 
 class PlanRemoteSource
 @Inject constructor(
-    private val planApi: PlanApi
+    private val planApi: PlanApi,
+    private val tokenApi: TokenApi,
+    private val sharedPreferences: SharedPreferences
 ) {
     companion object{
-        const val TAG = "[PlanRemote]"
+        private const val TAG = "[PlanRemote]"
     }
 
     suspend fun fetchPlanner(planner_id: Long): BaseResult<PlannerEntity, Failure> {

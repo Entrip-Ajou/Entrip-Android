@@ -1,5 +1,6 @@
 package ajou.paran.entrip.repository.network
 
+import ajou.paran.entrip.repository.network.api.TokenApi
 import ajou.paran.entrip.repository.network.api.UserAPIV2
 import ajou.paran.entrip.repository.network.api.UserApi
 import ajou.paran.entrip.repository.network.dto.*
@@ -11,6 +12,7 @@ import ajou.paran.entrip.repository.network.dto.response.UserSaveResponseDto
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+import android.content.SharedPreferences
 import android.util.Log
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -19,10 +21,12 @@ class UserRemoteSource
 @Inject
 constructor(
     private val userApi: UserApi,
-    private val userAPIV2: UserAPIV2
+    private val userAPIV2: UserAPIV2,
+    private val tokenApi: TokenApi,
+    private val sharedPreferences: SharedPreferences
 ) {
     companion object {
-        const val TAG = "[UserRemote]"
+        private const val TAG = "[UserRemote]"
     }
 
     suspend fun saveUser(user: UserTemp): BaseResponse<UserRequest>
@@ -34,18 +38,18 @@ constructor(
         when(res.status) {
             200 -> { BaseResult.Success(Unit) }
             else -> {
-                Log.e(CommentRemoteSource.TAG, "Err code = ${res.status}, Err message = ${res.message}")
+                Log.e(TAG, "Err code = ${res.status}, Err message = ${res.message}")
                 BaseResult.Error(Failure(res.status, res.message))
             }
         }
     } catch (e: NoInternetException) {
-        Log.e(CommentRemoteSource.TAG, "NoInternetException Message = ${e.localizedMessage}")
+        Log.e(TAG, "NoInternetException Message = ${e.localizedMessage}")
         BaseResult.Error(Failure(0, e.message))
     } catch (e: HttpException) {
-        Log.e(CommentRemoteSource.TAG, "HttpException Message = ${e.localizedMessage}")
+        Log.e(TAG, "HttpException Message = ${e.localizedMessage}")
         BaseResult.Error(Failure(e.code(), e.message.toString()))
     } catch (e: Exception) {
-        Log.e(CommentRemoteSource.TAG, "Exception Message = ${e.localizedMessage}")
+        Log.e(TAG, "Exception Message = ${e.localizedMessage}")
         BaseResult.Error(Failure(-1, e.message.toString()))
     }
 

@@ -75,9 +75,15 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePlanRemoteSource(planApi: PlanApi) : PlanRemoteSource {
-        return PlanRemoteSource(planApi)
-    }
+    fun providePlanRemoteSource(
+        planApi: PlanApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : PlanRemoteSource = PlanRemoteSource(
+        planApi = planApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
     @Provides
     @Singleton
@@ -85,20 +91,25 @@ object RepositoryModule {
         planApi: PlanApi,
         tokenApi: TokenApi,
         sharedPreferences: SharedPreferences
-    ) : PlannerRemoteSource{
-        return PlannerRemoteSource(
-            planApi = planApi,
-            tokenApi = tokenApi,
-            sharedPreferences = sharedPreferences
-        )
-    }
+    ) : PlannerRemoteSource = PlannerRemoteSource(
+        planApi = planApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
     @Provides
     @Singleton
     fun provideUserRemoteSource(
         userApi: UserApi,
-        userAPIV2: UserAPIV2
-    ) : UserRemoteSource = UserRemoteSource(userApi, userAPIV2)
+        userAPIV2: UserAPIV2,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : UserRemoteSource = UserRemoteSource(
+        userApi = userApi,
+        userAPIV2 = userAPIV2,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
     @Provides
     @Singleton
@@ -108,23 +119,51 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideCommentRemoteSource(commentApi: CommentApi) : CommentRemoteSource{
-        return CommentRemoteSource(commentApi)
-    }
+    fun provideCommentRemoteSource(
+        commentApi: CommentApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : CommentRemoteSource = CommentRemoteSource(
+        commentApi = commentApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
     @Provides
     @Singleton
-    fun provideNoticeRemoteSource(noticeApi: NoticeApi) : NoticeRemoteSource {
-        return NoticeRemoteSource(noticeApi)
-    }
+    fun provideNoticeRemoteSource(
+        noticeApi: NoticeApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : NoticeRemoteSource = NoticeRemoteSource(
+        noticeApi = noticeApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
     @Provides
     @Singleton
-    fun provideVoteRemoteSource(voteApi: VoteApi) : VoteRemoteSource {
-        return VoteRemoteSource(voteApi)
-    }
+    fun provideVoteRemoteSource(
+        voteApi: VoteApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ) : VoteRemoteSource = VoteRemoteSource(
+        voteApi = voteApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
-    fun provideCommunityRemoteSource(communityApi: CommunityApi): CommunityRemoteSource = CommunityRemoteSource(communityApi)
+    @Provides
+    @Singleton
+    fun provideCommunityRemoteSource(
+        communityApi: CommunityApi,
+        tokenApi: TokenApi,
+        sharedPreferences: SharedPreferences
+    ): CommunityRemoteSource = CommunityRemoteSource(
+        communityApi = communityApi,
+        tokenApi = tokenApi,
+        sharedPreferences = sharedPreferences
+    )
 
     @Provides
     @Singleton

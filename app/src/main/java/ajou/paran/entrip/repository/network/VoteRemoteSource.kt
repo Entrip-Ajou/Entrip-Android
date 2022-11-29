@@ -1,10 +1,12 @@
 package ajou.paran.entrip.repository.network
 
+import ajou.paran.entrip.repository.network.api.TokenApi
 import ajou.paran.entrip.repository.network.api.VoteApi
 import ajou.paran.entrip.repository.network.dto.*
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import ajou.paran.entrip.util.network.networkinterceptor.NoInternetException
+import android.content.SharedPreferences
 import android.util.Log
 import retrofit2.HttpException
 import retrofit2.http.Body
@@ -13,10 +15,12 @@ import javax.inject.Inject
 class VoteRemoteSource
 @Inject
 constructor(
-    private val voteApi: VoteApi
+    private val voteApi: VoteApi,
+    private val tokenApi: TokenApi,
+    private val sharedPreferences: SharedPreferences
 ) {
     companion object {
-        const val TAG = "[VoteRemote]"
+        private const val TAG = "[VoteRemote]"
     }
 
     suspend fun saveVote(votesSaveRequest: VotesSaveRequestDto) : BaseResult<VoteResponse, Failure>
