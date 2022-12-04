@@ -11,13 +11,17 @@ constructor(
     private val sharedPreferences: SharedPreferences
 ) : Interceptor {
 
-    private val accessToken: String
-        get() = if (sharedPreferences.getString("accessToken", "").isNullOrEmpty()) "" else sharedPreferences.getString("accessToken", "")!!
-
     override fun intercept(chain: Interceptor.Chain): Response = with(chain) {
         val request = request().newBuilder()
-            .addHeader("AccessToken", accessToken)
-            .build()
+            .addHeader(
+                name = "accessToken",
+                value = if (sharedPreferences.getString("accessToken", "").isNullOrEmpty()) {
+                    ""
+                } else {
+                    sharedPreferences.getString("accessToken", "")!!
+                }
+            ).build()
+
         proceed(request)
     }
 }
