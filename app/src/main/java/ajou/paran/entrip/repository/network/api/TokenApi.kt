@@ -11,5 +11,6 @@ interface TokenApi {
     @GET(BaseUrl.V2.User.REISSUE_URL)
     suspend fun reissueUserAccessToken(
         @Path("refreshToken") refreshToken: String
-    ): BaseResponse<UserReissueAccessTokenResponseDto>
+    ): BaseResponse<String>
+//    ): BaseResponse<UserReissueAccessTokenResponseDto>
 }

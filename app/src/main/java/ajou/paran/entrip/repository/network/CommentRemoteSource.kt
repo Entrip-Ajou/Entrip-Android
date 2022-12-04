@@ -153,11 +153,11 @@ constructor(
 
     private suspend fun reissueUserAccessToken(
         refreshToken: String = sharedPreferences.getString("refreshToken", "").toString()
-    ): BaseResult<UserReissueAccessTokenResponseDto, Failure> = try {
+    ): BaseResult<String, Failure> = try {
         val response = tokenApi.reissueUserAccessToken(refreshToken = refreshToken)
         when (response.status) {
             200 -> {
-                sharedPreferences.edit().putString("accessToken", response.data.accessToken).commit()
+                sharedPreferences.edit().putString("accessToken", response.data).commit()
                 BaseResult.Success(response.data)
             }
             else -> {

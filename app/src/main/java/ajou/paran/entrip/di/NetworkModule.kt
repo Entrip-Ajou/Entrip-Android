@@ -38,13 +38,16 @@ object NetworkModule {
     @Provides
     @Singleton
     @EntripV1
-    fun provideRetrofit(@EntripV1 client: OkHttpClient) : Retrofit {
-        return Retrofit.Builder().apply {
+    fun provideRetrofit(
+        @EntripV1 client: OkHttpClient
+    ) : Retrofit = Retrofit.Builder()
+        .apply {
             baseUrl(BaseUrl.MAIN_URL)
             addConverterFactory(GsonConverterFactory.create())
             client(client)
-        }.build()
-    }
+        }
+        .build()
+
 
     @Provides
     @Singleton
@@ -86,16 +89,17 @@ object NetworkModule {
         networkInterceptor: NetworkInterceptor,
         authInterceptor: AuthInterceptor,
         httpLoggingInterceptor: HttpLoggingInterceptor
-    ) : OkHttpClient {
-        return OkHttpClient.Builder().apply {
+    ) : OkHttpClient = OkHttpClient.Builder()
+        .apply {
             readTimeout(10, TimeUnit.SECONDS)
             connectTimeout(10, TimeUnit.SECONDS)
             writeTimeout(10, TimeUnit.SECONDS)
             addInterceptor(networkInterceptor)
             addInterceptor(authInterceptor)
             addInterceptor(httpLoggingInterceptor)
-        }.build()
-    }
+        }
+        .build()
+
 
     @Provides
     @Singleton

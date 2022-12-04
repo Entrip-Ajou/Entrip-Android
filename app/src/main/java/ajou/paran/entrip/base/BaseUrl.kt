@@ -1,8 +1,9 @@
 package ajou.paran.entrip.base
 
 object BaseUrl {
-    private const val BASE_URL = "http://2ntrip.com"
-    private const val DEV_PORT_URL = ":1010"
+    private const val BASE_URL = "https://2ntrip.com"
+    private const val DEV_PORT_URL = ""
+//    ":1010
     const val MAIN_URL = "$BASE_URL$DEV_PORT_URL/"
 
     object V1 {
