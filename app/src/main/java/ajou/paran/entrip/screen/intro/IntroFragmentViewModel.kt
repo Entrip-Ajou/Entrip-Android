@@ -1,6 +1,7 @@
 package ajou.paran.entrip.screen.intro
 
 import ajou.paran.entrip.repository.Impl.UserRepository
+import ajou.paran.entrip.util.network.BaseResult
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.*
@@ -51,8 +52,8 @@ constructor(
         password: String
     ) = viewModelScope.launch(Dispatchers.IO) {
         when (userRepository.loginUserAccount(userId = userId, password = password)) {
-            true -> { _loginState.postValue(LoginState.Success(isSuccess = true))   }
-            false -> { _loginState.postValue(LoginState.Error(isSuccess = false))  }
+            is BaseResult.Success -> { _loginState.postValue(LoginState.Success(isSuccess = true)) }
+            is BaseResult.Error -> { _loginState.postValue(LoginState.Error(isSuccess = false))  }
         }
     }
 

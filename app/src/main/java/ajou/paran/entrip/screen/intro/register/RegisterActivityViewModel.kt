@@ -69,10 +69,10 @@ constructor(
 
     private fun checkNickname(nickname: String) = viewModelScope.launch(Dispatchers.IO) {
         when (userRepository.isExistNickname(nickname)) {
-            true -> {
+            is BaseResult.Error -> {
                 _nicknameState.postValue(NicknameState.Error(isSuccess = false, reason = NicknameState.Error.EXIST))
             }
-            false -> {
+            is BaseResult.Success -> {
                 _nicknameState.postValue(NicknameState.Success(isSuccess = true))
             }
         }
@@ -108,16 +108,16 @@ constructor(
         password: String,
         gender: Long
     ) = viewModelScope.launch(Dispatchers.IO) {
-        val response = userRepository.saveUserAccount(
+
+        when (val response = userRepository.saveUserAccount(
             userId = userId,
             nickname = nickname,
             photoUrl = "",
             token = "",
             gender = gender,
             password = password
-        )
-        when (response.userId) {
-            userId -> {
+        )) {
+            is BaseResult.Success -> {
                 _registerState.postValue(
                     RegisterState.Success(
                         isSuccess = true,
@@ -126,11 +126,16 @@ constructor(
                     )
                 )
             }
-            "" -> {
-                _registerState.postValue(RegisterState.Error(isSuccess = false, reason = RegisterState.Error.EXIST))
-            }
-            else -> {
-                _registerState.postValue(RegisterState.Error(isSuccess = false))
+            is BaseResult.Error -> {
+                when (response.err.code) {
+                    202 -> {
+                        _registerState.postValue(RegisterState.Error(isSuccess = false, reason = RegisterState.Error.EXIST))
+                    }
+                    else -> {
+                        _registerState.postValue(RegisterState.Error(isSuccess = false))
+                    }
+                }
+
             }
         }
     }
@@ -152,13 +157,13 @@ constructor(
         userId: String,
         password: String
     ) = viewModelScope.launch(Dispatchers.IO) {
-        when (userRepository.loginUserAccount(userId = userId, password = password)) {
-            true -> {
-                _loginState.postValue(LoginState.Success(isSuccess = true))
+        when (val response = userRepository.loginUserAccount(userId = userId, password = password)) {
+            is BaseResult.Success -> {
+                _loginState.postValue(LoginState.Success(isSuccess = response.data))
                 sharedPreferences.edit().putString("gender", gender.toString()).commit()
                 sharedPreferences.edit().putString("photo_url","https://user-images.githubusercontent.com/77181865/169517449-f000a59d-5659-4957-9cb4-c6e5d3f4b197.png").commit()
             }
-            false -> { _loginState.postValue(LoginState.Error(isSuccess = false)) }
+            is BaseResult.Error -> { _loginState.postValue(LoginState.Error(isSuccess = false)) }
         }
     }
 

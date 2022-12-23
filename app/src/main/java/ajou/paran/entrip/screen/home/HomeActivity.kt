@@ -7,9 +7,11 @@ import ajou.paran.entrip.model.InviteEntity
 import ajou.paran.entrip.repository.network.dto.NotificationData
 import ajou.paran.entrip.repository.network.dto.PushNotification
 import ajou.paran.entrip.screen.community.main.CommunityFragment
+import ajou.paran.entrip.screen.intro.IntroActivity
 import ajou.paran.entrip.screen.planner.main.MainFragment
 import ajou.paran.entrip.screen.recommendation.RecommendationFragment
 import ajou.paran.entrip.util.ApiState
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -162,6 +164,11 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
                 builder.show()
             }
 
+            520 -> {
+                // refresh Login
+                backToLoginActivity()
+            }
+
             -1 -> {
                 Log.e(TAG, "최상위 Exception class에서 예외 발생 -> 코드 로직 오류")
             }
@@ -279,6 +286,13 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
             to = inviteEntity.token
         )
         viewModel.rejectInvitation(inviteEntity, notificationData)
+    }
+
+    private fun backToLoginActivity() {
+        val intent = Intent(this@HomeActivity, IntroActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        this@HomeActivity.finish()
+        startActivity(intent)
     }
 
 }

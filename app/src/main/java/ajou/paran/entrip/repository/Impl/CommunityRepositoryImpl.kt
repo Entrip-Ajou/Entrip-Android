@@ -103,13 +103,14 @@ constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getPostsListWithPageNum(pageNum: Long): List<ResponsePost>
-    = when (val boardList = communityRemoteSource.getPostsListWithPageNum(pageNum)) {
+    override suspend fun getPostsListWithPageNum(
+        pageNum: Long
+    ): BaseResult<List<ResponsePost>, Failure> = when (val boardList = communityRemoteSource.getPostsListWithPageNum(pageNum)) {
         is BaseResult.Success -> {
-            boardList.data
+            BaseResult.Success(boardList.data)
         }
         is BaseResult.Error -> {
-            listOf()
+            BaseResult.Error(boardList.err)
         }
     }
 

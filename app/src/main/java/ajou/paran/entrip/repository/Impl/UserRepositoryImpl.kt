@@ -5,6 +5,7 @@ import ajou.paran.entrip.repository.network.dto.request.UserLoginRequestDto
 import ajou.paran.entrip.repository.network.dto.request.UserSaveRequestDto
 import ajou.paran.entrip.repository.network.dto.response.UserSaveResponseDto
 import ajou.paran.entrip.util.network.BaseResult
+import ajou.paran.entrip.util.network.Failure
 import android.content.SharedPreferences
 import android.util.Log
 import javax.inject.Inject
@@ -28,7 +29,7 @@ constructor(
         gender: Long,
         password: String,
         attempt: Long
-    ): UserSaveResponseDto = when (val response = userRemoteSource.saveUserAccount(
+    ): BaseResult<UserSaveResponseDto, Failure> = when (val response = userRemoteSource.saveUserAccount(
             userSaveRequest = UserSaveRequestDto(
                 userId = userId,
                 nickname = nickname,
@@ -40,7 +41,7 @@ constructor(
         )
     ) {
         is BaseResult.Success -> {
-            response.data
+            BaseResult.Success(response.data)
         }
         is BaseResult.Error -> {
             when(response.err.code) {
@@ -51,35 +52,17 @@ constructor(
                             saveUserAccount(userId, nickname, photoUrl, token, gender, password)
                         }
                         else -> {
-                            UserSaveResponseDto(
-                                userId = userId,
-                                nickname = nickname,
-                                gender = gender,
-                                photoUrl = photoUrl,
-                                token = token
-                            )
+                            BaseResult.Error(response.err)
                         }
                     }
                 }
                 202 -> {
                     Log.d(TAG, "An account that already exists")
-                    UserSaveResponseDto(
-                        userId = "",
-                        nickname = "",
-                        gender = -1L,
-                        photoUrl = "",
-                        token = ""
-                    )
+                    BaseResult.Error(Failure(response.err.code, "An account that already exists"))
                 }
                 else -> {
                     Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")
-                    UserSaveResponseDto(
-                        userId = userId,
-                        nickname = nickname,
-                        gender = gender,
-                        photoUrl = photoUrl,
-                        token = token
-                    )
+                    BaseResult.Error(response.err)
                 }
             }
         }
@@ -90,13 +73,13 @@ constructor(
         userId: String,
         password: String,
         attempt: Long
-    ): Boolean = when (val response = userRemoteSource.loginUserAccount(loginRequest = UserLoginRequestDto(userId = userId, password = password))) {
+    ): BaseResult<Boolean, Failure> = when (val response = userRemoteSource.loginUserAccount(loginRequest = UserLoginRequestDto(userId = userId, password = password))) {
         is BaseResult.Success -> {
             sharedPreferences.edit().putString("user_id", response.data.userId).commit()
             sharedPreferences.edit().putString("nickname", response.data.nickname).commit()
             sharedPreferences.edit().putString("accessToken", response.data.accessToken).commit()
             sharedPreferences.edit().putString("refreshToken", response.data.refreshToken).commit()
-            true
+            BaseResult.Success(true)
         }
         is BaseResult.Error -> {
             when(response.err.code) {
@@ -107,13 +90,13 @@ constructor(
                             loginUserAccount(userId, password, attempt + 1)
                         }
                         else -> {
-                            false
+                            BaseResult.Error(response.err)
                         }
                     }
                 }
                 else -> {
                     Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")
-                    false
+                    BaseResult.Error(response.err)
                 }
             }
         }
@@ -122,9 +105,9 @@ constructor(
     override suspend fun isExistUserId(
         userId: String,
         attempt: Long
-    ): Boolean = when (val response = userRemoteSource.isExistUserId(userId = userId)) {
+    ): BaseResult<Boolean, Failure> = when (val response = userRemoteSource.isExistUserId(userId = userId)) {
         is BaseResult.Success -> {
-            response.data
+            BaseResult.Success(response.data)
         }
         is BaseResult.Error -> {
             when(response.err.code) {
@@ -135,13 +118,13 @@ constructor(
                             isExistUserId(userId, attempt + 1)
                         }
                         else -> {
-                            false
+                            BaseResult.Error(response.err)
                         }
                     }
                 }
                 else -> {
                     Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")
-                    false
+                    BaseResult.Error(response.err)
                 }
             }
         }
@@ -150,9 +133,9 @@ constructor(
     override suspend fun isExistNickname(
         nickname: String,
         attempt: Long
-    ): Boolean = when (val response = userRemoteSource.isExistNickname(nickname = nickname)) {
+    ): BaseResult<Boolean, Failure> = when (val response = userRemoteSource.isExistNickname(nickname = nickname)) {
         is BaseResult.Success -> {
-            response.data
+            BaseResult.Success(response.data)
         }
         is BaseResult.Error -> {
             when(response.err.code) {
@@ -163,13 +146,13 @@ constructor(
                             isExistNickname(nickname, attempt + 1)
                         }
                         else -> {
-                            true
+                            BaseResult.Error(response.err)
                         }
                     }
                 }
                 else -> {
                     Log.d(TAG, "Error code = ${response.err.code}, message = ${response.err.message}")
-                    true
+                    BaseResult.Error(response.err)
                 }
             }
         }

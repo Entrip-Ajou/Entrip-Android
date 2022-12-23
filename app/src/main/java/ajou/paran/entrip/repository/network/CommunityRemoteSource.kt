@@ -738,7 +738,14 @@ constructor(
         BaseResult.Error(Failure(0, e.message))
     } catch (e: HttpException) {
         Log.e(TAG, "HttpException Message = ${e.localizedMessage}")
-        BaseResult.Error(Failure(e.code(), e.message()))
+        when (e.code()) {
+            503 -> {
+                BaseResult.Error(Failure(520, e.message()))
+            }
+            else -> {
+                BaseResult.Error(Failure(e.code(), e.message()))
+            }
+        }
     } catch (e: Exception) {
         Log.e(TAG, "Exception Message = ${e.localizedMessage}")
         BaseResult.Error(Failure(-1, e.message.toString()))

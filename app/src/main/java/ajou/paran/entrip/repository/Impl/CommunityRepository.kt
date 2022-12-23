@@ -44,7 +44,7 @@ interface CommunityRepository {
 
     suspend fun getPostsListWithPageNum(
         pageNum: Long
-    ): List<ResponsePost>
+    ): BaseResult<List<ResponsePost>, Failure>
 
     suspend fun raiseLikeWithPostId(
         postId: Long,

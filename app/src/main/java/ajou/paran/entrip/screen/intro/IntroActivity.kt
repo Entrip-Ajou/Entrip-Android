@@ -25,7 +25,7 @@ class IntroActivity: BaseActivity<ActivityIntroBinding>(R.layout.activity_intro)
     override fun onBackPressed() {
         when(binding.introActVp2.currentItem) {
             0 -> {
-                super.onBackPressed()
+                binding.introActVp2.currentItem = 0
             }
             else -> {
                 binding.introActVp2.currentItem -= 1

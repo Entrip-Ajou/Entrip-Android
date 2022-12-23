@@ -36,27 +36,22 @@ constructor(
         private const val TAG = "[BCActVM]"
     }
 
-    //region private variable
-
     private val _photoIdList: MutableLiveData<List<Long>> = MutableLiveData()
-    private val _photoList: MutableLiveData<List<ResponseFindByIdPhoto>> = MutableLiveData()
-    private val _postId: MutableLiveData<Long> = MutableLiveData()
-    private val photoMap: HashMap<Long, Long> = hashMapOf()
-
-    //endregion
-
-    //region public variable
-
-    val userId: String
-        get() = sharedPreferences.getString("user_id", null) ?: ""
     val photoIdList: LiveData<List<Long>>
         get() = _photoIdList
+
+    private val _photoList: MutableLiveData<List<ResponseFindByIdPhoto>> = MutableLiveData()
     val photoList: LiveData<List<ResponseFindByIdPhoto>>
         get() = _photoList
+
+    private val _postId: MutableLiveData<Long> = MutableLiveData()
     val postId: LiveData<Long>
         get() = _postId
 
-    //endregion
+    private val photoMap: HashMap<Long, Long> = hashMapOf()
+
+    val userId: String
+        get() = sharedPreferences.getString("user_id", null) ?: ""
 
     fun postPhoto(
         uri: Uri,
