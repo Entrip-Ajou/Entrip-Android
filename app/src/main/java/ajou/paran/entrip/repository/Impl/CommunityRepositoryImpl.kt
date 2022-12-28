@@ -17,13 +17,17 @@ constructor(
         priority: Long,
         image: MultipartBody.Part,
         attempt: Int
-    ): Long
+    ): BaseResult<Long, Failure>
     = when (val result = communityRemoteSource.savePhoto(priority, image)) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
-            if(attempt >= 3) -1 else savePhoto(priority, image, attempt + 1)
+            if(attempt >= 3) {
+                result
+            } else {
+                savePhoto(priority, image, attempt + 1)
+            }
         }
     }
 
@@ -31,29 +35,23 @@ constructor(
     override suspend fun findByIdPhoto(
         photoId: Long,
         attempt: Int
-    ): ResponseFindByIdPhoto
+    ): BaseResult<ResponseFindByIdPhoto, Failure>
     = when (val result = communityRemoteSource.findByIdPhoto(photoId)) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
-            when (result.err.code) {
-                202 -> {
-                    ResponseFindByIdPhoto(photoId = -1L)
-                }
-                else -> {
-                    if(attempt >= 3) {
-                        ResponseFindByIdPhoto(photoId = -1L)
-                    } else {
-                        findByIdPhoto(photoId, attempt + 1)
-                    }
-                }
+            if(attempt >= 3) {
+                result
+            } else {
+                findByIdPhoto(photoId, attempt + 1)
             }
-
         }
     }
 
-    override suspend fun deletePhoto(photoId: Long): BaseResult<Long, Failure> {
+    override suspend fun deletePhoto(
+        photoId: Long
+    ): BaseResult<Long, Failure> {
         TODO("Not yet implemented")
     }
 
@@ -64,36 +62,34 @@ constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun savePost(requestPost: RequestPost, attempt: Int): Long
+    override suspend fun savePost(
+        requestPost: RequestPost,
+        attempt: Int
+    ): BaseResult<Long, Failure>
     = when(val result = communityRemoteSource.savePost(requestPost)) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
             if(attempt >= 3)
-                -1
+                result
             else
                 savePost(requestPost, attempt + 1)
         }
     }
 
 
-    override suspend fun findByIdPost(postId: Long, attempt: Int): ResponsePost
+    override suspend fun findByIdPost(
+        postId: Long,
+        attempt: Int
+    ): BaseResult<ResponsePost, Failure>
     = when(val result = communityRemoteSource.findByIdPost(postId)) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
             if(attempt >= 3)
-                ResponsePost(
-                    post_id = -1L,
-                    title = "",
-                    content = "",
-                    author = "",
-                    likeNumber = 0,
-                    commentsNumber = 0,
-                    photoList = listOf()
-                )
+                result
             else
                 findByIdPost(postId, attempt + 1)
         }
@@ -105,7 +101,8 @@ constructor(
 
     override suspend fun getPostsListWithPageNum(
         pageNum: Long
-    ): BaseResult<List<ResponsePost>, Failure> = when (val boardList = communityRemoteSource.getPostsListWithPageNum(pageNum)) {
+    ): BaseResult<List<ResponsePost>, Failure>
+    = when (val boardList = communityRemoteSource.getPostsListWithPageNum(pageNum)) {
         is BaseResult.Success -> {
             BaseResult.Success(boardList.data)
         }
@@ -134,7 +131,8 @@ constructor(
         content: String,
         postId: Long,
         attempt: Int
-    ): Long = when (val result = communityRemoteSource.saveComment(
+    ): BaseResult<Long, Failure>
+    = when (val result = communityRemoteSource.saveComment(
             RequestComment(
                 author = author,
                 content = content,
@@ -143,11 +141,11 @@ constructor(
         )
     ) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
             if (attempt >= 3) {
-                -1L
+                result
             } else {
                 saveComment(
                     author = author,
@@ -162,36 +160,39 @@ constructor(
 
     override suspend fun findByIdComment(
         commentId: Long
-    ): ResponseComment = when (val result = communityRemoteSource.findByIdComment(commentId)) {
+    ): BaseResult<ResponseComment, Failure>
+    = when (val result = communityRemoteSource.findByIdComment(commentId)) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
-            ResponseComment(commentId = -1L)
+            result
         }
     }
 
     override suspend fun deleteComment(
         commentId: Long
-    ): Long = when (val result = communityRemoteSource.deleteComment(commentId)) {
+    ): BaseResult<Long, Failure>
+    = when (val result = communityRemoteSource.deleteComment(commentId)) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
-            -1L
+            result
         }
     }
 
     override suspend fun getAllCommentsWithPostId(
         postId: Long,
         attempt: Int
-    ): List<ResponseComment> = when (val result = communityRemoteSource.getAllCommentsWithPostId(postId)) {
+    ): BaseResult<List<ResponseComment>, Failure>
+    = when (val result = communityRemoteSource.getAllCommentsWithPostId(postId)) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
             if (attempt > 3) {
-                listOf()
+                result
             } else {
                 getAllCommentsWithPostId(
                     postId = postId,
@@ -206,7 +207,8 @@ constructor(
         content: String,
         commentId: Long,
         attempt: Int
-    ): Long = when (val result = communityRemoteSource.saveNestedComment(
+    ): BaseResult<Long, Failure>
+    = when (val result = communityRemoteSource.saveNestedComment(
         RequestNestedComment(
             author = author,
             content = content,
@@ -214,11 +216,11 @@ constructor(
         )
     )) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
             if (attempt > 3) {
-                -1L
+                result
             } else {
                 saveNestedComment(
                     author = author,
@@ -232,36 +234,38 @@ constructor(
 
     override suspend fun findByIdNestedComment(
         nestedCommentId: Long
-    ): ResponseNestedComment = when (val result = communityRemoteSource.findByIdNestedComment(nestedCommentId)) {
+    ): BaseResult<ResponseNestedComment, Failure>
+    = when (val result = communityRemoteSource.findByIdNestedComment(nestedCommentId)) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
-            ResponseNestedComment(nestedCommentId = -1L)
+            result
         }
     }
 
     override suspend fun deleteNestedComment(
         nestedCommentId: Long
-    ): Long = when (val result = communityRemoteSource.deleteNestedComment(nestedCommentId)) {
+    ): BaseResult<Long, Failure> = when (val result = communityRemoteSource.deleteNestedComment(nestedCommentId)) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
-            -1L
+            result
         }
     }
 
     override suspend fun getAllNestedCommentsWithPostCommentId(
         commentId: Long,
         attempt: Int
-    ): List<ResponseNestedComment> = when (val result = communityRemoteSource.getAllNestedCommentsWithPostCommentId(commentId)) {
+    ): BaseResult<List<ResponseNestedComment>, Failure>
+    = when (val result = communityRemoteSource.getAllNestedCommentsWithPostCommentId(commentId)) {
         is BaseResult.Success -> {
-            result.data
+            result
         }
         is BaseResult.Error -> {
             if (attempt > 3) {
-                listOf()
+                result
             } else {
                 getAllNestedCommentsWithPostCommentId(
                     commentId = commentId,
