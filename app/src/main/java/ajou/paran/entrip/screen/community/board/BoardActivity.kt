@@ -6,9 +6,11 @@ import ajou.paran.entrip.databinding.ActivityBoardBinding
 import ajou.paran.entrip.model.CommentType
 import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
 import ajou.paran.entrip.screen.community.BoardImageAdapter
+import ajou.paran.entrip.screen.intro.IntroActivity
 import ajou.paran.entrip.util.toCommentList
 import ajou.paran.entrip.util.ui.RecyclerViewDecoration
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -165,6 +167,22 @@ class BoardActivity : BaseActivity<ActivityBoardBinding>(R.layout.activity_board
                 }
             }
         }
+        if (isExpiredRefreshToken.hasActiveObservers()) {
+            isExpiredRefreshToken.removeObservers(this@BoardActivity)
+        }
+        isExpiredRefreshToken.observe(this@BoardActivity) {
+            if (it) {
+                reLoginLogic()
+            }
+        }
+    }
+
+    private fun reLoginLogic() {
+        startActivity(
+            Intent(this, IntroActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+        )
     }
 
     private fun List<String>.toListResponseFindByIdPhoto(): List<ResponseFindByIdPhoto> {

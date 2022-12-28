@@ -55,6 +55,10 @@ constructor(
     private val userId: String
         get() = sharedPreferences.getString("user_id", "") ?: ""
 
+    private val _isExpiredRefreshToken: SingleLiveEvent<Boolean> = SingleLiveEvent()
+    val isExpiredRefreshToken: LiveData<Boolean>
+        get() = _isExpiredRefreshToken
+
     val testCommentList: MutableList<Comment> = mutableListOf()
 
     fun loadPostData(postId: Long) {
@@ -77,7 +81,14 @@ constructor(
                 _postComment.postValue(result.data)
             }
             is BaseResult.Error -> {
-                _postComment.postValue(-1L)
+                when (result.err.code) {
+                    520 -> {
+                        _isExpiredRefreshToken.postValue(true)
+                    }
+                    else -> {
+                        _postComment.postValue(-1L)
+                    }
+                }
             }
         }
 
@@ -90,7 +101,14 @@ constructor(
                     it.listNestedComment.addAll(result.data)
                 }
                 is BaseResult.Error -> {
-                    Log.d(TAG, "Empty Data")
+                    when (result.err.code) {
+                        520 -> {
+                            _isExpiredRefreshToken.postValue(true)
+                        }
+                        else -> {
+                            Log.d(TAG, "Empty Data")
+                        }
+                    }
                 }
             }
         }
@@ -108,7 +126,14 @@ constructor(
                 _postNestedComment.postValue(result.data)
             }
             is BaseResult.Error -> {
-                _postNestedComment.postValue(-1L)
+                when (result.err.code) {
+                    520 -> {
+                        _isExpiredRefreshToken.postValue(true)
+                    }
+                    else -> {
+                        _postNestedComment.postValue(-1L)
+                    }
+                }
             }
         }
     }
@@ -119,7 +144,14 @@ constructor(
                 _post.postValue(result.data)
             }
             is BaseResult.Error -> {
-                _post.postValue(ResponsePost(-1L))
+                when (result.err.code) {
+                    520 -> {
+                        _isExpiredRefreshToken.postValue(true)
+                    }
+                    else -> {
+                        _post.postValue(ResponsePost(-1L))
+                    }
+                }
             }
         }
 
@@ -131,7 +163,14 @@ constructor(
                 _commentList.postValue(result.data)
             }
             is BaseResult.Error -> {
-                _commentList.postValue(listOf())
+                when (result.err.code) {
+                    520 -> {
+                        _isExpiredRefreshToken.postValue(true)
+                    }
+                    else -> {
+                        _commentList.postValue(listOf())
+                    }
+                }
             }
         }
     }
