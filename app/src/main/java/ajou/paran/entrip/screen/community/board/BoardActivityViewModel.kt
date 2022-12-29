@@ -7,7 +7,9 @@ import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
 import ajou.paran.entrip.repository.network.dto.community.ResponseNestedComment
 import ajou.paran.entrip.repository.network.dto.community.ResponsePost
 import ajou.paran.entrip.util.SingleLiveEvent
+import ajou.paran.entrip.util.network.BaseResult
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -30,32 +32,35 @@ constructor(
         private const val TAG = "[BoardActVM]"
     }
 
-    //region private val field
     private val _post: MutableLiveData<ResponsePost> = MutableLiveData()
+    val post: LiveData<ResponsePost>
+        get() = _post
+
     private val _commentList: SingleLiveEvent<List<ResponseComment>> = SingleLiveEvent()
+    val commentList: LiveData<List<ResponseComment>>
+        get() = _commentList
+
     private val _isSuccessNestedComment: SingleLiveEvent<Boolean> = SingleLiveEvent()
+    val isSuccessNestedComment: LiveData<Boolean>
+        get() = _isSuccessNestedComment
+
     private val _postComment: SingleLiveEvent<Long> = SingleLiveEvent()
+    val postComment: LiveData<Long>
+        get() = _postComment
+
     private val _postNestedComment: SingleLiveEvent<Long> = SingleLiveEvent()
+    val postNestedComment: LiveData<Long>
+        get() = _postNestedComment
 
     private val userId: String
         get() = sharedPreferences.getString("user_id", "") ?: ""
-    //endregion
 
-    //region public val field
-    val post: LiveData<ResponsePost>
-        get() = _post
-    val commentList: LiveData<List<ResponseComment>>
-        get() = _commentList
-    val isSuccessNestedComment: LiveData<Boolean>
-        get() = _isSuccessNestedComment
-    val postComment: LiveData<Long>
-        get() = _postComment
-    val postNestedComment: LiveData<Long>
-        get() = _postNestedComment
+    private val _isExpiredRefreshToken: SingleLiveEvent<Boolean> = SingleLiveEvent()
+    val isExpiredRefreshToken: LiveData<Boolean>
+        get() = _isExpiredRefreshToken
+
     val testCommentList: MutableList<Comment> = mutableListOf()
-    //endregion
 
-    //region public function
     fun loadPostData(postId: Long) {
         _commentList.call()
         testCommentList.clear()
@@ -66,40 +71,107 @@ constructor(
     }
 
     fun postComment(postId: Long, content: String) = CoroutineScope(Dispatchers.IO).launch {
-        val post = communityRepositoryImpl.saveComment(
-            author = userId,
-            content = content,
-            postId = postId
-        )
-        _postComment.postValue(post)
+        when (val result = communityRepositoryImpl.saveComment(
+                author = userId,
+                content = content,
+                postId = postId
+            )
+        ) {
+            is BaseResult.Success -> {
+                _postComment.postValue(result.data)
+            }
+            is BaseResult.Error -> {
+                when (result.err.code) {
+                    520 -> {
+                        _isExpiredRefreshToken.postValue(true)
+                    }
+                    else -> {
+                        _postComment.postValue(-1L)
+                    }
+                }
+            }
+        }
+
     }
 
     fun loadNestedComment(list: List<Comment>) = CoroutineScope(Dispatchers.IO).launch {
         list.forEach {
-            it.listNestedComment.addAll(communityRepositoryImpl.getAllNestedCommentsWithPostCommentId(it.comment.commentId))
+            when (val result = communityRepositoryImpl.getAllNestedCommentsWithPostCommentId(it.comment.commentId)) {
+                is BaseResult.Success -> {
+                    it.listNestedComment.addAll(result.data)
+                }
+                is BaseResult.Error -> {
+                    when (result.err.code) {
+                        520 -> {
+                            _isExpiredRefreshToken.postValue(true)
+                        }
+                        else -> {
+                            Log.d(TAG, "Empty Data")
+                        }
+                    }
+                }
+            }
         }
         _isSuccessNestedComment.postValue(true)
     }
 
     fun postNestedComment(commentId: Long, content: String) = CoroutineScope(Dispatchers.IO).launch {
-        val post = communityRepositoryImpl.saveNestedComment(
-            author = userId,
-            content = content,
-            commentId = commentId
-        )
-        _postNestedComment.postValue(post)
+        when (val result = communityRepositoryImpl.saveNestedComment(
+                author = userId,
+                content = content,
+                commentId = commentId
+            )
+        ) {
+            is BaseResult.Success -> {
+                _postNestedComment.postValue(result.data)
+            }
+            is BaseResult.Error -> {
+                when (result.err.code) {
+                    520 -> {
+                        _isExpiredRefreshToken.postValue(true)
+                    }
+                    else -> {
+                        _postNestedComment.postValue(-1L)
+                    }
+                }
+            }
+        }
     }
-    //endregion
 
-    //region private function
     private fun findPost(postId: Long) = CoroutineScope(Dispatchers.IO).launch {
-        val post = communityRepositoryImpl.findByIdPost(postId)
-        _post.postValue(post)
+        when (val result = communityRepositoryImpl.findByIdPost(postId)) {
+            is BaseResult.Success -> {
+                _post.postValue(result.data)
+            }
+            is BaseResult.Error -> {
+                when (result.err.code) {
+                    520 -> {
+                        _isExpiredRefreshToken.postValue(true)
+                    }
+                    else -> {
+                        _post.postValue(ResponsePost(-1L))
+                    }
+                }
+            }
+        }
+
     }
 
     private fun findComment(postId: Long) = CoroutineScope(Dispatchers.IO).launch {
-        val list = communityRepositoryImpl.getAllCommentsWithPostId(postId)
-        _commentList.postValue(list)
+        when (val result = communityRepositoryImpl.getAllCommentsWithPostId(postId)) {
+            is BaseResult.Success -> {
+                _commentList.postValue(result.data)
+            }
+            is BaseResult.Error -> {
+                when (result.err.code) {
+                    520 -> {
+                        _isExpiredRefreshToken.postValue(true)
+                    }
+                    else -> {
+                        _commentList.postValue(listOf())
+                    }
+                }
+            }
+        }
     }
-    //endregion
 }

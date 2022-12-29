@@ -28,13 +28,22 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
     private fun check() = lifecycleScope.launchWhenResumed {
         if (viewModel.userID.isEmpty()) {
             delay(1000L)
-            startActivity(Intent(this@SplashActivity, IntroActivity::class.java))
+            val intent = Intent(this@SplashActivity, IntroActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            this@SplashActivity.finish()
+            startActivity(intent)
         } else {
             val isPatchToken = async { viewModel.patchToken() }
             if (isPatchToken.await()) {
-                startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
+                val intent = Intent(this@SplashActivity, HomeActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                this@SplashActivity.finish()
+                startActivity(intent)
             } else {
-                startActivity(Intent(this@SplashActivity, IntroActivity::class.java))
+                val intent = Intent(this@SplashActivity, IntroActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                this@SplashActivity.finish()
+                startActivity(intent)
             }
         }
     }

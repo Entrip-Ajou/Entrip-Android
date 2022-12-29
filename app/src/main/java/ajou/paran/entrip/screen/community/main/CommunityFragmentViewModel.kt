@@ -2,6 +2,7 @@ package ajou.paran.entrip.screen.community.main
 
 import ajou.paran.entrip.repository.Impl.CommunityRepositoryImpl
 import ajou.paran.entrip.repository.network.dto.community.ResponsePost
+import ajou.paran.entrip.util.network.BaseResult
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -24,7 +25,7 @@ constructor(
     }
 
     val userId: String
-    get() = sharedPreferences.getString("user_id", null) ?: ""
+        get() = sharedPreferences.getString("user_id", null) ?: ""
 
     private var pageNum: Long = 1L
 
@@ -34,17 +35,41 @@ constructor(
     get() = _boardItemList
 
     fun getNextPage() = CoroutineScope(Dispatchers.IO).launch {
-        val list = communityRepositoryImpl.getPostsListWithPageNum(pageNum++)
+        when (val response = communityRepositoryImpl.getPostsListWithPageNum(pageNum + 1)) {
+            is BaseResult.Success -> {
+                pageNum += 1
+                _boardItemList.postValue(response.data)
+            }
+            is BaseResult.Error -> {
+                when (response.err.code) {
+                    520 -> {
 
-        if (list.isEmpty()) pageNum--
-
-        _boardItemList.postValue(list)
+                    }
+                    else -> {
+                        _boardItemList.postValue(listOf())
+                    }
+                }
+            }
+        }
     }
 
     fun refreshPageData() = CoroutineScope(Dispatchers.IO).launch {
         for (i in 1 .. pageNum) {
-            val list = communityRepositoryImpl.getPostsListWithPageNum(i)
-            _boardItemList.postValue(list)
+            when (val response = communityRepositoryImpl.getPostsListWithPageNum(i)) {
+                is BaseResult.Success -> {
+                    _boardItemList.postValue(response.data)
+                }
+                is BaseResult.Error -> {
+                    when (response.err.code) {
+                        520 -> {
+
+                        }
+                        else -> {
+                            _boardItemList.postValue(listOf())
+                        }
+                    }
+                }
+            }
         }
     }
 

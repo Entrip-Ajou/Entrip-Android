@@ -6,6 +6,7 @@ import ajou.paran.entrip.repository.network.dto.community.ResponseFindByIdPhoto
 import ajou.paran.entrip.util.bitmapQualityResize
 import ajou.paran.entrip.util.buildImageBodyPart
 import ajou.paran.entrip.util.convertBitmapToFile
+import ajou.paran.entrip.util.network.BaseResult
 import android.content.ContentResolver
 import android.content.Context
 import android.content.SharedPreferences
@@ -36,27 +37,22 @@ constructor(
         private const val TAG = "[BCActVM]"
     }
 
-    //region private variable
-
     private val _photoIdList: MutableLiveData<List<Long>> = MutableLiveData()
-    private val _photoList: MutableLiveData<List<ResponseFindByIdPhoto>> = MutableLiveData()
-    private val _postId: MutableLiveData<Long> = MutableLiveData()
-    private val photoMap: HashMap<Long, Long> = hashMapOf()
-
-    //endregion
-
-    //region public variable
-
-    val userId: String
-        get() = sharedPreferences.getString("user_id", null) ?: ""
     val photoIdList: LiveData<List<Long>>
         get() = _photoIdList
+
+    private val _photoList: MutableLiveData<List<ResponseFindByIdPhoto>> = MutableLiveData()
     val photoList: LiveData<List<ResponseFindByIdPhoto>>
         get() = _photoList
+
+    private val _postId: MutableLiveData<Long> = MutableLiveData()
     val postId: LiveData<Long>
         get() = _postId
 
-    //endregion
+    private val photoMap: HashMap<Long, Long> = hashMapOf()
+
+    val userId: String
+        get() = sharedPreferences.getString("user_id", null) ?: ""
 
     fun postPhoto(
         uri: Uri,
@@ -71,43 +67,47 @@ constructor(
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
             val file = bitmap.convertBitmapToFile(getFileName(), context).bitmapQualityResize()
 
-            withContext(Dispatchers.IO) {
-                val photoId = communityRepositoryImpl.savePhoto(priority, file.buildImageBodyPart())
-                photoMap[priority] = photoId
-                _photoIdList.postValue(photoMap.values.toList())
-                Log.d(TAG, "photoID: $photoId, Priority: $priority")
-            }
+            postPhotoJob(priority, file)
         } else {
             val source = ImageDecoder.createSource(contentResolver, uri)
             val bitmap = ImageDecoder.decodeBitmap(source)
             val file = bitmap.convertBitmapToFile(getFileName(), context).bitmapQualityResize()
 
-            withContext(Dispatchers.IO) {
-                val photoId = communityRepositoryImpl.savePhoto(priority, file.buildImageBodyPart())
-                photoMap[priority] = photoId
-                _photoIdList.postValue(photoMap.values.toList())
-                Log.d(TAG, "photoID: $photoId, Priority: $priority")
-            }
+            postPhotoJob(priority, file)
         }
     }
 
     fun postPost(title: String, context: String) = CoroutineScope(Dispatchers.IO).launch {
-        val postId = communityRepositoryImpl.savePost(
-            RequestPost(
-                title = title,
-                content = context,
-                author = userId,
-                photoIdList = photoMap.values.toList()
+        when (val result = communityRepositoryImpl.savePost(
+                RequestPost(
+                    title = title,
+                    content = context,
+                    author = userId,
+                    photoIdList = photoMap.values.toList()
+                )
             )
-        )
-        _postId.postValue(postId)
+        ) {
+            is BaseResult.Success -> {
+                _postId.postValue(result.data)
+            }
+            is BaseResult.Error -> {
+                _postId.postValue(-1L)
+            }
+        }
+
     }
 
     fun findPhotos(list: List<Long>) = CoroutineScope(Dispatchers.IO).launch {
         val mutableList: MutableList<ResponseFindByIdPhoto> = mutableListOf()
         for (photoId in list.sorted()){
-            val photo = communityRepositoryImpl.findByIdPhoto(photoId = photoId)
-            mutableList.add(photo)
+            when (val result = communityRepositoryImpl.findByIdPhoto(photoId = photoId)) {
+                is BaseResult.Success -> {
+                    mutableList.add(result.data)
+                }
+                is BaseResult.Error -> {
+                    continue
+                }
+            }
         }
         _photoList.postValue(mutableList.toList())
     }
@@ -116,4 +116,17 @@ constructor(
 //    fun getFileName() = "${System.currentTimeMillis()}_image.png"
 
     fun mapClear() = photoMap.clear()
+
+    private suspend fun postPhotoJob(priority: Long, file: File) = withContext(Dispatchers.IO) {
+        when (val result = communityRepositoryImpl.savePhoto(priority, file.buildImageBodyPart())) {
+            is BaseResult.Success -> {
+                photoMap[priority] = result.data
+                _photoIdList.postValue(photoMap.values.toList())
+                Log.d(TAG, "photoID: ${result.data}, Priority: $priority")
+            }
+            is BaseResult.Error -> {
+
+            }
+        }
+    }
 }

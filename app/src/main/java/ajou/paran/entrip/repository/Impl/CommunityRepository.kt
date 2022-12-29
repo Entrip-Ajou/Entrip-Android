@@ -5,6 +5,7 @@ import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import android.graphics.Bitmap
 import okhttp3.MultipartBody
+import java.io.File
 
 interface CommunityRepository {
 
@@ -12,12 +13,12 @@ interface CommunityRepository {
         priority: Long,
         image: MultipartBody.Part,
         attempt: Int = 0
-    ): Long
+    ): BaseResult<Long, Failure>
 
     suspend fun findByIdPhoto(
         photoId: Long,
         attempt: Int = 0
-    ): ResponseFindByIdPhoto
+    ): BaseResult<ResponseFindByIdPhoto, Failure>
 
     suspend fun deletePhoto(
         photoId: Long
@@ -31,12 +32,12 @@ interface CommunityRepository {
     suspend fun savePost(
         requestPost: RequestPost,
         attempt: Int = 0
-    ): Long
+    ): BaseResult<Long, Failure>
 
     suspend fun findByIdPost(
         postId: Long,
         attempt: Int = 0
-    ): ResponsePost
+    ): BaseResult<ResponsePost, Failure>
 
     suspend fun deletePost(
         postId: Long
@@ -44,7 +45,7 @@ interface CommunityRepository {
 
     suspend fun getPostsListWithPageNum(
         pageNum: Long
-    ): List<ResponsePost>
+    ): BaseResult<List<ResponsePost>, Failure>
 
     suspend fun raiseLikeWithPostId(
         postId: Long,
@@ -61,39 +62,39 @@ interface CommunityRepository {
         content: String,
         postId: Long,
         attempt: Int = 0
-    ): Long
+    ): BaseResult<Long, Failure>
 
     suspend fun findByIdComment(
         commentId: Long
-    ): ResponseComment
+    ): BaseResult<ResponseComment, Failure>
 
     suspend fun deleteComment(
         commentId: Long
-    ): Long
+    ): BaseResult<Long, Failure>
 
     suspend fun getAllCommentsWithPostId(
         postId: Long,
         attempt: Int = 0
-    ): List<ResponseComment>
+    ): BaseResult<List<ResponseComment>, Failure>
 
     suspend fun saveNestedComment(
         author: String,
         content: String,
         commentId: Long,
         attempt: Int = 0
-    ): Long
+    ): BaseResult<Long, Failure>
 
     suspend fun findByIdNestedComment(
         nestedCommentId: Long
-    ): ResponseNestedComment
+    ): BaseResult<ResponseNestedComment, Failure>
 
     suspend fun deleteNestedComment(
         nestedCommentId: Long
-    ): Long
+    ): BaseResult<Long, Failure>
 
     suspend fun getAllNestedCommentsWithPostCommentId(
         commentId: Long,
         attempt: Int = 0
-    ): List<ResponseNestedComment>
+    ): BaseResult<List<ResponseNestedComment>, Failure>
 
 }

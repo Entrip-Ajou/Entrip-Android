@@ -10,4 +10,14 @@ data class ResponsePost(
     @SerializedName("likeNumber") val likeNumber: Long,
     @SerializedName("commentsNumber") val commentsNumber: Long,
     @SerializedName("photoList") val photoList: List<String>
-)
+) {
+    constructor(post_id: Long) : this(
+        post_id = post_id,
+        title = "",
+        content = "",
+        author = "",
+        likeNumber = 0L,
+        commentsNumber = 0L,
+        photoList = listOf()
+    )
+}
