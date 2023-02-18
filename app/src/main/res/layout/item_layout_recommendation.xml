@@ -8,9 +8,11 @@
     android:background="#70b3eb">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="312dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="44dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/shape_round_layout"
         android:orientation="vertical"
         app:cardCornerRadius="30dp"
@@ -23,7 +25,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
             <ImageView
@@ -41,11 +43,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="리버 사이드 카페"
-                android:textStyle="normal"
-                android:textSize="17sp"
-                android:textColor="#010101"
                 android:lineSpacingExtra="-15sp"
+                android:text="리버 사이드 카페"
+                android:textColor="#010101"
+                android:textSize="17sp"
+                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recomItem_image" />
 
@@ -55,26 +57,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="경기도 수원시 팔달구 중부대로207번길 13 1층"
-                android:textStyle="normal"
-                android:textSize="11sp"
-                android:textColor="#959595"
                 android:lineSpacingExtra="5sp"
+                android:text="경기도 수원시 팔달구 중부대로207번길 13 1층"
+                android:textColor="#959595"
+                android:textSize="11sp"
+                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recomItem_name" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recomItem_rv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recomItem_address"
-                tools:listitem="@layout/item_layout_tags" />
 
         </LinearLayout>
 

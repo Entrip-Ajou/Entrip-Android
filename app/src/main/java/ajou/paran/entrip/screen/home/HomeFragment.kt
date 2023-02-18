@@ -44,9 +44,6 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
     private lateinit var recommendItemAdapter: HomeRecommendAdapter
 
     override fun init() {
-        binding.homeFragBtnRecommendation.setOnClickListener{
-            (activity as HomeActivity).changeFrag(RecommendationFragment())
-        }
         observeState()
         setUpRecyclerView()
     }

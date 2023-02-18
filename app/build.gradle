@@ -150,4 +150,8 @@ dependencies {
     //coil
     implementation("io.coil-kt:coil:1.4.0")
     implementation("io.coil-kt:coil-video:1.4.0")
+
+    //json serialization
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.1"
+
 }
