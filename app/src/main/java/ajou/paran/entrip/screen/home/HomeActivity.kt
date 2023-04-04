@@ -25,7 +25,6 @@ import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.invitation_dialog.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn

@@ -10,7 +10,6 @@ import ajou.paran.entrip.repository.room.plan.dao.UserDao
 import ajou.paran.entrip.util.network.BaseResult
 import ajou.paran.entrip.util.network.Failure
 import kotlinx.coroutines.flow.Flow
-import okhttp3.internal.wait
 import javax.inject.Inject
 
 class UserAddRepositoryImpl @Inject constructor(
