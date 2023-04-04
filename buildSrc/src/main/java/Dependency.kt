@@ -9,6 +9,7 @@ object Versions {
     const val RETROFIT = "2.9.0"
     const val GLIDE = "4.14.2"
     const val COIL = "1.4.0"
+    const val DATASTORE = "1.0.0"
 }
 
 sealed class Dependencies {
@@ -33,7 +34,7 @@ sealed class Dependencies {
     }
 
     object Test : Dependencies() {
-        const val JUNIT = "junit:junit:" // testImplementation
+        const val JUNIT = "junit:junit:4.13.2" // testImplementation
         const val JUNIT_EXT = "androidx.test.ext:junit:1.1.5" // androidTestImplementation
         const val ESPRESSO = "androidx.test.espresso:espresso-core:3.5.1" // androidTestImplementation
     }
@@ -91,8 +92,14 @@ sealed class Dependencies {
         const val COIL_VIDEO = "io.coil-kt:coil-video:${Versions.COIL}"
     }
 
-    object JsonSerialization {
+    object JsonSerialization : Dependencies() {
         const val JSON_SERIALIZATION = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.2"
+    }
+
+    object DataStore {
+        const val DATASTORE = "androidx.datastore:datastore:${Versions.DATASTORE}"
+        const val DATASTORE_PREFERENCE = "androidx.datastore:datastore-preferences:${Versions.DATASTORE}"
+        const val DATASTORE_PREFERENCE_CORE = "androidx.datastore:datastore-preferences-core:${Versions.DATASTORE}"
     }
 
 }
