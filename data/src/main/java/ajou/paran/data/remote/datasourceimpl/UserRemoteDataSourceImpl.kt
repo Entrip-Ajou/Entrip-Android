@@ -40,39 +40,64 @@ constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun saveUser(userId: String, gender: Int, nickname: String, photoUrl: String) {
+    override suspend fun saveUser(
+        userId: String,
+        gender: Int,
+        nickname: String,
+        photoUrl: String
+    ) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateToken(user_id: String, token: String) {
+    override suspend fun updateToken(
+        userId: String,
+        token: String
+    ) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun searchUser(user_id_or_nickname: String) {
+    override suspend fun searchUser(
+        userIdOrNickname: String
+    ) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun findAllUsersByPlannerId(planner_id: Long) {
+    override suspend fun findAllUsersByPlannerId(
+        plannerId: Long
+    ) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun addPlanners(planner_id: Long, user_id: String) {
+    override suspend fun addPlanners(
+        plannerId: Long,
+        userId: String
+    ) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun findAllPlannersByUser(user_id: String) {
+    override suspend fun findAllPlannersByUser(
+        userId: String
+    ) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun findUserById(user_id: String) {
+    override suspend fun findUserById(
+        userId: String
+    ) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun isExistUserInPlannerByUserId(planner_id: Long, user_id: String) {
+    override suspend fun isExistUserInPlannerByUserId(
+        plannerId: Long,
+        userId: String
+    ) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun isExistUserInPlannerByNickname(planner_id: Long, nickname: String) {
+    override suspend fun isExistUserInPlannerByNickname(
+        plannerId: Long,
+        nickname: String
+    ) {
         TODO("Not yet implemented")
     }
 

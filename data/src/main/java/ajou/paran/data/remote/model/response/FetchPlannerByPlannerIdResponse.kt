@@ -2,10 +2,7 @@ package ajou.paran.data.remote.model.response
 
 import com.google.gson.annotations.SerializedName
 
-typealias FindAllPlannersResponseList = List<FindAllPlannersResponse>
-
-
-data class FindAllPlannersResponse(
+data class FetchPlannerByPlannerIdResponse(
     @SerializedName("planner_id")
     val plannerId: Long,
     @SerializedName("title")

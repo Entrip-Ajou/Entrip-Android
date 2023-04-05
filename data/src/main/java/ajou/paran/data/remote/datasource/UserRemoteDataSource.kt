@@ -32,38 +32,38 @@ interface UserRemoteDataSource {
     )
 
     suspend fun updateToken(
-        user_id : String,
+        userId : String,
         token : String
     )
 
     suspend fun searchUser(
-        user_id_or_nickname : String
+        userIdOrNickname : String
     )
 
     suspend fun findAllUsersByPlannerId(
-        planner_id : Long
+        plannerId : Long
     )
 
     suspend fun addPlanners(
-        planner_id : Long,
-        user_id : String
+        plannerId : Long,
+        userId : String
     )
 
     suspend fun findAllPlannersByUser(
-        user_id: String
+        userId: String
     )
 
     suspend fun findUserById(
-        user_id : String
+        userId : String
     )
 
     suspend fun isExistUserInPlannerByUserId(
-        planner_id : Long,
-        user_id : String
+        plannerId : Long,
+        userId : String
     )
 
     suspend fun isExistUserInPlannerByNickname(
-        planner_id : Long,
+        plannerId : Long,
         nickname : String
     )
 

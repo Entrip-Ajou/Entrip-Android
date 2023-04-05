@@ -43,46 +43,46 @@ interface UserAPI {
 
     @PUT("api/v1/users/token/{user_id}/{token}")
     suspend fun updateToken(
-        @Path("user_id") user_id : String,
-        @Path("token") token : String
+        @Path("user_id") userId: String,
+        @Path("token") token: String
     )
 
     @GET("api/v1/users/findUserWithNicknameOrUserId/{user_id_or_nickname}")
     suspend fun searchUser(
-        @Path("user_id_or_nickname") user_id_or_nickname : String
+        @Path("user_id_or_nickname") userIdOrNickname: String
     ): SearchUserResponse
 
     @GET("api/v1/planners/{planner_id}/getAllUser")
     suspend fun findAllUsersByPlannerId(
-        @Path("planner_id") planner_id : Long
+        @Path("planner_id") plannerId: Long
     ): FindAllUsersWithPlannerIdResponseList
 
     @PUT("api/v1/planners/{planner_id}/{user_id}")
     suspend fun addPlanners(
-        @Path("planner_id") planner_id : Long,
-        @Path("user_id") user_id : String
+        @Path("planner_id") plannerId: Long,
+        @Path("user_id") userId: String
     ): Int
 
     @GET("api/v1/users/{user_id}/all")
     suspend fun findAllPlannersByUser(
-        @Path("user_id") user_id: String
+        @Path("user_id") userId: String
     ): FindAllPlannersResponseList
 
     @GET("api/v1/users/{user_id}")
     suspend fun findUserById(
-        @Path("user_id") user_id : String
+        @Path("user_id") userId: String
     ): FindUserByIdResponse
 
     @GET("api/v1/planners/{planner_id}/{user_id}/exist")
     suspend fun isExistUserInPlannerByUserId(
-        @Path ("planner_id") planner_id : Long,
-        @Path ("user_id") user_id : String
+        @Path ("planner_id") plannerId: Long,
+        @Path ("user_id") userId: String
     ): Boolean
 
     @GET("api/v1/planners/{planner_id}/{nickname}/exist")
     suspend fun isExistUserInPlannerByNickname(
-        @Path ("planner_id") planner_id : Long,
-        @Path ("nickname") nickname : String
+        @Path ("planner_id") plannerId: Long,
+        @Path ("nickname") nickname: String
     ): Boolean
     //endregion
 
