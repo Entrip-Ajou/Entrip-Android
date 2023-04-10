@@ -43,6 +43,9 @@ dependencies {
     testImplementation(Dependencies.Test.JUNIT)
     androidTestImplementation(Dependencies.Test.JUNIT_EXT)
     androidTestImplementation(Dependencies.Test.ESPRESSO)
+    testImplementation(Dependencies.Test.COROUTINE)
+    testImplementation(Dependencies.Test.TRUTH)
+    testImplementation(Dependencies.Test.MOCKITO_WEB_SERVER)
 
     implementation(Dependencies.Hilt.HILT)
     kapt(Dependencies.Hilt.HILT_COMPILER)

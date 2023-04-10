@@ -37,6 +37,12 @@ sealed class Dependencies {
         const val JUNIT = "junit:junit:4.13.2" // testImplementation
         const val JUNIT_EXT = "androidx.test.ext:junit:1.1.5" // androidTestImplementation
         const val ESPRESSO = "androidx.test.espresso:espresso-core:3.5.1" // androidTestImplementation
+        const val ROBOLECTRIC = "org.robolectric:robolectric:4.9" // testImplementation
+        const val MOCKITO = "org.mockito:mockito-core:1.10.19" // testImplementation
+        const val MOCKITO_WEB_SERVER = "com.squareup.okhttp3:mockwebserver:4.10.0" // testImplementation
+        const val HAMCREST_LIBRARY = "org.hamcrest:hamcrest-library:2.2" // testImplementation
+        const val COROUTINE = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2" // testImplementation
+        const val TRUTH = "com.google.truth:truth:1.1.3" // testImplementation
     }
 
     object Hilt : Dependencies() {
