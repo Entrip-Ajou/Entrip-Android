@@ -2,6 +2,7 @@ package ajou.paran.data.remote.datasourceimpl
 
 import ajou.paran.data.remote.api.PlanAPI
 import ajou.paran.data.remote.datasource.PlanRemoteDataSource
+import ajou.paran.data.utils.baseApiCall
 import javax.inject.Inject
 
 class PlanRemoteDataSourceImpl
@@ -16,13 +17,13 @@ constructor(
         todo: String,
         time: Int,
         location: String?
-    ) {
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 
     override suspend fun deletePlanById(
         planId: Long,
-    ) {
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 
@@ -32,7 +33,7 @@ constructor(
         todo: String,
         time: Int,
         location: String?
-    ) {
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 

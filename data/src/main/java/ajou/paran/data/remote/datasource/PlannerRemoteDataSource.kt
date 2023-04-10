@@ -9,7 +9,7 @@ interface PlannerRemoteDataSource {
     suspend fun deletePlanner(
         userId: String,
         plannerId: Long,
-    ): Boolean
+    )
 
     suspend fun fetchPlannerByPlannerId(
         plannerId: Long,

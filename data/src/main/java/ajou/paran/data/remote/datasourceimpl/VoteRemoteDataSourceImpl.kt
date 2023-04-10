@@ -2,6 +2,7 @@ package ajou.paran.data.remote.datasourceimpl
 
 import ajou.paran.data.remote.api.VoteAPI
 import ajou.paran.data.remote.datasource.VoteRemoteDataSource
+import ajou.paran.data.utils.baseApiCall
 import javax.inject.Inject
 
 class VoteRemoteDataSourceImpl
@@ -18,7 +19,7 @@ constructor(
         deadLine: String?,
         plannerId: Long,
         author: String
-    ) {
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 
@@ -28,31 +29,46 @@ constructor(
         multipleVote: Boolean,
         anonymousVote: Boolean,
         deadLine: String
-    ) {
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteVoteById(voteId: Long) {
+    override suspend fun deleteVoteById(
+        voteId: Long
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun doVote(votesId: Long, voteContentIds: MutableList<Long>, userId: String) {
+    override suspend fun doVote(
+        votesId: Long,
+        voteContentIds: MutableList<Long>,
+        userId: String
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getVotesById(voteId: Long) {
+    override suspend fun getVotesById(
+        voteId: Long
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun terminateVoteById(voteId: Long) {
+    override suspend fun terminateVoteById(
+        voteId: Long
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchVotesByPlannerId(plannerId: Long) {
+    override suspend fun fetchVotesByPlannerId(
+        plannerId: Long
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getPreviousVotes(userId: String, voteId: Long) {
+    override suspend fun getPreviousVotes(
+        userId: String,
+        voteId: Long
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 
@@ -60,7 +76,7 @@ constructor(
         votesId: Long,
         voteContentIds: MutableList<Long>,
         userId: String
-    ) {
+    ): Unit = baseApiCall {
         TODO("Not yet implemented")
     }
 

@@ -36,11 +36,6 @@ interface UserAPI {
     //endregion
 
     //region v1
-    @POST("api/v1/users")
-    suspend fun saveUser(
-        @Body response: SaveUserResponse
-    ): SaveUserRequest
-
     @PUT("api/v1/users/token/{user_id}/{token}")
     suspend fun updateToken(
         @Path("user_id") userId: String,
