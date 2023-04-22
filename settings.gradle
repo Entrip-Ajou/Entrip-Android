@@ -10,3 +10,6 @@ dependencyResolutionManagement {
 rootProject.name = "Entrip"
 include ':app'
 include ':data'
+include ':domain'
+include ':renew'
+include ':presentation'

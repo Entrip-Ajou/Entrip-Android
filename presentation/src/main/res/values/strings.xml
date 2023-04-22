@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Entrip</string>
+
+    <string name="intro_exit">시작하기</string>
+
+    <string name="intro_first_title">나만의 플래너</string>
+    <string name="intro_first_content">친구들과 여행 일정을 함께 만들어보세요!\n일정을 쉽게 추가하고 삭제할 수 있어요</string>
+    <string name="intro_second_title">커뮤니티</string>
+    <string name="intro_second_content">자유롭게 정보를 공유하고\n 얻으며 소통할 수 있어요</string>
+    <string name="intro_third_title">여행지 추천</string>
+    <string name="intro_third_content">당신의 여행 성향과 비슷한 사람들의 추천을 바탕으로\n당신만의 여행지를 추천 받아보세요!</string>
+
+    <string name="sign_in_logo">Entrip</string>
+    <string name="sign_in_hint_email">아이디를 입력해주세요.</string>
+    <string name="sign_in_hint_password">비밀번호를 입력해주세요.</string>
+    <string name="sign_in_error">테스트 에러 메세지 입니다.</string>
+    <string name="sign_in_sign_in">로그인</string>
+    <string name="sign_in_sign_up">회원가입</string>
+
+</resources>

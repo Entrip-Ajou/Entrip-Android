@@ -7,6 +7,8 @@ data class SearchUserResponse(
     val user_id: String,
     @SerializedName("nickname")
     val nickname: String,
+    @SerializedName("gender")
+    val gender: Long,
     @SerializedName("photoUrl")
     val photoUrl: String,
     @SerializedName("token")

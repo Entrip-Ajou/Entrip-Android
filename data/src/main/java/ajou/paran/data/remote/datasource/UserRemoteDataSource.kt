@@ -1,12 +1,13 @@
 package ajou.paran.data.remote.datasource
 
+import ajou.paran.domain.model.BaseCondition
+
 interface UserRemoteDataSource {
 
     suspend fun saveUserAccount(
         userId: String,
         nickname: String,
         photoUrl: String,
-        token: String,
         gender: Long,
         password: String
     ): Unit
@@ -18,11 +19,11 @@ interface UserRemoteDataSource {
 
     suspend fun isExistUserByUserId(
         userId: String
-    ): Unit
+    ): BaseCondition
 
     suspend fun isExistUserByNickname(
         nickname: String
-    ): Unit
+    ): BaseCondition
 
     suspend fun updateToken(
         userId : String,

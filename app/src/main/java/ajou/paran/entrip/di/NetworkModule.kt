@@ -37,15 +37,28 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @EntripV1
     fun provideRetrofit(
-        client: OkHttpClient
+        @EntripV1 client: OkHttpClient
     ) : Retrofit = Retrofit.Builder()
-    .apply {
+        .apply {
+            baseUrl(BaseUrl.MAIN_URL)
+            addConverterFactory(GsonConverterFactory.create())
+            client(client)
+        }
+        .build()
+
+
+    @Provides
+    @Singleton
+    @EntripV2
+    fun provideV2Retrofit(
+        @EntripV2 client: OkHttpClient
+    ) : Retrofit = Retrofit.Builder().apply {
         baseUrl(BaseUrl.MAIN_URL)
         addConverterFactory(GsonConverterFactory.create())
         client(client)
-    }
-    .build()
+    }.build()
 
     @Provides
     @Singleton
@@ -76,12 +89,29 @@ object NetworkModule {
         networkInterceptor: NetworkInterceptor,
         authInterceptor: AuthInterceptor,
         httpLoggingInterceptor: HttpLoggingInterceptor
+    ) : OkHttpClient = OkHttpClient.Builder()
+        .apply {
+            readTimeout(10, TimeUnit.SECONDS)
+            connectTimeout(10, TimeUnit.SECONDS)
+            writeTimeout(10, TimeUnit.SECONDS)
+            addInterceptor(networkInterceptor)
+            addInterceptor(authInterceptor)
+            addInterceptor(httpLoggingInterceptor)
+        }
+        .build()
+
+
+    @Provides
+    @Singleton
+    @EntripV2
+    fun provideV2HttpClient(
+        networkInterceptor: NetworkInterceptor,
+        httpLoggingInterceptor: HttpLoggingInterceptor
     ) : OkHttpClient = OkHttpClient.Builder().apply {
         readTimeout(10, TimeUnit.SECONDS)
         connectTimeout(10, TimeUnit.SECONDS)
         writeTimeout(10, TimeUnit.SECONDS)
         addInterceptor(networkInterceptor)
-        addInterceptor(authInterceptor)
         addInterceptor(httpLoggingInterceptor)
     }.build()
 

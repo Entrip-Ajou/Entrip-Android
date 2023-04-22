@@ -9,8 +9,6 @@ data class SaveUserAccountRequest(
     val nickname: String,
     @SerializedName("photo_url")
     val photoUrl: String,
-    @SerializedName("token")
-    val token: String,
     @SerializedName("gender")
     val gender: Long,
     @SerializedName("password")

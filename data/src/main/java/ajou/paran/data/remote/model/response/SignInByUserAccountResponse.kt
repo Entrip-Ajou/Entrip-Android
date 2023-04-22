@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class SignInByUserAccountResponse(
     @SerializedName("detailedMessage")
-    val detailedMessage: String,
+    val detailedMessage: String = "",
     @SerializedName("user_id")
     val userId: String,
     @SerializedName("accessToken")
@@ -12,5 +12,5 @@ data class SignInByUserAccountResponse(
     @SerializedName("nickname")
     val nickname: String,
     @SerializedName("refreshToken")
-    val refreshToken: String
+    val refreshToken: String,
 )

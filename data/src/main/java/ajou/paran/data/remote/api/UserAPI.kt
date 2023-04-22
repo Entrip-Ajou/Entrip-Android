@@ -1,7 +1,6 @@
 package ajou.paran.data.remote.api
 
 import ajou.paran.data.remote.model.request.SaveUserAccountRequest
-import ajou.paran.data.remote.model.request.SaveUserRequest
 import ajou.paran.data.remote.model.request.SignInByUserAccountRequest
 import ajou.paran.data.remote.model.response.*
 import retrofit2.http.*
@@ -13,25 +12,25 @@ interface UserAPI {
     @POST("api/v2/users")
     suspend fun saveUserAccount(
         @Body request: SaveUserAccountRequest
-    ): SaveUserAccountResponse
-
-    @Headers("No-Authentication: true")
-    @POST("api/v2/users/login")
-    suspend fun signInByUserAccount(
-        @Body request: SignInByUserAccountRequest
-    ): SignInByUserAccountResponse
-
-    @Headers("No-Authentication: true")
-    @GET("api/v2/users/{user_id}/user_id/exist")
-    suspend fun isExistUserByUserId(
-        @Path("user_id") userId: String
-    ): Boolean
+    ): BaseResponse<SaveUserAccountResponse>
 
     @Headers("No-Authentication: true")
     @GET("api/v2/users/{nickname}/nickname/exist")
     suspend fun isExistUserByNickname(
         @Path("nickname") nickname: String
-    ): Boolean
+    ): BaseResponse<Boolean>
+
+    @Headers("No-Authentication: true")
+    @GET("api/v2/users/{user_id}/user_id/exist")
+    suspend fun isExistUserByUserId(
+        @Path("user_id") userId: String
+    ): BaseResponse<Boolean>
+
+    @Headers("No-Authentication: true")
+    @POST("api/v2/users/login")
+    suspend fun signInByUserAccount(
+        @Body request: SignInByUserAccountRequest
+    ): BaseResponse<SignInByUserAccountResponse>
 
     //endregion
 
@@ -40,12 +39,12 @@ interface UserAPI {
     suspend fun updateToken(
         @Path("user_id") userId: String,
         @Path("token") token: String
-    )
+    ): BaseResponse<UpdateTokenResponse>
 
     @GET("api/v1/users/findUserWithNicknameOrUserId/{user_id_or_nickname}")
     suspend fun searchUser(
         @Path("user_id_or_nickname") userIdOrNickname: String
-    ): SearchUserResponse
+    ): BaseResponse<SearchUserResponse>
 
     @GET("api/v1/planners/{planner_id}/getAllUser")
     suspend fun findAllUsersByPlannerId(
@@ -61,7 +60,7 @@ interface UserAPI {
     @GET("api/v1/users/{user_id}/all")
     suspend fun findAllPlannersByUser(
         @Path("user_id") userId: String
-    ): FindAllPlannersResponseList
+    ): BaseResponse<FindAllPlannersResponseList>
 
     @GET("api/v1/users/{user_id}")
     suspend fun findUserById(

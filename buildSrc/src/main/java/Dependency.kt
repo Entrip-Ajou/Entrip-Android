@@ -16,7 +16,7 @@ sealed class Dependencies {
 
     object AndroidX : Dependencies() {
         const val CORE = "androidx.core:core-ktx:1.9.0"
-        const val APPCOMPAT = "androidx.appcompat:appcompat:1.6.1"
+        const val APPCOMPAT = "androidx.appcompat:appcompat:1.4.2"
         const val CONSTRAINT_LAYOUT = "androidx.constraintlayout:constraintlayout:2.1.4"
         const val SWIPE_REFRESH_LAYOUT = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
         const val LEGACY = "androidx.legacy:legacy-support-v4:1.0.0"
@@ -31,6 +31,7 @@ sealed class Dependencies {
         const val ROOM = "androidx.room:room-ktx:${Versions.ROOM}"
         const val ROOM_RUNTIME = "androidx.room:room-runtime:${Versions.ROOM}"
         const val ROOM_COMPILER = "androidx.room:room-compiler:${Versions.ROOM}" // kapt
+        const val VIEW_PAGER_2 = "androidx.viewpager2:viewpager2:1.0.0"
     }
 
     object Test : Dependencies() {
@@ -67,7 +68,7 @@ sealed class Dependencies {
     }
 
     object Google : Dependencies()  {
-        const val MATERIAL = "com.google.android.material:material:1.8.0"
+        const val MATERIAL = "com.google.android.material:material:1.6.0"
         const val FIREBASE_BOM = "com.google.firebase:firebase-bom:30.0.0"  // implementation platform
         const val FIREBASE_AUTH = "com.google.firebase:firebase-auth-ktx"
         const val FIREBASE_ANALYTICS = "com.google.firebase:firebase-analytics-ktx"
@@ -106,6 +107,10 @@ sealed class Dependencies {
         const val DATASTORE = "androidx.datastore:datastore:${Versions.DATASTORE}"
         const val DATASTORE_PREFERENCE = "androidx.datastore:datastore-preferences:${Versions.DATASTORE}"
         const val DATASTORE_PREFERENCE_CORE = "androidx.datastore:datastore-preferences-core:${Versions.DATASTORE}"
+    }
+
+    object DotsIndicator {
+        const val DOTS = "com.tbuonomo:dotsindicator:4.2"
     }
 
 }

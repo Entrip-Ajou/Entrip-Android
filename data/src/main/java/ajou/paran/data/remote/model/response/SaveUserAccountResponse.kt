@@ -12,5 +12,5 @@ data class SaveUserAccountResponse(
     @SerializedName("photoUrl")
     val photoUrl: String,
     @SerializedName("token")
-    val token: String
+    val token: String = "",
 )
