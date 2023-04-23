@@ -17,4 +17,19 @@
     <string name="sign_in_sign_in">로그인</string>
     <string name="sign_in_sign_up">회원가입</string>
 
+    <string name="sign_up_title">회원가입</string>
+    <string name="sign_up_email_title">아이디</string>
+    <string name="sign_up_hint_email">아이디를 입력해주세요</string>
+    <string name="sign_up_btn_check_email">중복검사</string>
+    <string name="sign_up_password_title">비밀번호</string>
+    <string name="sign_up_hint_password">비밀번호를 입력해주세요</string>
+    <string name="sign_up_password_check_title">비밀번호 확인</string>
+    <string name="sign_up_hint_password_check">비밀번호를 한번 더 입력해주세요</string>
+    <string name="sign_up_nickname_title">닉네임</string>
+    <string name="sign_up_hint_nickname">닉네임을 입력해주세요</string>
+    <string name="sign_up_btn_check_nickname">중복검사</string>
+    <string name="sign_up_gender_title">성별</string>
+    <string name="sign_up_gender_man">남성</string>
+    <string name="sign_up_gender_woman">여성</string>
+
 </resources>
