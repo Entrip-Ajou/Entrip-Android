@@ -1,6 +1,8 @@
 package ajou.paran.data.remote.datasource
 
 import ajou.paran.domain.model.BaseCondition
+import ajou.paran.domain.model.DefaultUser
+import ajou.paran.domain.model.UserSignUp
 
 interface UserRemoteDataSource {
 
@@ -10,12 +12,12 @@ interface UserRemoteDataSource {
         photoUrl: String,
         gender: Long,
         password: String
-    ): Unit
+    ): UserSignUp
 
     suspend fun signInByUserAccount(
         userId: String,
         password: String
-    ): Unit
+    ): DefaultUser
 
     suspend fun isExistUserByUserId(
         userId: String

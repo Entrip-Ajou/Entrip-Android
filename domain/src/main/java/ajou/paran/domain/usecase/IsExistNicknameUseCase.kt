@@ -3,7 +3,7 @@ package ajou.paran.domain.usecase
 import ajou.paran.domain.repository.UserRepository
 import javax.inject.Inject
 
-class IsExistUserUseCase
+class IsExistNicknameUseCase
 @Inject
 constructor(
     private val repository: UserRepository
@@ -12,12 +12,12 @@ constructor(
     suspend operator fun invoke(
         params: Params
     ): Boolean = kotlin.runCatching {
-        repository.isExistUser(
-            userId = params.userId
+        repository.isExistNickname(
+            nickname = params.nickname
         )
-    }.getOrDefault(true)
+    }.getOrDefault(false)
 
     data class Params(
-        val userId: String
+        val nickname: String
     )
 }

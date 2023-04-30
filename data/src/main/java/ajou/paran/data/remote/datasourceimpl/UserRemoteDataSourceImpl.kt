@@ -9,6 +9,8 @@ import ajou.paran.data.remote.model.response.BaseResponse
 import ajou.paran.data.utils.baseApiCall
 import ajou.paran.data.utils.exceptions.NotAcceptedException
 import ajou.paran.domain.model.BaseCondition
+import ajou.paran.domain.model.DefaultUser
+import ajou.paran.domain.model.UserSignUp
 import javax.inject.Inject
 
 class UserRemoteDataSourceImpl
@@ -23,7 +25,7 @@ constructor(
         photoUrl: String,
         gender: Long,
         password: String,
-    ): Unit = baseApiCall {
+    ): UserSignUp = baseApiCall {
        userAPI.saveUserAccount(
            request = SaveUserAccountRequest(
                userId = userId,
@@ -37,7 +39,7 @@ constructor(
 //               202 -> {}
 //               else -> {}
 //           }
-       }
+       }.toModel()
     }
 
     override suspend fun isExistUserByUserId(
@@ -71,7 +73,7 @@ constructor(
     override suspend fun signInByUserAccount(
         userId: String,
         password: String
-    ): Unit = baseApiCall {
+    ): DefaultUser = baseApiCall {
         userAPI.signInByUserAccount(
             request = SignInByUserAccountRequest(
                 userId = userId,
@@ -86,7 +88,7 @@ constructor(
                     }
                 }
             }
-        }
+        }.toModel()
     }
 
     override suspend fun updateToken(

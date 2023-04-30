@@ -31,6 +31,19 @@ class SignUpActivity : BaseETActivity<ActivitySignUpBinding>(R.layout.activity_s
     }
 
     private fun initSubObserver() {
+        signUpActivityViewModel.isNotExistUser.observe(this) { result ->
+            if (result) {
+                binding.signUpTvEmail.visibility = View.VISIBLE
+                binding.signUpEtEmail.visibility = View.GONE
+            }
+        }
+        signUpActivityViewModel.isNotExistNickname.observe(this) { result ->
+            if (result) {
+                binding.signUpTvNickname.visibility = View.VISIBLE
+                binding.signUpEtNickname.visibility = View.GONE
+            }
+        }
+
         signUpActivityViewModel.errorMessage.observe(this) {
             when (it.isEmpty()) {
                 true -> hideKeyboard()
@@ -43,7 +56,7 @@ class SignUpActivity : BaseETActivity<ActivitySignUpBinding>(R.layout.activity_s
     }
 
     private fun snackBar(msg: String) = Snackbar
-        .make(binding.root, msg, Snackbar.LENGTH_INDEFINITE)
+        .make(binding.root, msg, Snackbar.LENGTH_SHORT)
         .setAction("확인") {
             signUpActivityViewModel.clearErrorMessage()
         }.show()
@@ -88,6 +101,7 @@ class SignUpActivity : BaseETActivity<ActivitySignUpBinding>(R.layout.activity_s
                     setBackgroundResource(R.drawable.shape_register)
                     setTextColor(Color.parseColor("#616161"))
                 }
+                signUpActivityViewModel.onClickGender(0)
 //                viewModel.gender.value = 0
             }
             binding.signUpBtnWoman.id -> {
@@ -99,6 +113,7 @@ class SignUpActivity : BaseETActivity<ActivitySignUpBinding>(R.layout.activity_s
                     setBackgroundResource(R.drawable.shape_btn_round_recommend)
                     setTextColor(Color.parseColor("#1a83e6"))
                 }
+                signUpActivityViewModel.onClickGender(1)
 //                viewModel.gender.value = 1
             }
         }

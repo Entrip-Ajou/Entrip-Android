@@ -12,7 +12,9 @@ import com.paran.presentation.R
 import com.paran.presentation.common.base.BaseETActivity
 import com.paran.presentation.databinding.ActivitySignInBinding
 import com.paran.presentation.views.viewmodel.SignInActivityViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SignInActivity : BaseETActivity<ActivitySignInBinding>(R.layout.activity_sign_in) {
     companion object {
         private const val TAG = "SignInAct"

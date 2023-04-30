@@ -86,7 +86,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatEditText
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/sign_up_tv_email"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -126,7 +126,7 @@
             app:layout_constraintTop_toBottomOf="@+id/sign_up_cl_email" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/sign_in_cl_password"
+            android:id="@+id/sign_up_cl_password"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
@@ -143,6 +143,7 @@
                 android:layout_height="0dp"
                 android:gravity="center_vertical"
                 android:hint="@string/sign_up_hint_password"
+                android:text="@={viewModel.inputPassword}"
                 android:inputType="text|textPassword"
                 android:paddingStart="16dp"
                 android:background="@null"
@@ -196,10 +197,10 @@
             android:text="@string/sign_up_hint_password_check"
             android:textColor="#000000"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sign_in_cl_password" />
+            app:layout_constraintTop_toBottomOf="@+id/sign_up_cl_password" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/sign_in_cl_password_check"
+            android:id="@+id/sign_up_cl_password_check"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
@@ -216,6 +217,7 @@
                 android:layout_height="0dp"
                 android:gravity="center_vertical"
                 android:hint="@string/sign_up_hint_password_check"
+                android:text="@={viewModel.inputPasswordCheck}"
                 android:inputType="text|textPassword"
                 android:paddingStart="16dp"
                 android:background="@null"
@@ -269,7 +271,7 @@
             android:text="@string/sign_up_nickname_title"
             android:textColor="#000000"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sign_in_cl_password_check" />
+            app:layout_constraintTop_toBottomOf="@+id/sign_up_cl_password_check" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/sign_up_cl_nickname"
@@ -288,6 +290,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:hint="@string/sign_up_hint_nickname"
+                android:text="@={viewModel.inputNickname}"
                 android:paddingStart="16dp"
                 android:gravity="center_vertical"
                 android:inputType="text|textEmailAddress"
@@ -297,12 +300,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatEditText
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/sign_up_tv_nickname"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:paddingStart="16dp"
                 android:gravity="center_vertical"
+                android:text="@={viewModel.inputNickname}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -320,6 +324,7 @@
             android:textSize="12sp"
             android:gravity="center"
             android:background="@drawable/vector_intro_button"
+            android:onClick="@{() -> viewModel.checkIsExistUserByNickname()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/sign_up_cl_nickname" />
 
@@ -392,6 +397,7 @@
             android:textColor="#48b3ff"
             android:textSize="18dp"
             android:textStyle="bold"
+            android:onClick="@{() -> viewModel.onClickSignUp()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/radioGroup" />

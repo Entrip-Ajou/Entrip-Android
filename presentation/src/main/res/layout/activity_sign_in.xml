@@ -62,7 +62,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/sign_in_cl_password"
+            android:id="@+id/sign_up_cl_password"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
@@ -139,7 +139,7 @@
             android:textColor="#FF0000"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sign_in_cl_password"
+            app:layout_constraintTop_toBottomOf="@+id/sign_up_cl_password"
             android:visibility="invisible"/>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -157,8 +157,8 @@
             android:background="@drawable/vector_sign_in_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sign_in_cl_password"
-            android:onClick="@{viewModel::onClickSignUp}"/>
+            app:layout_constraintTop_toBottomOf="@+id/sign_up_cl_password"
+            android:onClick="@{() -> viewModel.onClickSignIn()}"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/sign_in_btn_sign_up"
