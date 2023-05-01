@@ -3,11 +3,13 @@ package com.paran.presentation.views.viewmodel
 import ajou.paran.domain.usecase.IsExistNicknameUseCase
 import ajou.paran.domain.usecase.IsExistUserUseCase
 import ajou.paran.domain.usecase.SaveUserAccountUseCase
+import ajou.paran.domain.usecase.SignInByUserAccountUseCase
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.paran.presentation.utils.state.SignUpState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +23,7 @@ constructor(
     private val isExistUserUseCase: IsExistUserUseCase,
     private val isExistNicknameUseCase: IsExistNicknameUseCase,
     private val saveUserAccountUseCase: SaveUserAccountUseCase,
+    private val signInByUserAccountUseCase: SignInByUserAccountUseCase
 ) : ViewModel() {
     companion object {
         private const val TAG = "SignUpActVM"
@@ -45,6 +48,10 @@ constructor(
     private val _errorMessage = MutableLiveData("")
     val errorMessage: LiveData<String>
         get() = _errorMessage
+
+    private val _routeState = MutableLiveData<SignUpState>(SignUpState.Init)
+    val routeState: LiveData<SignUpState>
+        get() = _routeState
 
     fun checkIsExistUserByUserId() = inputUserId.value?.let {
         when(it.checkEmailVerify()) {
@@ -97,6 +104,8 @@ constructor(
     }
 
     fun onClickSignUp() {
+        _routeState.value = SignUpState.Loading
+
         when (checkSignUpCondition()) {
             true -> {
                 CoroutineScope(Dispatchers.IO).launch {
@@ -109,13 +118,26 @@ constructor(
                             password = inputPassword.value ?: ""
                         )
                     ).onSuccess {
-
+                        signInByUserAccountUseCase(
+                            params = SignInByUserAccountUseCase.Params(
+                                userId = inputUserId.value ?: "",
+                                password = inputPassword.value ?: ""
+                            )
+                        ).onSuccess {
+                            _routeState.postValue(SignUpState.Success)
+                        }.onFailure {
+                            _routeState.postValue(SignUpState.Init)
+                        }
                     }.onFailure {
                         _errorMessage.postValue("회원가입에 실패했습니다.")
+                        _routeState.postValue(SignUpState.Init)
                     }
                 }
             }
-            false -> _errorMessage.value = "회원가입 정보를 다시 한번 살펴주세요."
+            false -> {
+                _errorMessage.value = "회원가입 정보를 다시 한번 살펴주세요."
+                _routeState.postValue(SignUpState.Init)
+            }
         }
     }
 

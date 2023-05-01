@@ -1,6 +1,7 @@
 package com.paran.presentation.views.activity
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
@@ -13,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.paran.presentation.R
 import com.paran.presentation.common.base.BaseETActivity
 import com.paran.presentation.databinding.ActivitySignUpBinding
+import com.paran.presentation.utils.state.SignUpState
 import com.paran.presentation.views.viewmodel.SignUpActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,13 +45,28 @@ class SignUpActivity : BaseETActivity<ActivitySignUpBinding>(R.layout.activity_s
                 binding.signUpEtNickname.visibility = View.GONE
             }
         }
-
         signUpActivityViewModel.errorMessage.observe(this) {
             when (it.isEmpty()) {
                 true -> hideKeyboard()
                 false -> {
                     snackBar(it)
                     hideKeyboard()
+                }
+            }
+        }
+        signUpActivityViewModel.routeState.observe(this) { state ->
+            when (state) {
+                is SignUpState.Loading -> {
+                    binding.signUpLoading.visibility = View.VISIBLE
+                    binding.signUpContent.visibility = View.GONE
+                }
+                is SignUpState.Success -> {
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    finish()
+                }
+                else -> {
+                    binding.signUpLoading.visibility = View.GONE
+                    binding.signUpContent.visibility = View.VISIBLE
                 }
             }
         }

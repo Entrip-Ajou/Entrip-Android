@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import com.paran.presentation.R
 import com.paran.presentation.common.base.BaseETActivity
 import com.paran.presentation.databinding.ActivitySignInBinding
+import com.paran.presentation.utils.state.SignInState
 import com.paran.presentation.views.viewmodel.SignInActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,11 +26,30 @@ class SignInActivity : BaseETActivity<ActivitySignInBinding>(R.layout.activity_s
     override fun init(savedInstanceState: Bundle?) {
         binding.activity = this
         binding.viewModel = signInViewModel
+        subObserver()
+    }
+
+    private fun subObserver() {
+        signInViewModel.routeState.observe(this) { state ->
+            when (state) {
+                is SignInState.Loading -> {
+                    binding.signInLoading.visibility = View.VISIBLE
+                    binding.signInContent.visibility = View.GONE
+                }
+                is SignInState.Success -> {
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    finish()
+                }
+                else -> {
+                    binding.signInLoading.visibility = View.GONE
+                    binding.signInContent.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     fun onClickSignUp(view: View) {
         startActivity(Intent(this@SignInActivity, SignUpActivity::class.java))
-        finish()
     }
 
     fun onClickHide(view: View) = binding.run {

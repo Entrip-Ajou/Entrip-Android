@@ -26,5 +26,11 @@ interface UserRepository {
         nickname: String
     ): Boolean
 
+    suspend fun fetchIsEntry(): Boolean
 
+    suspend fun saveIsEntry(
+        isEntry: Boolean
+    )
+
+    suspend fun clearIsEntry()
 }

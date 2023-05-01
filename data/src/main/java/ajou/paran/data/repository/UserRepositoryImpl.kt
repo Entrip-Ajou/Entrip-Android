@@ -5,6 +5,7 @@ import ajou.paran.data.remote.datasource.UserRemoteDataSource
 import ajou.paran.domain.model.DefaultUser
 import ajou.paran.domain.model.UserSignUp
 import ajou.paran.domain.repository.UserRepository
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class UserRepositoryImpl
@@ -50,5 +51,17 @@ constructor(
     ): Boolean = userRemoteDataSource.isExistUserByNickname(
         nickname = nickname
     ).condition
+
+    override suspend fun fetchIsEntry(): Boolean = dataStoreDataSource.fetchIsEntry().first()
+
+    override suspend fun saveIsEntry(
+        isEntry: Boolean
+    ) {
+        dataStoreDataSource.saveIsEntry(isEntry = isEntry)
+    }
+
+    override suspend fun clearIsEntry() {
+        dataStoreDataSource.clearIsEntry()
+    }
 
 }

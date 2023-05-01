@@ -20,6 +20,8 @@
             android:exported="false"/>
         <activity android:name=".views.activity.SignUpActivity"
             android:exported="false"/>
+        <activity android:name=".views.activity.HomeActivity"
+            android:exported="false"/>
 
     </application>
 

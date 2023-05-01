@@ -26,3 +26,11 @@ internal fun Context.fetchStringPreference(
 }.map { preference ->
     preference[key] ?: ""
 }
+
+internal fun Context.fetchBooleanPreference(
+    key: Preferences.Key<Boolean>
+) = this.datastore.data.catch { exception ->
+    dataEmptyException(exception = exception)
+}.map { preference ->
+    preference[key] ?: false
+}

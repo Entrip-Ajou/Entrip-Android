@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.paran.presentation.R
 import com.paran.presentation.common.base.BaseETActivity
 import com.paran.presentation.databinding.ActivitySplashBinding
+import com.paran.presentation.utils.state.SplashState
 import com.paran.presentation.views.viewmodel.SplashActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +28,24 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        testSplash()
+        subObserver()
+        splashViewModel.checkEntry()
+    }
+
+    private fun subObserver() {
+        splashViewModel.routeState.observe(this) { state ->
+            when (state) {
+                is SplashState.Intro -> {
+                    startActivity(Intent(this@SplashActivity, IntroActivity::class.java))
+                    finish()
+                }
+                is SplashState.SignIn -> {
+                    startActivity(Intent(this@SplashActivity, SignInActivity::class.java))
+                    finish()
+                }
+                else -> {}
+            }
+        }
     }
 
     private fun testSplash() = CoroutineScope(Dispatchers.IO).launch {
