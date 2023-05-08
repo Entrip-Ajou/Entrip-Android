@@ -28,7 +28,7 @@ interface PlanDao {
         plannerId: Long,
     )
 
-    @Query("SELECT * FROM `plan` WHERE date = :planDate AND plannerId = :plannerId ORDER BY time ASC")
+    @Query("SELECT * FROM `plan` WHERE date = :planDate AND plannerIdFK = :plannerId ORDER BY time ASC")
     fun selectPlanByIdWithDate(
         planDate: String,
         plannerId: Long,
@@ -49,7 +49,7 @@ interface PlanDao {
         plannerId: Long,
     ) : Flow<PlannerEntity>
 
-    @Query("DELETE FROM 'plan' WHERE plannerId = :plannerId")
+    @Query("DELETE FROM 'plan' WHERE plannerIdFK = :plannerId")
     fun deleteAllPlansByPlannerId(
         plannerId: Long,
     )
@@ -67,7 +67,7 @@ interface PlanDao {
     @Query("SELECT * FROM 'planner'")
     fun selectAllPlanner() : Flow<List<PlannerEntity>>
 
-    @Query("DELETE FROM 'plan' WHERE plannerId = :plannerId AND date= :date")
+    @Query("DELETE FROM 'plan' WHERE plannerIdFK = :plannerId AND date= :date")
     fun deletePlanByPlannerIdWithDate(
         plannerId: Long,
         date: String,

@@ -13,7 +13,7 @@ import kotlinx.parcelize.Parcelize
         ForeignKey(
             entity = PlannerEntity::class,
             parentColumns = ["plannerId"],
-            childColumns = ["plannerId"],
+            childColumns = ["plannerIdFK"],
             onDelete = ForeignKey.CASCADE
         )
     ]
@@ -21,7 +21,7 @@ import kotlinx.parcelize.Parcelize
 data class PlanEntity(
     @PrimaryKey(autoGenerate = false)
     val planId: Long,
-    val plannerId: Long,
+    val plannerIdFK: Long,
     val todo: String,
     val time: Int,
     val location: String?,

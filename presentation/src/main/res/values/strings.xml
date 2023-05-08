@@ -32,4 +32,8 @@
     <string name="sign_up_gender_man">남성</string>
     <string name="sign_up_gender_woman">여성</string>
 
+    <string name="open">open</string>
+    <string name="close">close</string>
+
+
 </resources>

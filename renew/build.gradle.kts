@@ -55,6 +55,9 @@ dependencies {
     implementation(Dependencies.OkHttp.OKHTTP_LOGGING)
     implementation(Dependencies.DataStore.DATASTORE_PREFERENCE)
     implementation(Dependencies.DataStore.DATASTORE_PREFERENCE_CORE)
+    implementation(Dependencies.AndroidX.ROOM)
+    implementation(Dependencies.AndroidX.ROOM_RUNTIME)
+    kapt(Dependencies.AndroidX.ROOM_COMPILER)
 
     implementation(platform(Dependencies.Google.FIREBASE_BOM))
     implementation(Dependencies.Google.FIREBASE_ANALYTICS)
