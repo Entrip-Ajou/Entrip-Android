@@ -12,7 +12,7 @@ internal fun BaseResponse<Boolean>.toModel(): BaseCondition = BaseCondition(data
 
 internal fun BaseResponse<SaveUserAccountResponse>.toModel(): UserSignUp = data.toModel()
 
-internal fun BaseResponse<SignInByUserAccountResponse>.toModel(): DefaultUser = data.toModel()
+internal fun BaseResponse<SignInByUserAccountResponse>.toModel(): DefaultUser.User = data.toModel()
 
 internal fun SaveUserAccountResponse.toModel() = UserSignUp(
     userId = userId,
@@ -21,7 +21,7 @@ internal fun SaveUserAccountResponse.toModel() = UserSignUp(
     photoUrl = photoUrl
 )
 
-internal fun SignInByUserAccountResponse.toModel() = DefaultUser(
+internal fun SignInByUserAccountResponse.toModel() = DefaultUser.User(
     userId = userId,
     nickname = nickname,
     bearerToken = Token(

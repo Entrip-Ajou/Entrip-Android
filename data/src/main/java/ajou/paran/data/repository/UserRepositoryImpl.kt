@@ -32,7 +32,7 @@ constructor(
     override suspend fun signInByUserAccount(
         userId: String,
         password: String
-    ): DefaultUser = userRemoteDataSource.signInByUserAccount(
+    ): DefaultUser.User = userRemoteDataSource.signInByUserAccount(
         userId,
         password
     ).also { user ->

@@ -39,7 +39,7 @@ interface VoteAPI {
     @GET("api/v1/planners/{planner_id}/allVotes")
     suspend fun fetchVotesByPlannerId(
         @Path("planner_id") plannerId : Long
-    ): FetchVotesByPlannerIdResponseList
+    ): FindAllVotesByPlannerIdResponse
 
     @POST("api/v1/votes/getPreviousVotes")
     suspend fun getPreviousVotes(

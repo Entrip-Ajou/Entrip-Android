@@ -11,4 +11,8 @@ data class CreatePlannerByUserIdResponse(
     val startDate: String,
     @SerializedName("end_date")
     val endDate: String,
+    @SerializedName("time_stamp")
+    val timeStamp: String,
+    @SerializedName("comment_timeStamp")
+    val commentTimeStamp: String
 )

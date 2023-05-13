@@ -17,7 +17,7 @@ interface UserRemoteDataSource {
     suspend fun signInByUserAccount(
         userId: String,
         password: String
-    ): DefaultUser
+    ): DefaultUser.User
 
     suspend fun isExistUserByUserId(
         userId: String

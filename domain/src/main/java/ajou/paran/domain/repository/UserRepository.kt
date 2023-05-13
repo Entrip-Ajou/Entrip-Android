@@ -16,7 +16,7 @@ interface UserRepository {
     suspend fun signInByUserAccount(
         userId: String,
         password: String
-    ): DefaultUser
+    ): DefaultUser.User
 
     suspend fun isExistUser(
         userId: String

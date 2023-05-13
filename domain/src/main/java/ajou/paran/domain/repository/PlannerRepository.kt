@@ -26,4 +26,44 @@ interface PlannerRepository {
 
     suspend fun selectAllPlanner(): List<BasePlanner>
 
+    suspend fun deletePlanByPlannerIdWithDate(
+        plannerId: Long,
+        date: String,
+    )
+
+    suspend fun createPlannerByUserId(
+        userId: String
+    )
+
+    suspend fun deletePlanner(
+        userId: String,
+        plannerId: Long,
+    )
+
+    suspend fun fetchPlannerByPlannerId(
+        plannerId: Long,
+    )
+
+    suspend fun fetchPlansInPlannerByPlannerId(
+        plannerId: Long
+    )
+
+    suspend fun updateRemotePlanner(
+        plannerId: Long,
+        title: String,
+        startDate: String,
+        endDate: String,
+        timeStamp: String,
+        commentTimeStamp: String
+    )
+
+    suspend fun findPlanByPlannerIdWithDate(
+        plannerId: Long,
+        date: String
+    )
+
+    suspend fun isExistPlannerById(
+        plannerId: Long
+    )
+
 }

@@ -2,9 +2,9 @@ package ajou.paran.data.remote.model.response
 
 import com.google.gson.annotations.SerializedName
 
-typealias FetchVotesByPlannerIdResponseList = List<FetchVotesByPlannerIdResponse>
+typealias FindAllVotesByPlannerIdResponseList = List<FindAllVotesByPlannerIdResponse>
 
-data class FetchVotesByPlannerIdResponse(
+data class FindAllVotesByPlannerIdResponse(
     @SerializedName("vote_id")
     val voteId: Long,
     @SerializedName("title")

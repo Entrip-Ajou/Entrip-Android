@@ -4,46 +4,71 @@ import ajou.paran.data.remote.model.request.UpdatePlannerRequest
 import ajou.paran.data.remote.model.response.*
 import retrofit2.http.*
 
-// api/v1/planners
-// https://2ntrip.link
 interface PlannerAPI {
 
     @POST("api/v1/planners/{user_id}")
     suspend fun createPlannerByUserId(
         @Path("user_id") userId: String
-    ): CreatePlannerByUserIdResponse
-
-    @DELETE("api/v1/planners/{planner_id}/{user_id}/exit")
-    suspend fun deletePlanner(
-        @Path("user_id") userId: String,
-        @Path("planner_id") plannerId: Long
-    ): Boolean
-
-    @GET("api/v1/planners/{planner_id}")
-    suspend fun fetchPlannerByPlannerId(
-        @Path("planner_id") plannerId: Long
-    ): FetchPlannerByPlannerIdResponse
-
-    @GET("api/v1/planners/{planner_id}/all")
-    suspend fun fetchPlansInPlannerByPlannerId(
-        @Path("planner_id") plannerId: Long
-    ): FetchPlansInPlannerByPlannerIdResponseList
+    ): BaseResponse<CreatePlannerByUserIdResponse>
 
     @PUT("api/v1/planners/{planner_id}")
     suspend fun updatePlanner(
         @Path("planner_id") plannerId: Long,
         @Body request: UpdatePlannerRequest
-    ): UpdatePlannerResponse
+    ): BaseResponse<UpdatePlannerResponse>
 
-    @GET("api/v1/planners/{planner_id}/{date}/find")
-    suspend fun findPlanByPlannerIdWithDate(
-        @Path("planner_id") plannerId: Long,
-        @Path("date") date: String
-    ): FindPlanByPlannerIdWithDateResponseList
-
-    @GET("api/v1/planners/{planner_id}/exist")
-    suspend fun isExistPlannerById(
+    @GET("api/v1/planners/{planner_id}")
+    suspend fun findPlannerById(
         @Path("planner_id") plannerId: Long
-    ): Boolean
+    ): BaseResponse<FindPlannerByIdResponse>
+
+    @GET("/api/v1/planners/{planner_id}/getAllUser")
+    suspend fun findAllUsersByPlannerId(
+        @Path("planner_id") plannerId: Long
+    ): BaseResponse<FindAllUsersByPlannerIdResponseList>
+
+    @GET("api/v1/planners/{planner_id}/all")
+    suspend fun findAllPlansByPlannerId(
+        @Path("planner_id") plannerId: Long
+    ): BaseResponse<FindAllPlansByPlannerIdResponseList>
+
+    @GET("/api/v1/planners/{planner_id}/{date}/find")
+    suspend fun findAllPlansByPlannerIdWithDate(
+        @Path("planner_id") plannerId: Long,
+        @Path("date") date: String,
+    ): BaseResponse<FindAllPlansByPlannerIdWithDateResponseList>
+
+    @GET("/api/v1/planners/{planner_id}/allNotices")
+    suspend fun findAllNoticesByPlannerId(
+        @Path("planner_id") plannerId: Long,
+    ): BaseResponse<FindAllNoticesByPlannerIdResponseList>
+
+    @GET("/api/v1/planners/1/allVotes")
+    suspend fun findAllVotesByPlannerId(
+        @Path("planner_id") plannerId: Long,
+    ): BaseResponse<FindAllVotesByPlannerIdResponseList>
+
+    @PUT("/api/v1/planners/{planner_id}/{user_id}")
+    suspend fun addUsersToPlanner(
+        @Path("planner_id") plannerId: Long,
+        @Path("user_id") userId: String,
+    ): BaseResponse<Long>
+
+    @DELETE("/api/v1/planners/{planner_id}/{user_id}/exit")
+    suspend fun exitUserFromPlanner(
+        @Path("planner_id") plannerId: Long,
+        @Path("user_id") userId: String,
+    ): BaseResponse<Boolean>
+
+    @DELETE("/api/v1/planners/{planner_id}")
+    suspend fun deletePlannerById(
+        @Path("planner_id") plannerId: Long,
+    ): BaseResponse<Long>
+
+    @DELETE("/api/v1/planners/{planner_id}/{user_id}/delete")
+    suspend fun deletePlannerAndExitById(
+        @Path("planner_id") plannerId: Long,
+        @Path("user_id") userId: String,
+    ): BaseResponse<Long>
 
 }

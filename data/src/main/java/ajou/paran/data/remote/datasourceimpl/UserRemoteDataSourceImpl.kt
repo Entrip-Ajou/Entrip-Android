@@ -77,7 +77,7 @@ constructor(
     override suspend fun signInByUserAccount(
         userId: String,
         password: String
-    ): DefaultUser = baseApiCall {
+    ): DefaultUser.User = baseApiCall {
         userAPI.signInByUserAccount(
             request = SignInByUserAccountRequest(
                 userId = userId,
