@@ -29,33 +29,33 @@ interface PlanDao {
     )
 
     @Query("SELECT * FROM `plan` WHERE date = :planDate AND plannerIdFK = :plannerId ORDER BY time ASC")
-    fun selectPlanByIdWithDate(
+    suspend fun selectPlanByIdWithDate(
         planDate: String,
         plannerId: Long,
-    ): Flow<List<PlanEntity>>
+    ): List<PlanEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllPlan(
+    suspend fun insertAllPlan(
         planList: List<PlanEntity>,
     )
 
     @Query("SELECT * FROM 'planner' WHERE plannerId = :plannerId")
-    fun findPlannerById(
+    suspend fun findPlannerById(
         plannerId: Long,
     ): PlannerEntity?
 
     @Query("SELECT * FROM 'planner' WHERE plannerId = :plannerId")
-    fun findFlowPlannerById(
+    suspend fun findFlowPlannerById(
         plannerId: Long,
-    ) : Flow<PlannerEntity>
+    ): PlannerEntity
 
     @Query("DELETE FROM 'plan' WHERE plannerIdFK = :plannerId")
-    fun deleteAllPlansByPlannerId(
+    suspend fun deleteAllPlansByPlannerId(
         plannerId: Long,
     )
 
     @Update
-    fun updatePlanner(
+    suspend fun updatePlanner(
         entity: PlannerEntity,
     )
 
@@ -65,16 +65,16 @@ interface PlanDao {
     )
 
     @Query("SELECT * FROM 'planner'")
-    fun selectAllPlanner() : Flow<List<PlannerEntity>>
+    suspend fun selectAllPlanner(): List<PlannerEntity>
 
     @Query("DELETE FROM 'plan' WHERE plannerIdFK = :plannerId AND date= :date")
-    fun deletePlanByPlannerIdWithDate(
+    suspend fun deletePlanByPlannerIdWithDate(
         plannerId: Long,
         date: String,
     )
 
     @Query("UPDATE 'plan' SET isExistComments = :isExistComments WHERE planId = :planId")
-    fun updateIsExistCommentsWithPlanId(
+    suspend fun updateIsExistCommentsWithPlanId(
         isExistComments : Boolean,
         planId : Long
     )

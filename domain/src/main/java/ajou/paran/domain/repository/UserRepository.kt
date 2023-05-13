@@ -28,9 +28,17 @@ interface UserRepository {
 
     suspend fun fetchIsEntry(): Boolean
 
+    suspend fun fetchUserEmail(): String
+
     suspend fun saveIsEntry(
         isEntry: Boolean
     )
 
     suspend fun clearIsEntry()
+
+    suspend fun fetchAccessToken(): String
+
+    suspend fun findAllPlannersByUser(
+        userId: String
+    )
 }

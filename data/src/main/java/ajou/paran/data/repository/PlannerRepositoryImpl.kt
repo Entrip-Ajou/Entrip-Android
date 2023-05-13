@@ -1,36 +1,25 @@
 package ajou.paran.data.repository
 
+import ajou.paran.data.local.datasource.PlannerRoomDataSource
 import ajou.paran.domain.model.BasePlanner
 import ajou.paran.domain.repository.PlannerRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class PlannerRepositoryImpl
 @Inject
 constructor(
-
+    private val plannerRoomDataSource: PlannerRoomDataSource,
 ) : PlannerRepository {
-    override suspend fun insertPlanner(planner: BasePlanner) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun insertPlanner(planner: BasePlanner) = plannerRoomDataSource.insertPlanner(planner)
 
-    override suspend fun deletePlannerById(plannerId: Long) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun deletePlannerById(plannerId: Long) = plannerRoomDataSource.deletePlannerById(plannerId)
 
-    override fun findPlannerById(plannerId: Long): BasePlanner? {
-        TODO("Not yet implemented")
-    }
+    override suspend fun findPlannerById(plannerId: Long): BasePlanner? = plannerRoomDataSource.findPlannerById(plannerId)
 
-    override fun deleteAllPlansByPlannerId(plannerId: Long) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun deleteAllPlansByPlannerId(plannerId: Long) = plannerRoomDataSource.deleteAllPlansByPlannerId(plannerId)
 
-    override fun updatePlanner(planner: BasePlanner) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun updatePlanner(planner: BasePlanner) = plannerRoomDataSource.updatePlanner(planner)
 
-    override fun selectAllPlanner(): Flow<List<BasePlanner>> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun selectAllPlanner(): List<BasePlanner> = plannerRoomDataSource.selectAllPlanner()
+
 }

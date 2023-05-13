@@ -1,5 +1,6 @@
 package com.paran.presentation.views.activity
 
+import ajou.paran.domain.model.BasePlanner
 import android.annotation.SuppressLint
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -9,7 +10,9 @@ import android.util.Log
 import androidx.activity.viewModels
 import com.paran.presentation.R
 import com.paran.presentation.common.base.BaseETActivity
+import com.paran.presentation.common.route.HomeRoute
 import com.paran.presentation.databinding.ActivityHomeBinding
+import com.paran.presentation.utils.state.PlannerState
 import com.paran.presentation.views.fragment.*
 import com.paran.presentation.views.viewmodel.HomeActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,36 +25,62 @@ class HomeActivity : BaseETActivity<ActivityHomeBinding>(R.layout.activity_home)
     private val viewModel: HomeActivityViewModel by viewModels()
 
     override fun init(savedInstanceState: Bundle?) {
+        subObserver()
         setUpBottomNavigationBar()
-//        observeState()
 //        setUpInviteFlag()
+    }
+
+    private fun subObserver() {
+        viewModel.route.observe(this) { route ->
+            when (route) {
+                is HomeRoute.Planner -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlannerFragment.newInstance()).commit()
+                is HomeRoute.PlannerDetail -> {
+                    binding.homeBottomNav.selectedItemId = R.id.nav_planner
+                    when (val planner = viewModel.detailPlannerState.value) {
+                        is PlannerState.Store -> {
+                            supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlannerDetailFragment.newInstance(
+                                planner.data
+                            )).commit()
+                        }
+                        else -> {
+                            viewModel.pushRoute(HomeRoute.Planner.tag)
+                        }
+                    }
+
+                }
+                is HomeRoute.Recommendation -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, RecommendationFragment.newInstance()).commit()
+                is HomeRoute.Community -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, CommunityFragment.newInstance()).commit()
+                is HomeRoute.MyPage -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, MyPageFragment.newInstance()).commit()
+                else -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, HomeFragment.newInstance()).commit()
+            }
+        }
     }
 
     @SuppressLint("CommitTransaction")
     private fun setUpBottomNavigationBar(){
-        supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, HomeFragment.newInstance()).commit()
-
         binding.homeBottomNav.run {
             setOnItemSelectedListener {
                 when(it.itemId){
                     R.id.nav_home -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, HomeFragment.newInstance()).commit()
+                        viewModel.pushRoute(HomeRoute.Home.tag)
                         true
                     }
                     R.id.nav_planner -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlannerFragment.newInstance()).commit()
+                        if (viewModel.route.value?.tag != HomeRoute.PlannerDetail.tag) {
+                            viewModel.pushRoute(HomeRoute.Planner.tag)
+                        }
                         true
                     }
                     R.id.nav_recommendation -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, RecommendationFragment.newInstance()).commit()
+                        viewModel.pushRoute(HomeRoute.Recommendation.tag)
                         true
                     }
                     R.id.nav_board -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, CommunityFragment.newInstance()).commit()
+                        viewModel.pushRoute(HomeRoute.Community.tag)
                         true
                     }
                     R.id.nav_mypage -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, MyPageFragment.newInstance()).commit()
+                        viewModel.pushRoute(HomeRoute.MyPage.tag)
                         true
                     }
                     else -> false
@@ -62,7 +91,6 @@ class HomeActivity : BaseETActivity<ActivityHomeBinding>(R.layout.activity_home)
                     else -> { }
                 }
             }
-            selectedItemId = intent.getIntExtra("last_pos", R.id.nav_home)
         }
     }
 
@@ -83,6 +111,14 @@ class HomeActivity : BaseETActivity<ActivityHomeBinding>(R.layout.activity_home)
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
+    }
+
+    fun initPlannerData(planner: BasePlanner) {
+        viewModel.initPlannerData(planner)
+    }
+
+    fun cleanPlannerData() {
+        viewModel.cleanPlannerData()
     }
 
 }

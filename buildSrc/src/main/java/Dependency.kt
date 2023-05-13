@@ -103,13 +103,13 @@ sealed class Dependencies {
         const val JSON_SERIALIZATION = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.2"
     }
 
-    object DataStore {
+    object DataStore : Dependencies() {
         const val DATASTORE = "androidx.datastore:datastore:${Versions.DATASTORE}"
         const val DATASTORE_PREFERENCE = "androidx.datastore:datastore-preferences:${Versions.DATASTORE}"
         const val DATASTORE_PREFERENCE_CORE = "androidx.datastore:datastore-preferences-core:${Versions.DATASTORE}"
     }
 
-    object DotsIndicator {
+    object DotsIndicator : Dependencies() {
         const val DOTS = "com.tbuonomo:dotsindicator:4.2"
     }
 

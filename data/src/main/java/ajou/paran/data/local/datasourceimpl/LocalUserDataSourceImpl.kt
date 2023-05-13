@@ -15,6 +15,8 @@ constructor(
     override fun fetchAccessToken(): Flow<String> = dataStoreDataSource.fetchAccessToken()
 
     override fun fetchRefreshToken(): Flow<String> = dataStoreDataSource.fetchRefreshToken()
+    override fun fetchUserEmail(): Flow<String> = dataStoreDataSource.fetchUserEmail()
+
     override suspend fun saveIdToken(idToken: String) {
         dataStoreDataSource.saveIdToken(token = idToken)
     }
@@ -25,6 +27,10 @@ constructor(
 
     override suspend fun saveRefreshToken(refreshToken: String) {
         dataStoreDataSource.saveRefreshToken(token = refreshToken)
+    }
+
+    override suspend fun saveUserEmail(email: String) {
+        dataStoreDataSource.saveUserEmail(email = email)
     }
 
 //    override suspend fun saveToken(userToken: UserToken) {
@@ -44,6 +50,10 @@ constructor(
             clearAccessToken()
             clearRefreshToken()
         }
+    }
+
+    override suspend fun clearUserEmail() {
+        dataStoreDataSource.clearUserEmail()
     }
 
 }

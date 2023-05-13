@@ -46,7 +46,7 @@ constructor(
 
                 request = request.newBuilder()
                     .addHeader(
-                        name = "token",
+                        name = "AccessToken",
                         value = accessToken
                     )
                     .build()

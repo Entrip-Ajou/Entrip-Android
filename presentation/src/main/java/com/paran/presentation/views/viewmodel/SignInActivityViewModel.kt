@@ -1,5 +1,6 @@
 package com.paran.presentation.views.viewmodel
 
+import ajou.paran.domain.usecase.FindAllPlannersByUserUseCase
 import ajou.paran.domain.usecase.SignInByUserAccountUseCase
 import android.util.Log
 import android.view.View
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class SignInActivityViewModel
 @Inject
 constructor(
-    private val signInByUserAccountUseCase: SignInByUserAccountUseCase
+    private val signInByUserAccountUseCase: SignInByUserAccountUseCase,
+    private val findAllPlannersByUserUseCase: FindAllPlannersByUserUseCase
 ) : ViewModel() {
     companion object {
         private const val TAG = "SignInActVM"
@@ -25,6 +27,10 @@ constructor(
 
     val inputEmail: MutableLiveData<String> = MutableLiveData("")
     val inputPassword: MutableLiveData<String> = MutableLiveData("")
+
+    private val _signInState = MutableLiveData<Boolean>(false)
+    val signInState: LiveData<Boolean>
+        get() = _signInState
 
     private val _routeState = MutableLiveData<SignInState>(SignInState.Init)
     val routeState: LiveData<SignInState>
@@ -45,14 +51,16 @@ constructor(
                             password = inputPassword.value ?: "",
                         )
                     ).onSuccess {
-                        _routeState.postValue(SignInState.Success)
+                        _signInState.postValue(true)
                     }.onFailure {
                         _routeState.postValue(SignInState.Init)
+                        _signInState.postValue(false)
                     }
                 }
             }
             false -> {
                 _routeState.value = SignInState.Init
+                _signInState.postValue(false)
             }
         }
     }
@@ -61,4 +69,11 @@ constructor(
         inputEmail.value?.isNotEmpty() ?: false
             && inputPassword.value?.isNotEmpty() ?: false
     )
+
+    fun syncDBToServer() = CoroutineScope(Dispatchers.IO).launch {
+        findAllPlannersByUserUseCase(inputEmail.value ?: "")
+            .onSuccess { _routeState.postValue(SignInState.Success) }
+            .onFailure { _routeState.postValue(SignInState.Success) }
+    }
+
 }

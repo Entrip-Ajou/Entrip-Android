@@ -24,32 +24,32 @@ constructor(
 
     override suspend fun deletePlannerById(plannerId: Long) = planDao.deletePlannerById(plannerId)
 
-    override fun selectPlanByIdWithDate(
+    override suspend fun selectPlanByIdWithDate(
         planDate: String,
         plannerId: Long
-    ): Flow<List<BasePlan>> = planDao.selectPlanByIdWithDate(
+    ): List<BasePlan> = planDao.selectPlanByIdWithDate(
         planDate,
         plannerId
-    ).map { list -> list.map { entity -> entity.toModel() } }
+    ).map { it.toModel() }
 
-    override fun insertAllPlan(planList: List<BasePlan>) = planDao.insertAllPlan(
+    override suspend fun insertAllPlan(planList: List<BasePlan>) = planDao.insertAllPlan(
         planList.map { it.toEntity() }
     )
 
-    override fun findPlannerById(plannerId: Long): BasePlanner? = planDao.findPlannerById(plannerId)?.toModel()
+    override suspend fun findPlannerById(plannerId: Long): BasePlanner? = planDao.findPlannerById(plannerId)?.toModel()
 
-    override fun findFlowPlannerById(plannerId: Long): Flow<BasePlanner> = planDao.findFlowPlannerById(plannerId).map { it.toModel() }
+    override suspend fun findFlowPlannerById(plannerId: Long): BasePlanner = planDao.findFlowPlannerById(plannerId).toModel()
 
-    override fun deleteAllPlansByPlannerId(plannerId: Long) = planDao.deleteAllPlansByPlannerId(plannerId)
+    override suspend fun deleteAllPlansByPlannerId(plannerId: Long) = planDao.deleteAllPlansByPlannerId(plannerId)
 
-    override fun updatePlanner(planner: BasePlanner) = planDao.updatePlanner(planner.toEntity())
+    override suspend fun updatePlanner(planner: BasePlanner) = planDao.updatePlanner(planner.toEntity())
 
     override suspend fun updatePlan(plan: BasePlan) = planDao.updatePlan(plan.toEntity())
 
-    override fun selectAllPlanner(): Flow<List<BasePlanner>> = planDao.selectAllPlanner().map { list -> list.map { item -> item.toModel() } }
+    override suspend fun selectAllPlanner(): List<BasePlanner> = planDao.selectAllPlanner().map { it.toModel() }
 
-    override fun deletePlanByPlannerIdWithDate(plannerId: Long, date: String) = planDao.deletePlanByPlannerIdWithDate(plannerId, date)
+    override suspend fun deletePlanByPlannerIdWithDate(plannerId: Long, date: String) = planDao.deletePlanByPlannerIdWithDate(plannerId, date)
 
-    override fun updateIsExistCommentsWithPlanId(isExistComments: Boolean, planId: Long) = planDao.updateIsExistCommentsWithPlanId(isExistComments, planId)
+    override suspend fun updateIsExistCommentsWithPlanId(isExistComments: Boolean, planId: Long) = planDao.updateIsExistCommentsWithPlanId(isExistComments, planId)
 
 }

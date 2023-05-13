@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="4">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <LinearLayout
+                android:id="@+id/ll_item_delete"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:background="@drawable/plan_square"
+                android:backgroundTint="@color/red"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_weight="3">
+
+                <ImageView
+                    android:id="@+id/iv_item_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_baseline_delete_24" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_plan"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:background="@drawable/plan_square">
+
+            <TextView
+                android:id="@+id/tv_item_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:textAlignment="center"
+                android:textColor="#757575"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Time" />
+
+            <TextView
+                android:id="@+id/tv_item_todo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:scrollbarFadeDuration="0"
+                android:scrollbars="horizontal"
+                android:textColor="#212121"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/tv_item_time"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="00카페가서 크로플 먹기" />
+
+            <TextView
+                android:id="@+id/tv_item_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="12dp"
+                android:scrollbarFadeDuration="0"
+                android:scrollbars="horizontal"
+                android:textColor="#9a9a9a"
+                android:textSize="9sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_item_time"
+                app:layout_constraintTop_toBottomOf="@+id/tv_item_todo"
+                tools:text="경기도 수원시 팔달구 중부대로207번길 13 1층" />
+
+            <ImageView
+                android:id="@+id/iv_item_comment"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
+</layout>

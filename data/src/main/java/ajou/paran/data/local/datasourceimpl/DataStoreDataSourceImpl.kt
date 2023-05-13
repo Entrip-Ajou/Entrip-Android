@@ -20,6 +20,7 @@ constructor(
         private val ID_TOKEN = stringPreferencesKey("ID_TOKEN")
         private val ACCESS_TOKEN = stringPreferencesKey("ACCESS_TOKEN")
         private val REFRESH_TOKEN = stringPreferencesKey("REFRESH_TOKEN")
+        private val USER_EMAIL = stringPreferencesKey("USER_EMAIL")
         private val IS_ENTRY = booleanPreferencesKey("IS_ENTRY")
     }
 
@@ -28,6 +29,9 @@ constructor(
     override fun fetchAccessToken(): Flow<String> = context.fetchStringPreference(key = ACCESS_TOKEN)
 
     override fun fetchRefreshToken(): Flow<String> = context.fetchStringPreference(key = REFRESH_TOKEN)
+
+    override fun fetchUserEmail(): Flow<String>  = context.fetchStringPreference(key = USER_EMAIL)
+
     override fun fetchIsEntry(): Flow<Boolean> = context.fetchBooleanPreference(key = IS_ENTRY)
     override suspend fun saveIdToken(token: String) {
         context.datastore.edit { preference ->
@@ -44,6 +48,12 @@ constructor(
     override suspend fun saveRefreshToken(token: String) {
         context.datastore.edit { preference ->
             preference[REFRESH_TOKEN] = token
+        }
+    }
+
+    override suspend fun saveUserEmail(email: String) {
+        context.datastore.edit { preference ->
+            preference[USER_EMAIL] = email
         }
     }
 
@@ -66,6 +76,12 @@ constructor(
     override suspend fun clearRefreshToken() {
         context.datastore.edit { preference ->
             preference.remove(REFRESH_TOKEN)
+        }
+    }
+
+    override suspend fun clearUserEmail() {
+        context.datastore.edit { preference ->
+            preference.remove(USER_EMAIL)
         }
     }
 

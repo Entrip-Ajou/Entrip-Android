@@ -29,7 +29,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         subObserver()
-        splashViewModel.checkEntry()
+        splashViewModel.checkToken()
     }
 
     private fun subObserver() {
@@ -41,6 +41,10 @@ class SplashActivity : AppCompatActivity() {
                 }
                 is SplashState.SignIn -> {
                     startActivity(Intent(this@SplashActivity, SignInActivity::class.java))
+                    finish()
+                }
+                is SplashState.Home -> {
+                    startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
                     finish()
                 }
                 else -> {}

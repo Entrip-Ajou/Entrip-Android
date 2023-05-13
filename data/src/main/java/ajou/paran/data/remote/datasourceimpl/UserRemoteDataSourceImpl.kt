@@ -1,5 +1,8 @@
 package ajou.paran.data.remote.datasourceimpl
 
+import ajou.paran.data.db.converter.toEntity
+import ajou.paran.data.db.converter.toModel
+import ajou.paran.data.local.datasource.PlannerRoomDataSource
 import ajou.paran.data.mapper.toModel
 import ajou.paran.data.remote.api.UserAPI
 import ajou.paran.data.remote.datasource.UserRemoteDataSource
@@ -17,6 +20,7 @@ class UserRemoteDataSourceImpl
 @Inject
 constructor(
     private val userAPI: UserAPI,
+    private val plannerRoomDataSource: PlannerRoomDataSource,
 ) : UserRemoteDataSource {
 
     override suspend fun saveUserAccount(
@@ -138,7 +142,9 @@ constructor(
         userAPI.findAllPlannersByUser(
             userId = userId
         ).apply {
-//
+            this.data.toEntity().forEach {
+                plannerRoomDataSource.insertPlanner(it.toModel())
+            }
         }
     }
 

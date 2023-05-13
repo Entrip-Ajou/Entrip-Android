@@ -30,6 +30,11 @@ class SignInActivity : BaseETActivity<ActivitySignInBinding>(R.layout.activity_s
     }
 
     private fun subObserver() {
+        signInViewModel.signInState.observe(this) { signIn ->
+            if (signIn) {
+                signInViewModel.syncDBToServer()
+            }
+        }
         signInViewModel.routeState.observe(this) { state ->
             when (state) {
                 is SignInState.Loading -> {

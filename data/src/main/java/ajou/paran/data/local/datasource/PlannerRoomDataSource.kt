@@ -2,7 +2,6 @@ package ajou.paran.data.local.datasource
 
 import ajou.paran.domain.model.BasePlan
 import ajou.paran.domain.model.BasePlanner
-import kotlinx.coroutines.flow.Flow
 
 interface PlannerRoomDataSource {
     suspend fun insertPlan(
@@ -21,28 +20,28 @@ interface PlannerRoomDataSource {
         plannerId: Long,
     )
 
-    fun selectPlanByIdWithDate(
+    suspend fun selectPlanByIdWithDate(
         planDate: String,
         plannerId: Long,
-    ): Flow<List<BasePlan>>
+    ): List<BasePlan>
 
-    fun insertAllPlan(
+    suspend fun insertAllPlan(
         planList: List<BasePlan>,
     )
 
-    fun findPlannerById(
+    suspend fun findPlannerById(
         plannerId: Long,
     ): BasePlanner?
 
-    fun findFlowPlannerById(
+    suspend fun findFlowPlannerById(
         plannerId: Long,
-    ) : Flow<BasePlanner>
+    ): BasePlanner
 
-    fun deleteAllPlansByPlannerId(
+    suspend fun deleteAllPlansByPlannerId(
         plannerId: Long,
     )
 
-    fun updatePlanner(
+    suspend fun updatePlanner(
         planner: BasePlanner,
     )
 
@@ -50,14 +49,14 @@ interface PlannerRoomDataSource {
         plan: BasePlan,
     )
 
-    fun selectAllPlanner(): Flow<List<BasePlanner>>
+    suspend fun selectAllPlanner(): List<BasePlanner>
 
-    fun deletePlanByPlannerIdWithDate(
+    suspend fun deletePlanByPlannerIdWithDate(
         plannerId: Long,
         date: String,
     )
 
-    fun updateIsExistCommentsWithPlanId(
+    suspend fun updateIsExistCommentsWithPlanId(
         isExistComments: Boolean,
         planId: Long
     )

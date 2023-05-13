@@ -1,7 +1,6 @@
 package ajou.paran.domain.repository
 
 import ajou.paran.domain.model.BasePlanner
-import kotlinx.coroutines.flow.Flow
 
 interface PlannerRepository {
 
@@ -13,18 +12,18 @@ interface PlannerRepository {
         plannerId: Long,
     )
 
-    fun findPlannerById(
+    suspend fun findPlannerById(
         plannerId: Long,
     ): BasePlanner?
 
-    fun deleteAllPlansByPlannerId(
+    suspend fun deleteAllPlansByPlannerId(
         plannerId: Long,
     )
 
-    fun updatePlanner(
+    suspend fun updatePlanner(
         planner: BasePlanner,
     )
 
-    fun selectAllPlanner(): List<BasePlanner>
+    suspend fun selectAllPlanner(): List<BasePlanner>
 
 }

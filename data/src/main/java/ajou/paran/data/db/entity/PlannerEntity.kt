@@ -13,4 +13,6 @@ data class PlannerEntity(
     val title : String,
     val startDate : String,
     val endDate : String,
+    val timeStamp: String,
+    val commentTimeStamp: String,
 ) : Parcelable

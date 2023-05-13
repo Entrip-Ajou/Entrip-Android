@@ -38,6 +38,7 @@ constructor(
     ).also { user ->
         dataStoreDataSource.saveAccessToken(user.bearerToken.accessToken)
         dataStoreDataSource.saveRefreshToken(user.bearerToken.refreshToken)
+        dataStoreDataSource.saveUserEmail(email = userId)
     }
 
     override suspend fun isExistUser(
@@ -53,6 +54,7 @@ constructor(
     ).condition
 
     override suspend fun fetchIsEntry(): Boolean = dataStoreDataSource.fetchIsEntry().first()
+    override suspend fun fetchUserEmail(): String = dataStoreDataSource.fetchUserEmail().first()
 
     override suspend fun saveIsEntry(
         isEntry: Boolean
@@ -62,6 +64,12 @@ constructor(
 
     override suspend fun clearIsEntry() {
         dataStoreDataSource.clearIsEntry()
+    }
+
+    override suspend fun fetchAccessToken(): String = dataStoreDataSource.fetchAccessToken().first()
+
+    override suspend fun findAllPlannersByUser(userId: String) {
+        userRemoteDataSource.findAllPlannersByUser(userId)
     }
 
 }
