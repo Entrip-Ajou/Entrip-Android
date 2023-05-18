@@ -2,7 +2,9 @@ package com.paran.presentation.views.viewmodel
 
 import ajou.paran.domain.model.BasePlan
 import ajou.paran.domain.model.BasePlanner
+import ajou.paran.domain.model.PlannerDate
 import ajou.paran.domain.usecase.SelectPlanByIdWithDateUseCase
+import ajou.paran.domain.usecase.UpdateRemotePlannerUseCase
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,7 +19,8 @@ import javax.inject.Inject
 class PlannerDetailFragmentViewModel
 @Inject
 constructor(
-    private val selectPlanByIdWithDateUseCase: SelectPlanByIdWithDateUseCase
+    private val selectPlanByIdWithDateUseCase: SelectPlanByIdWithDateUseCase,
+    private val updateRemotePlannerUseCase: UpdateRemotePlannerUseCase
 ) : ViewModel() {
     companion object {
         private const val TAG = "PlannerDetailFragVM"
@@ -53,6 +56,25 @@ constructor(
             }.onFailure {
                 Log.d(TAG, "Load Plan Failure")
                 _loadPlanList.postValue(emptyList())
+            }
+        }
+    }
+
+    fun modifyDate(
+        startDate: String,
+        endDate: String
+    ) = _selectedPlanner.value?.let { planner ->
+        CoroutineScope(Dispatchers.IO).launch {
+            updateRemotePlannerUseCase(
+                params = UpdateRemotePlannerUseCase.Params(
+                    plannerId = planner.id,
+                    title =  planner.title,
+                    startDate = startDate,
+                    endDate = endDate
+                )
+            ).onSuccess {
+                _selectedPlanner.postValue(it)
+                _selectedDate.postValue(it.startDate)
             }
         }
     }

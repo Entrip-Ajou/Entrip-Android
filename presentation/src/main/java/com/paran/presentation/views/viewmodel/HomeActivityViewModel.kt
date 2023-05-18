@@ -31,6 +31,10 @@ constructor(
         when (routeName) {
             HomeRoute.Planner.tag -> _route.value = HomeRoute.Planner
             HomeRoute.PlannerDetail.tag -> _route.value = HomeRoute.PlannerDetail
+            HomeRoute.PlanInput.tag -> _route.value = HomeRoute.PlanInput
+            HomeRoute.Notice.tag -> _route.value = HomeRoute.Notice
+            HomeRoute.Vote.tag -> _route.value = HomeRoute.Vote
+            HomeRoute.PlannerUserAdd.tag -> _route.value = HomeRoute.PlannerUserAdd
             HomeRoute.Recommendation.tag -> _route.value = HomeRoute.Recommendation
             HomeRoute.Community.tag -> _route.value = HomeRoute.Community
             HomeRoute.MyPage.tag -> _route.value = HomeRoute.MyPage

@@ -15,7 +15,8 @@ import com.paran.presentation.utils.callbacks.BasePlanDiffCallback
 class PlanAdapter(
     private val onClickDeletePlan: (plan: BasePlan) -> Unit,
     private val onClickPlan: (plan: BasePlan) -> Unit,
-    private val onClickComment: (plan: BasePlan) -> Unit
+    private val onClickComment: (plan: BasePlan) -> Unit,
+    private val onClickAdd: () -> Unit
 ) : ListAdapter<BasePlan, RecyclerView.ViewHolder>(BasePlanDiffCallback()) {
     companion object {
         private const val FOOTER_VIEW_TYPE = 1
@@ -30,7 +31,8 @@ class PlanAdapter(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ),
+            onClickAdd = onClickAdd
         )
         else -> PlanViewHolder(
             ItemPlanBinding.inflate(
@@ -118,8 +120,14 @@ class PlanAdapter(
     }
 
     inner class PlanFooterViewHolder(
-        private val binding: ItemPlanFooterBinding
+        private val binding: ItemPlanFooterBinding,
+        private val onClickAdd: () -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.btnPlanAdd.setOnClickListener {
+                onClickAdd()
+            }
+        }
 
         fun bind() {
 

@@ -53,9 +53,7 @@ interface PlannerRepository {
         title: String,
         startDate: String,
         endDate: String,
-        timeStamp: String,
-        commentTimeStamp: String
-    )
+    ): BasePlanner
 
     suspend fun findPlanByPlannerIdWithDate(
         plannerId: Long,

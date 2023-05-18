@@ -37,7 +37,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:onClick="click_notification"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -55,6 +54,7 @@
                     android:layout_alignRight="@id/ic_notification"
                     android:src="@drawable/ic_baseline_circle_24"
                     android:visibility="gone" />
+
             </RelativeLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

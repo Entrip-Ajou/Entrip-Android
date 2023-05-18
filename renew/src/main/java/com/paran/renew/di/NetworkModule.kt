@@ -1,6 +1,7 @@
 package com.paran.renew.di
 
 import ajou.paran.data.local.datasource.LocalUserDataSource
+import ajou.paran.data.remote.api.PlannerAPI
 import ajou.paran.data.remote.api.UserAPI
 import ajou.paran.data.utils.interceptors.AuthInterceptor
 import ajou.paran.data.utils.interceptors.NullOrEmptyConverterFactory
@@ -77,5 +78,10 @@ object NetworkModule {
     fun providerUserAPI(
         retrofit: Retrofit
     ): UserAPI = retrofit.create(UserAPI::class.java)
+
+    @Provides
+    fun providerPlannerAPI(
+        retrofit: Retrofit
+    ): PlannerAPI = retrofit.create(PlannerAPI::class.java)
 
 }

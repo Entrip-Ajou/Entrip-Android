@@ -46,8 +46,11 @@ class HomeActivity : BaseETActivity<ActivityHomeBinding>(R.layout.activity_home)
                             viewModel.pushRoute(HomeRoute.Planner.tag)
                         }
                     }
-
                 }
+                is HomeRoute.PlanInput -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlanInputFragment.newInstance()).commit()
+                is HomeRoute.Notice -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, NoticeFragment.newInstance()).commit()
+                is HomeRoute.Vote -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, VoteFragment.newInstance()).commit()
+                is HomeRoute.PlannerUserAdd -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlannerUserAddFragment.newInstance()).commit()
                 is HomeRoute.Recommendation -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, RecommendationFragment.newInstance()).commit()
                 is HomeRoute.Community -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, CommunityFragment.newInstance()).commit()
                 is HomeRoute.MyPage -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, MyPageFragment.newInstance()).commit()
@@ -119,6 +122,10 @@ class HomeActivity : BaseETActivity<ActivityHomeBinding>(R.layout.activity_home)
 
     fun cleanPlannerData() {
         viewModel.cleanPlannerData()
+    }
+
+    fun pushRoute(routeName: String) {
+        viewModel.pushRoute(routeName)
     }
 
 }

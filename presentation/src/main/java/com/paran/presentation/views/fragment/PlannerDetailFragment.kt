@@ -5,18 +5,24 @@ import ajou.paran.domain.model.BasePlanner
 import ajou.paran.domain.model.PlannerDate
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.PopupMenu
+import androidx.core.util.Pair
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.paran.presentation.R
 import com.paran.presentation.common.adapter.PlanAdapter
 import com.paran.presentation.common.adapter.PlannerDateAdapter
 import com.paran.presentation.common.base.BaseETFragment
+import com.paran.presentation.common.route.HomeRoute
+import com.paran.presentation.common.widgets.CustomMaterialDatePicker
 import com.paran.presentation.databinding.FragmentPlannerDetailBinding
 import com.paran.presentation.utils.callbacks.SwipeHelperCallback
 import com.paran.presentation.views.activity.HomeActivity
@@ -42,7 +48,8 @@ class PlannerDetailFragment : BaseETFragment<FragmentPlannerDetailBinding>(R.lay
     private val planAdapter = PlanAdapter(
         onClickDeletePlan = this::onClickDelete,
         onClickPlan = this::onClickPlan,
-        onClickComment = this::onClickComment
+        onClickComment = this::onClickComment,
+        onClickAdd = this::onClickAdd
     )
     private val swipeHelperCallback = SwipeHelperCallback(planAdapter)
 
@@ -109,6 +116,14 @@ class PlannerDetailFragment : BaseETFragment<FragmentPlannerDetailBinding>(R.lay
 
     }
 
+    private fun onClickAdd() {
+        when (val activity = requireActivity()) {
+            is HomeActivity -> {
+                activity.pushRoute(HomeRoute.PlanInput.tag)
+            }
+        }
+    }
+
     private fun onClickDate(date: PlannerDate) {
         viewModel.loadPlanData(date.date)
     }
@@ -159,4 +174,63 @@ class PlannerDetailFragment : BaseETFragment<FragmentPlannerDetailBinding>(R.lay
         }
     }
 
+    @SuppressLint("RestrictedApi")
+    fun onClickModifyDate() {
+        viewModel.selectedPlanner.value?.let { planner ->
+            val selector = CustomMaterialDatePicker()
+
+            val formatter = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+            formatter.timeZone = TimeZone.getTimeZone("UTC")
+
+            val formattedStartDate = formatter.parse(planner.startDate)
+            val formattedEndDate = formatter.parse(planner.endDate)
+
+            val dateRangePicker = MaterialDatePicker.Builder.customDatePicker(selector)
+                .setTitleText("Select dates")
+                .setSelection(Pair(formattedStartDate?.time, formattedEndDate?.time))
+                .build()
+
+            dateRangePicker.show(this.parentFragmentManager,"Hello")
+
+            dateRangePicker.addOnPositiveButtonClickListener { pairDate ->
+                val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+                val (startYear, startMonth, startDay) = format.format(pairDate.first)
+                    .split("/")
+                    .map { it.toInt() }
+                val (endYear, endMonth, endDay) = format.format(pairDate.second)
+                    .split("/")
+                    .map { it.toInt() }
+
+                val list = getDates(
+                    startDate = "$startYear/$startMonth/$startDay",
+                    endDate = "$endYear/$endMonth/$endDay"
+                )
+
+
+
+                viewModel.modifyDate(format.format(pairDate.first), format.format(pairDate.second))
+//                init_start_date = "$s_year/$s_month/$s_day"
+//                init_end_date = "$endYear/$e_month/$e_day"
+//                midFragment.setAdapter(format.format(pairDate.first))
+            }
+        }
+    }
+
+    fun onClickMenu() {
+        val popup = PopupMenu(context, binding.plannerActMenu)
+        requireActivity().menuInflater.inflate(R.menu.navigation_menu, popup.menu)
+
+        popup.setOnMenuItemClickListener { item ->
+            when(item.itemId){
+                R.id.gallery -> {
+
+                }
+                R.id.notice -> (activity as HomeActivity).pushRoute(HomeRoute.Notice.tag)
+                R.id.vote -> (activity as HomeActivity).pushRoute(HomeRoute.Vote.tag)
+                R.id.invite -> (activity as HomeActivity).pushRoute(HomeRoute.PlannerUserAdd.tag)
+            }
+            false
+        }
+        popup.show()
+    }
 }

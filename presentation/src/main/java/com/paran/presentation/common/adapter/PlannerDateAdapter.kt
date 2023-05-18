@@ -43,6 +43,7 @@ constructor(
 
     override fun submitList(list: MutableList<PlannerDate>?) {
         selectedItemPos = 0
+        lastItemSelectedPos = 0
         super.submitList(list)
     }
 
