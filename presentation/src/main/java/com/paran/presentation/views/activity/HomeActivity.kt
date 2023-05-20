@@ -7,11 +7,13 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import com.paran.presentation.R
 import com.paran.presentation.common.base.BaseETActivity
 import com.paran.presentation.common.route.HomeRoute
 import com.paran.presentation.databinding.ActivityHomeBinding
+import com.paran.presentation.utils.state.PlanState
 import com.paran.presentation.utils.state.PlannerState
 import com.paran.presentation.views.fragment.*
 import com.paran.presentation.views.viewmodel.HomeActivityViewModel
@@ -33,28 +35,60 @@ class HomeActivity : BaseETActivity<ActivityHomeBinding>(R.layout.activity_home)
     private fun subObserver() {
         viewModel.route.observe(this) { route ->
             when (route) {
-                is HomeRoute.Planner -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlannerFragment.newInstance()).commit()
+                is HomeRoute.Planner -> {
+                    viewGoneAppBar()
+                    supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlannerFragment.newInstance()).commit()
+                }
                 is HomeRoute.PlannerDetail -> {
                     binding.homeBottomNav.selectedItemId = R.id.nav_planner
                     when (val planner = viewModel.detailPlannerState.value) {
                         is PlannerState.Store -> {
-                            supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlannerDetailFragment.newInstance(
-                                planner.data
-                            )).commit()
+                            viewGoneAppBar()
+                            supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlannerDetailFragment.newInstance(planner.data)).commit()
                         }
                         else -> {
                             viewModel.pushRoute(HomeRoute.Planner.tag)
                         }
                     }
                 }
-                is HomeRoute.PlanInput -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlanInputFragment.newInstance()).commit()
-                is HomeRoute.Notice -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, NoticeFragment.newInstance()).commit()
-                is HomeRoute.Vote -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, VoteFragment.newInstance()).commit()
-                is HomeRoute.PlannerUserAdd -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlannerUserAddFragment.newInstance()).commit()
-                is HomeRoute.Recommendation -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, RecommendationFragment.newInstance()).commit()
-                is HomeRoute.Community -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, CommunityFragment.newInstance()).commit()
-                is HomeRoute.MyPage -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, MyPageFragment.newInstance()).commit()
-                else -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, HomeFragment.newInstance()).commit()
+                is HomeRoute.PlanInput -> {
+                    viewGoneAppBar()
+                    when (val state = viewModel.detailPlanState.value) {
+                        is PlanState.Store -> supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlanInputFragment.newInstance(
+                            plannerId = state.plannerId,
+                            selectedDate = state.selectedDate
+                        )).commit()
+                        else -> viewModel.pushRoute(HomeRoute.Planner.tag)
+                    }
+                }
+                is HomeRoute.Notice -> {
+                    viewGoneAppBar()
+                    supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, NoticeFragment.newInstance()).commit()
+                }
+                is HomeRoute.Vote -> {
+                    viewGoneAppBar()
+                    supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, VoteFragment.newInstance()).commit()
+                }
+                is HomeRoute.PlannerUserAdd -> {
+                    viewGoneAppBar()
+                    supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlannerUserAddFragment.newInstance()).commit()
+                }
+                is HomeRoute.Recommendation -> {
+                    visibleAppBar()
+                    supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, RecommendationFragment.newInstance()).commit()
+                }
+                is HomeRoute.Community -> {
+                    viewGoneAppBar()
+                    supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, CommunityFragment.newInstance()).commit()
+                }
+                is HomeRoute.MyPage -> {
+                    visibleAppBar()
+                    supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, MyPageFragment.newInstance()).commit()
+                }
+                else -> {
+                    visibleAppBar()
+                    supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, HomeFragment.newInstance()).commit()
+                }
             }
         }
     }
@@ -116,8 +150,23 @@ class HomeActivity : BaseETActivity<ActivityHomeBinding>(R.layout.activity_home)
         }
     }
 
+    private fun viewGoneAppBar() {
+        binding.homeActTop.visibility = View.GONE
+    }
+
+    private fun visibleAppBar() {
+        binding.homeActTop.visibility = View.VISIBLE
+    }
+
     fun initPlannerData(planner: BasePlanner) {
         viewModel.initPlannerData(planner)
+    }
+
+    fun initPlanData(
+        plannerId: Long,
+        selectedDate: String
+    ) {
+        viewModel.initPlanData(plannerId, selectedDate)
     }
 
     fun cleanPlannerData() {

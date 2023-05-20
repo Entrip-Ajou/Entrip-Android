@@ -3,6 +3,7 @@ package ajou.paran.data.remote.api
 import ajou.paran.data.remote.model.request.AddPlanRequest
 import ajou.paran.data.remote.model.request.UpdatePlanByIdRequest
 import ajou.paran.data.remote.model.response.AddPlanResponse
+import ajou.paran.data.remote.model.response.BaseResponse
 import ajou.paran.data.remote.model.response.UpdatePlanByIdResponse
 import retrofit2.http.*
 
@@ -13,7 +14,7 @@ interface PlanAPI {
     @POST("api/v1/plans")
     suspend fun addPlan(
         @Body request: AddPlanRequest
-    ): AddPlanResponse
+    ): BaseResponse<AddPlanResponse>
 
     @DELETE("api/v1/plans/{plan_id}")
     suspend fun deletePlanById(

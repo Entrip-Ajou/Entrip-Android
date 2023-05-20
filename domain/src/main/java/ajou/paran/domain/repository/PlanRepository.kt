@@ -4,6 +4,14 @@ import ajou.paran.domain.model.BasePlan
 
 interface PlanRepository {
 
+    suspend fun addPlan(
+        plannerId: Long,
+        date: String,
+        todo: String,
+        time: Int,
+        location: String?
+    )
+
     suspend fun insertPlan(
         plan: BasePlan
     )

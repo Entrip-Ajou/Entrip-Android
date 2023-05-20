@@ -1,5 +1,7 @@
 package ajou.paran.data.remote.datasource
 
+import ajou.paran.domain.model.BasePlan
+
 interface PlanRemoteDataSource {
 
     suspend fun addPlan(
@@ -8,7 +10,7 @@ interface PlanRemoteDataSource {
         todo: String,
         time: Int,
         location: String? = null,
-    )
+    ): BasePlan
 
     suspend fun deletePlanById(
         planId: Long

@@ -78,6 +78,11 @@ class PlannerDetailFragment : BaseETFragment<FragmentPlannerDetailBinding>(R.lay
             dateAdapter.submitList(getDates(it.startDate, it.endDate))
         }
         viewModel.loadPlanList.observe(this) {
+            when (val activity = requireActivity()) {
+                is HomeActivity -> {
+                    activity.initPlanData(viewModel.selectedPlanner.value!!.id, viewModel.selectedDate.value!!)
+                }
+            }
             swipeHelperCallback.removeMyClamp(binding.rvPlan)
             planAdapter.submitList(it)
         }

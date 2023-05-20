@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.paran.presentation.common.route.HomeRoute
+import com.paran.presentation.utils.state.PlanState
 import com.paran.presentation.utils.state.PlannerState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -27,6 +28,10 @@ constructor(
     val detailPlannerState: LiveData<PlannerState>
         get() = _detailPlannerState
 
+    private val _detailPlanState = MutableLiveData<PlanState>(PlanState.Init)
+    val detailPlanState: LiveData<PlanState>
+        get() = _detailPlanState
+
     fun pushRoute(routeName: String) {
         when (routeName) {
             HomeRoute.Planner.tag -> _route.value = HomeRoute.Planner
@@ -45,6 +50,13 @@ constructor(
     fun initPlannerData(planner: BasePlanner) {
         _detailPlannerState.value = PlannerState.Store(planner)
         _route.value = HomeRoute.PlannerDetail
+    }
+
+    fun initPlanData(
+        plannerId: Long,
+        selectedDate: String
+    ) {
+        _detailPlanState.value = PlanState.Store(plannerId, selectedDate)
     }
 
     fun cleanPlannerData() {
