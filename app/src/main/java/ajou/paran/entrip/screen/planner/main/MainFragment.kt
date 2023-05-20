@@ -97,7 +97,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main),
     private fun handleError(code: Int) {
         when (code) {
             0 -> {
-                val builder = AlertDialog.Builder(activity!!)
+                val builder = AlertDialog.Builder(requireActivity())
                 builder.setMessage("네트워크를 확인해주세요")
                     .setPositiveButton("확인",
                         DialogInterface.OnClickListener { dialog, which -> })
@@ -118,7 +118,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main),
         val intent = Intent(activity, PlannerActivity::class.java)
         intent.putExtra("PlannerEntity", plannerEntity)
         startActivity(intent)
-        activity!!.finish()
+        requireActivity().finish()
     }
 
     override fun onPlannerAddClickListener() {

@@ -37,20 +37,6 @@
             app:spanCount="3"
             tools:listitem="@layout/item_layout_planner" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/homeFrag_btn_recommendation"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="32dp"
-            android:background="@drawable/shape_btn_round_recommend"
-            android:text="+"
-            android:textColor="#1982e6"
-            android:textSize="16sp"
-            android:textStyle="normal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/homeFrag_rv_planner" />
-
         <TextView
             android:id="@+id/homeFrag_text2"
             android:layout_width="wrap_content"

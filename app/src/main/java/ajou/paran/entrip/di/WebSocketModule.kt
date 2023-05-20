@@ -19,7 +19,7 @@ import kotlin.coroutines.coroutineContext
 @Module
 @InstallIn(SingletonComponent::class)
 object WebSocketModule {
-    private val url = "wss://2ntrip.com/ws/websocket"
+    private val url = "wss://2ntrip.link/ws/websocket"
     private val intervalMills = 5000
     private const val TAG = "[WebSocket]"
 

@@ -60,10 +60,10 @@ class IntroFourFragment: BaseFragment<FragmentIntroFourBinding>(R.layout.fragmen
     private fun tokenCheck() {
         when (viewModel.isTokenNull()) {
             true -> {
-                AlertDialog.Builder(activity!!)
+                AlertDialog.Builder(requireActivity())
                     .setMessage("앱을 재시작 해주세요.")
                     .setPositiveButton("확인") { dialog, which ->
-                        activity!!.finishAffinity()
+                        requireActivity().finishAffinity()
                         System.runFinalization()
                         System.exit(0)
                     }.show()

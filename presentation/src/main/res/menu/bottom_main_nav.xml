@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/icon_home"
+        android:title="홈"/>
+
+    <item
+        android:id="@+id/nav_planner"
+        android:icon="@drawable/icon_planner"
+        android:title="플래너"/>
+
+    <item
+        android:id="@+id/nav_recommendation"
+        android:icon="@drawable/icon_recommendation"
+        android:title="여행지 추천"/>
+
+    <item
+        android:id="@+id/nav_board"
+        android:icon="@drawable/icon_community"
+        android:title="게시판"/>
+
+    <item
+        android:id="@+id/nav_mypage"
+        android:icon="@drawable/icon_mypage"
+        android:title="마이페이지"/>
+
+</menu>

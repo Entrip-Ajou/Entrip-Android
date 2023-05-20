@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Entrip</string>
+
+    <string name="intro_exit">시작하기</string>
+
+    <string name="intro_first_title">나만의 플래너</string>
+    <string name="intro_first_content">친구들과 여행 일정을 함께 만들어보세요!\n일정을 쉽게 추가하고 삭제할 수 있어요</string>
+    <string name="intro_second_title">커뮤니티</string>
+    <string name="intro_second_content">자유롭게 정보를 공유하고\n 얻으며 소통할 수 있어요</string>
+    <string name="intro_third_title">여행지 추천</string>
+    <string name="intro_third_content">당신의 여행 성향과 비슷한 사람들의 추천을 바탕으로\n당신만의 여행지를 추천 받아보세요!</string>
+
+    <string name="sign_in_logo">Entrip</string>
+    <string name="sign_in_hint_email">아이디를 입력해주세요.</string>
+    <string name="sign_in_hint_password">비밀번호를 입력해주세요.</string>
+    <string name="sign_in_error">테스트 에러 메세지 입니다.</string>
+    <string name="sign_in_sign_in">로그인</string>
+    <string name="sign_in_sign_up">회원가입</string>
+
+    <string name="sign_up_title">회원가입</string>
+    <string name="sign_up_email_title">아이디</string>
+    <string name="sign_up_hint_email">아이디를 입력해주세요</string>
+    <string name="sign_up_btn_check_email">중복검사</string>
+    <string name="sign_up_password_title">비밀번호</string>
+    <string name="sign_up_hint_password">비밀번호를 입력해주세요</string>
+    <string name="sign_up_password_check_title">비밀번호 확인</string>
+    <string name="sign_up_hint_password_check">비밀번호를 한번 더 입력해주세요</string>
+    <string name="sign_up_nickname_title">닉네임</string>
+    <string name="sign_up_hint_nickname">닉네임을 입력해주세요</string>
+    <string name="sign_up_btn_check_nickname">중복검사</string>
+    <string name="sign_up_gender_title">성별</string>
+    <string name="sign_up_gender_man">남성</string>
+    <string name="sign_up_gender_woman">여성</string>
+
+    <string name="open">open</string>
+    <string name="close">close</string>
+
+
+</resources>

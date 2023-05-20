@@ -25,7 +25,6 @@ import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.invitation_dialog.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
@@ -38,6 +37,9 @@ import android.content.pm.PackageManager
 
 import android.content.pm.PackageInfo
 import android.util.Base64
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -197,8 +199,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
             .setView(mDialogView)
 
         val mAlertDialog = mBuilder.show()
-
-        mDialogView.img_close.setOnClickListener {
+        findViewById<ImageView>(R.id.img_close).setOnClickListener {
             mAlertDialog.dismiss()
         }
     }
@@ -218,8 +219,9 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
 
     private fun setUpInvitationRecyclerView(v: View) {
         val inviteAdapter = InviteAdapter(this@HomeActivity)
-        v.rv_invite_log.adapter = inviteAdapter
-
+        val rv = findViewById<RecyclerView>(R.id.rv_invite_log)
+        val isInviteText = findViewById<TextView>(R.id.isInviteText)
+        rv.adapter = inviteAdapter
         lifecycle.coroutineScope.launch {
             viewModel.selectAllInvite()
                 .onStart { viewModel.setLoading() }
@@ -233,12 +235,12 @@ class HomeActivity: BaseActivity<ActivityHomeBinding>(R.layout.activity_home), I
                     withContext(Dispatchers.Main) {
                         when(inviteAdapter.itemCount) {
                             0 -> {
-                                v.isInviteText.text = "도착한 초대장이 없어요"
-                                v.rv_invite_log.visibility = View.GONE
+                                isInviteText.text = "도착한 초대장이 없어요"
+                                rv.visibility = View.GONE
                             }
                             else -> {
-                                v.isInviteText.text = "초대장이 도착했어요 !"
-                                v.rv_invite_log.visibility = View.VISIBLE
+                                isInviteText.text = "초대장이 도착했어요 !"
+                                rv.visibility = View.VISIBLE
                             }
                         }
                     }

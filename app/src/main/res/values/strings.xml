@@ -4,6 +4,7 @@
     <string name="default_web_client_id2">1058695871135-ihcevjm41gpu0fhhq70n7mb1f5piia1h.apps.googleusercontent.com</string>
     <string name="recommend_top">인트립이 추천하는\n국내 여행지 TOP5</string>
     <string name="recommend_middle">추천 여행지가 매주 새로 업데이트 됩니다</string>
+    <string name="recommend_btn_service">나만의 여행지 추천 받기</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="default_notification_channel_id">Entrip_channel_ID</string>

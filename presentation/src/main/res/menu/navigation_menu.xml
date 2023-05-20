@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText">
+
+    <item
+        android:id="@+id/gallery"
+        android:title="사진첩"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/notice"
+        android:title="공지"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/vote"
+        android:title="투표"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/invite"
+        android:title="친구 초대"
+        app:showAsAction="never"/>
+
+</menu>

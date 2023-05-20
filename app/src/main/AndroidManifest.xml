@@ -17,7 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Entrip"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".screen.recommendation.RecommendActivity"
+            android:exported="false" />
         <activity
             android:name=".screen.planner.top.vote.find.VoteFindActivity"
             android:exported="false" />
@@ -90,12 +92,16 @@
         <activity
             android:name=".screen.planner.top.useradd.PlannerUserAddActivity"
             android:exported="false" />
-        <activity android:name=".screen.community.create.BoardCreateActivity"
-            android:exported="false"/>
-        <activity android:name=".screen.community.select.ImageSelectActivity"
-            android:exported="false"/>
-        <activity android:name=".screen.community.board.BoardActivity"
-            android:exported="false"/>
+        <activity
+            android:name=".screen.community.create.BoardCreateActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screen.community.select.ImageSelectActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screen.community.board.BoardActivity"
+            android:exported="false" />
+
         <service
             android:name=".util.network.fcm.MyFirebaseMessaingService"
             android:exported="false"
