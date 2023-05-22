@@ -25,6 +25,7 @@ import com.paran.presentation.common.route.HomeRoute
 import com.paran.presentation.common.widgets.CustomMaterialDatePicker
 import com.paran.presentation.databinding.FragmentPlannerDetailBinding
 import com.paran.presentation.utils.callbacks.SwipeHelperCallback
+import com.paran.presentation.utils.extensions.dateToFormat
 import com.paran.presentation.views.activity.HomeActivity
 import com.paran.presentation.views.viewmodel.PlannerDetailFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint

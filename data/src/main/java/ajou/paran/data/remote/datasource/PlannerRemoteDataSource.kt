@@ -4,6 +4,7 @@ import ajou.paran.data.remote.model.request.UpdatePlannerRequest
 import ajou.paran.data.remote.model.response.*
 import ajou.paran.domain.model.BaseCondition
 import ajou.paran.domain.model.BaseId
+import ajou.paran.domain.model.BasePlan
 import ajou.paran.domain.model.BasePlanner
 import ajou.paran.domain.model.DefaultUser
 
@@ -33,7 +34,7 @@ interface PlannerRemoteDataSource {
     suspend fun findAllPlansByPlannerIdWithDate(
         plannerId: Long,
         date: String,
-    ): FindAllPlansByPlannerIdWithDateResponseList
+    ): List<BasePlan>
 
     suspend fun findAllNoticesByPlannerId(
         plannerId: Long,

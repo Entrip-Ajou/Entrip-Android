@@ -15,7 +15,8 @@ constructor(
             date = params.date,
             todo = params.todo,
             time = params.time,
-            location = params.location
+            location = params.location,
+            rgb = params.rgb,
         )
     }
 
@@ -24,7 +25,8 @@ constructor(
         val date: String,
         val todo: String,
         val time: Int,
-        val location: String?
+        val location: String?,
+        val rgb: Long
     )
 
 }

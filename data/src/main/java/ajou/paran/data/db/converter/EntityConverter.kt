@@ -14,6 +14,7 @@ internal fun BasePlan.toEntity() = PlanEntity(
     time = time,
     location = location,
     date = date,
+    rgb = rgb,
     isExistComments = isExistComments
 )
 
@@ -24,6 +25,7 @@ internal fun PlanEntity.toModel() = BasePlan(
     time = time,
     location = location,
     date = date,
+    rgb = rgb,
     isExistComments = isExistComments
 )
 

@@ -19,7 +19,8 @@ constructor(
         date: String,
         todo: String,
         time: Int,
-        location: String?
+        location: String?,
+        rgb: Long,
     ): BasePlan = baseApiCall {
         planAPI.addPlan(
             request = AddPlanRequest(
@@ -27,6 +28,7 @@ constructor(
                 todo = todo,
                 time = time,
                 location = location,
+                rgb = rgb,
                 plannerId = plannerId
             )
         ).data.toModel()

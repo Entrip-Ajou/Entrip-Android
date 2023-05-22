@@ -9,7 +9,8 @@ interface PlanRepository {
         date: String,
         todo: String,
         time: Int,
-        location: String?
+        location: String?,
+        rgb: Long
     )
 
     suspend fun insertPlan(

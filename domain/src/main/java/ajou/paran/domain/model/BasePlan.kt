@@ -7,5 +7,6 @@ data class BasePlan(
     val time: Int,
     val location: String?,
     val date: String,
+    val rgb: Long,
     val isExistComments: Boolean
 )

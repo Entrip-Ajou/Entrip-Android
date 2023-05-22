@@ -36,7 +36,7 @@ class HomeActivity : BaseETActivity<ActivityHomeBinding>(R.layout.activity_home)
         viewModel.route.observe(this) { route ->
             when (route) {
                 is HomeRoute.Planner -> {
-                    viewGoneAppBar()
+                    visibleAppBar()
                     supportFragmentManager.beginTransaction().replace(R.id.homeAct_nav_host_container, PlannerFragment.newInstance()).commit()
                 }
                 is HomeRoute.PlannerDetail -> {

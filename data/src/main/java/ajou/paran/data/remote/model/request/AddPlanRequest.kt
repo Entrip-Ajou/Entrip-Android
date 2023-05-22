@@ -11,6 +11,8 @@ data class AddPlanRequest(
     val time: Int,
     @SerializedName("location")
     val location: String?,
+    @SerializedName("rgb")
+    val rgb: Long,
     @SerializedName("planner_id")
     val plannerId: Long
 )

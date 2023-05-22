@@ -8,6 +8,7 @@ import ajou.paran.data.remote.model.response.*
 import ajou.paran.data.utils.baseApiCall
 import ajou.paran.domain.model.BaseCondition
 import ajou.paran.domain.model.BaseId
+import ajou.paran.domain.model.BasePlan
 import ajou.paran.domain.model.BasePlanner
 import ajou.paran.domain.model.DefaultUser
 import javax.inject.Inject
@@ -64,8 +65,15 @@ constructor(
     override suspend fun findAllPlansByPlannerIdWithDate(
         plannerId: Long,
         date: String
-    ): FindAllPlansByPlannerIdWithDateResponseList {
-        TODO("Not yet implemented")
+    ): List<BasePlan> = baseApiCall {
+        plannerAPI.findAllPlansByPlannerIdWithDate(
+            plannerId = plannerId,
+            date = date
+        ).apply {
+            when (statusCode) {
+                else -> {}
+            }
+        }.data.toModel()
     }
 
     override suspend fun findAllNoticesByPlannerId(plannerId: Long): FindAllNoticesByPlannerIdResponseList {

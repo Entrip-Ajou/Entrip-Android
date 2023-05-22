@@ -10,5 +10,6 @@ internal fun AddPlanResponse.toModel() = BasePlan(
     time = time,
     location = location,
     date = date,
+    rgb = rgb,
     isExistComments = isExistComments
 )

@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.paran.presentation.utils.extensions.dateToFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,14 +46,19 @@ constructor(
 
     fun loadPlanData(planDate: String) = _selectedPlanner.value?.let {
         CoroutineScope(Dispatchers.IO).launch {
-            selectPlanByIdWithDateUseCase(
-                params = SelectPlanByIdWithDateUseCase.Params(
-                    planDate = planDate,
-                    plannerId = it.id
-                )
-            ).onSuccess {
-                Log.d(TAG, "Load Plan Success")
-                _loadPlanList.postValue(it)
+            kotlin.runCatching {
+                selectPlanByIdWithDateUseCase(
+                    params = SelectPlanByIdWithDateUseCase.Params(
+                        planDate = planDate.dateToFormat(),
+                        plannerId = it.id
+                    )
+                ).onSuccess {
+                    Log.d(TAG, "Load Plan Success")
+                    _loadPlanList.postValue(it)
+                }.onFailure {
+                    Log.d(TAG, "Load Plan Failure")
+                    _loadPlanList.postValue(emptyList())
+                }
             }.onFailure {
                 Log.d(TAG, "Load Plan Failure")
                 _loadPlanList.postValue(emptyList())

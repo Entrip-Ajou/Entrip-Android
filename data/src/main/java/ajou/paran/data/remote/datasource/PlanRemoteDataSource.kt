@@ -10,6 +10,7 @@ interface PlanRemoteDataSource {
         todo: String,
         time: Int,
         location: String? = null,
+        rgb: Long
     ): BasePlan
 
     suspend fun deletePlanById(

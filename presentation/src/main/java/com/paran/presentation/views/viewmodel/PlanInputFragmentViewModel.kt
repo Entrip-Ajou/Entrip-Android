@@ -57,7 +57,8 @@ constructor(
                             todo = todo,
                             date = selectedDate.value!!,
                             time = convertTime,
-                            location = inputLocation.value
+                            location = inputLocation.value,
+                            rgb = 0,
                         )
                     ).onSuccess {
                         Log.d(TAG, "Success")
